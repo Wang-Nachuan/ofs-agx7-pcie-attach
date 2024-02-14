@@ -2,25 +2,25 @@
 // SPDX-License-Identifier: MIT
 
 //
-// Description
-//-----------------------------------------------------------------------------
+// Side-band to in-band unit test.
 //
-//   Test OFS modules used at the end of the PCIe SS AXI-S variant
-//
-//-----------------------------------------------------------------------------
 
-module test
+module test_sb2ib
   #(
     parameter DATA_WIDTH = 512,
-    parameter NUM_OF_SEG = 1//DATA_WIDTH / 256
+    parameter string FILE_PREFIX = "test_stream_sb2ib"
     )
    (
-    input bit clk,
-    input bit rst_n,
-    input bit csr_clk,
-    input bit csr_rst_n
+    input  bit clk,
+    input  bit rst_n,
+    input  bit csr_clk,
+    input  bit csr_rst_n,
+
+    output logic done
     );
 
+    // The sb2ib module only supports 1 segment with SOP at bit 0.
+    localparam NUM_OF_SEG = 1;
     localparam HDR_WIDTH = 256;
 
     int log_in_fd;
@@ -38,16 +38,15 @@ module test
                               .SB_HEADERS(0)) tlp_stream_out;
 
     int cnt;
-    logic done;
+    logic stop_stream;
 
     // Reference queue, used to compare the input stream to the output
     rand_tlp_pkg::rand_tlp tlp_ref_queue[$];
     rand_tlp_pkg::rand_tlp tlp_ref;
 
     initial begin
-        log_in_fd = $fopen("test_tlp_stream_in.tsv", "w");
-        log_out_fd = $fopen("test_tlp_stream_out.tsv", "w");
-
+        log_in_fd = $fopen($sformatf("%0s_%0d_in.tsv", FILE_PREFIX, DATA_WIDTH), "w");
+        log_out_fd = $fopen($sformatf("%0s_%0d_out.tsv", FILE_PREFIX, DATA_WIDTH), "w");
         tlp_stream_in = new();
         tlp_stream_out = new();
     end
@@ -71,7 +70,7 @@ module test
 
     always_ff @(posedge clk) begin
         if (rst_n && (in_tready || !in_tvalid)) begin
-            tlp_stream_in.next_cycle(done);
+            tlp_stream_in.next_cycle(stop_stream);
             in_tvalid <= tlp_stream_in.tvalid;
             in_tdata <= tlp_stream_in.tdata;
             in_tkeep <= tlp_stream_in.tkeep;
@@ -108,14 +107,14 @@ module test
                 $fwrite(log_in_fd, "\n%0t: %0s\n", $time, tlp.sfmt());
 
                 cnt <= cnt + 1;
-                if (cnt == 10000)
-                    done <= 1'b1;
+                if (cnt == 100000-1)
+                    stop_stream <= 1'b1;
             end
         end
 
         if (!rst_n) begin
             cnt <= 0;
-            done <= 1'b0;
+            stop_stream <= 1'b0;
         end
     end
 
@@ -143,6 +142,7 @@ module test
 
     assign in_tready = axi_in.tready;
 
+    // Random back-pressure
     always_ff @(posedge clk) begin
         out_merged.tready <= ($urandom() & 4'hf) != 4'hf;
     end
@@ -179,7 +179,6 @@ module test
             while (tlp_stream_out.tlp_queue.size() > 0) begin
                 tlp_out = tlp_stream_out.tlp_queue.pop_front();
                 $fwrite(log_out_fd, "%0t: %0s\n", $time, tlp_out.sfmt());
-                tlp_out.display();
 
                 assert(tlp_ref_queue.size() > 0) else
                     $fatal(1, "Output TLP with no corresponding input!");
@@ -190,9 +189,18 @@ module test
     end
 
     always_ff @(posedge clk) begin
-        if (rst_n && done && (tlp_ref_queue.size() == 0)) begin
-            $display("\nPass!");
-            $finish(0);
+        if (!done && stop_stream && (tlp_ref_queue.size() == 0)) begin
+            $fwrite(log_out_fd, "\nPass sb2ib data width %0d, num seg %0d, %0d packets\n",
+                    DATA_WIDTH, NUM_OF_SEG, cnt);
+            $display("Pass sb2ib data width %0d, num seg %0d, %0d packets",
+                     DATA_WIDTH, NUM_OF_SEG, cnt);
+            $fflush(log_in_fd);
+            $fflush(log_out_fd);
+            done <= 1'b1;
+        end
+
+        if (!rst_n) begin
+            done <= 1'b0;
         end
     end
 

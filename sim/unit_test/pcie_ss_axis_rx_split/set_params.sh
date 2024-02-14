@@ -5,7 +5,8 @@ DEFINES="+define+SIM_MODE \
  +define+VCD_ON"
 
 TB_SRC="-F $OFS_ROOTDIR/ofs-common/sim/bfm/simple_pcie_ss_stream_bfm/filelist.txt \
- $TEST_BASE_DIR/test.sv \
+ $TEST_BASE_DIR/test_rx_seg_align.sv \
+ $TEST_BASE_DIR/test_sb2ib.sv \
  $TEST_BASE_DIR/top_tb.sv"
 
 MSIM_OPTS=(-c top_tb -suppress 7033,12023 -voptargs="-access=rw+/. -designfile design_2.bin -debug" -qwavedb=+signal -do "add log -r /* ; run -all; quit -f")
