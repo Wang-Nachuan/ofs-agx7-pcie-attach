@@ -2,16 +2,13 @@
 // SPDX-License-Identifier: MIT
 
 //
-// Packet realignment test. Cycles with multiple headers or headers not in
-// the first segment are remapped to single header packets starting at 0.
+// In-band to side-band unit test.
 //
 
-module test_rx_seg_align
+module test_ib2sb
   #(
     parameter DATA_WIDTH = 512,
-    parameter NUM_OF_SEG = DATA_WIDTH / 256,
-    parameter SB_HEADERS = 1,
-    parameter string FILE_PREFIX = "test_stream_rx_seg_align"
+    parameter string FILE_PREFIX = "test_stream_ib2sb"
     )
    (
     input  bit clk,
@@ -22,8 +19,9 @@ module test_rx_seg_align
     output logic done
     );
 
+    // The ib2sb module only supports 1 segment with SOP at bit 0.
+    localparam NUM_OF_SEG = 1;
     localparam HDR_WIDTH = 256;
-    localparam string SB_STRING = SB_HEADERS ? "sb" : "ib";
 
     int log_in_fd;
     int log_out_fd;
@@ -31,14 +29,13 @@ module test_rx_seg_align
     rand_tlp_pkg::rand_tlp tlp;
     rand_tlp_pkg::rand_tlp_stream#(.DATA_WIDTH(DATA_WIDTH),
                                    .NUM_OF_SEG(NUM_OF_SEG),
-                                   .SB_HEADERS(SB_HEADERS),
+                                   .SB_HEADERS(0),
                                    .MAX_SOP_PER_CYCLE(NUM_OF_SEG)) tlp_stream_in;
 
     rand_tlp_pkg::rand_tlp tlp_out;
     rand_tlp_pkg::bus_to_tlp#(.DATA_WIDTH(DATA_WIDTH),
-                              // The output of the test has 1 segment
-                              .NUM_OF_SEG(1),
-                              .SB_HEADERS(SB_HEADERS)) tlp_stream_out;
+                              .NUM_OF_SEG(NUM_OF_SEG),
+                              .SB_HEADERS(1)) tlp_stream_out;
 
     int cnt;
     logic stop_stream;
@@ -48,8 +45,8 @@ module test_rx_seg_align
     rand_tlp_pkg::rand_tlp tlp_ref;
 
     initial begin
-        log_in_fd = $fopen($sformatf("%0s_%0d_%0s_in.tsv", FILE_PREFIX, DATA_WIDTH, SB_STRING), "w");
-        log_out_fd = $fopen($sformatf("%0s_%0d_%0s_out.tsv", FILE_PREFIX, DATA_WIDTH, SB_STRING), "w");
+        log_in_fd = $fopen($sformatf("%0s_%0d_in.tsv", FILE_PREFIX, DATA_WIDTH), "w");
+        log_out_fd = $fopen($sformatf("%0s_%0d_out.tsv", FILE_PREFIX, DATA_WIDTH), "w");
         tlp_stream_in = new();
         tlp_stream_out = new();
     end
@@ -128,43 +125,26 @@ module test_rx_seg_align
     //
     // ====================================================================
 
-    ofs_fim_pcie_ss_shims_pkg::t_tuser_seg [NUM_OF_SEG-1:0] axi_in_seg_tuser;
-    pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W($bits(axi_in_seg_tuser))) axi_in(clk, rst_n);
-
-    ofs_fim_pcie_ss_shims_pkg::t_tuser_seg out_aligned_tuser;
-    pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W($bits(out_aligned_tuser))) out_aligned(clk, rst_n);
-
-    for (genvar i = 0; i < NUM_OF_SEG; i += 1) begin
-        // ofs_fim_pcie_ss_rx_seg_align expects the tuser values in a struct
-        assign axi_in_seg_tuser[i].vendor = in_tuser_vendor[i];
-        assign axi_in_seg_tuser[i].last_segment = in_tuser_last_segment[i];
-        assign axi_in_seg_tuser[i].hvalid = in_tuser_hvalid[i];
-        // The hdr field is ignored when in-band headers are in use
-        assign axi_in_seg_tuser[i].hdr = in_tuser_hdr[i];
-    end
+    pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W(1)) axi_in(clk, rst_n);
+    pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W(1+HDR_WIDTH)) out_split(clk, rst_n);
 
     assign axi_in.tvalid = in_tvalid;
     assign axi_in.tlast = in_tlast;
-    assign axi_in.tuser_vendor = axi_in_seg_tuser;
+    assign axi_in.tuser_vendor = in_tuser_vendor[0];
     assign axi_in.tdata = in_tdata;
     assign axi_in.tkeep = in_tkeep;
 
-    ofs_fim_pcie_ss_rx_seg_align
-      #(
-        .NUM_OF_SEG(NUM_OF_SEG)
-        )
-      rx_seg_align
+    ofs_fim_pcie_ss_ib2sb ib2sb
        (
         .stream_in(axi_in),
-        .stream_out(out_aligned)
+        .stream_out(out_split)
         );
 
     assign in_tready = axi_in.tready;
-    assign out_aligned_tuser = out_aligned.tuser_vendor;
 
     // Random back-pressure
     always_ff @(posedge clk) begin
-        out_aligned.tready <= ($urandom() & 4'hf) != 4'hf;
+        out_split.tready <= ($urandom() & 4'hf) != 4'hf;
     end
 
 
@@ -175,18 +155,27 @@ module test_rx_seg_align
     // ====================================================================
 
     logic out_sop;
+    logic [NUM_OF_SEG-1:0][HDR_WIDTH-1:0] out_tuser_hdr;
+
+    always_comb begin
+        out_tuser_hdr = '0;
+        if (out_sop)
+            out_tuser_hdr[0] = out_split.tuser_vendor[1 +: HDR_WIDTH];
+    end
 
     always_ff @(posedge clk) begin
-        if (rst_n && out_aligned.tvalid && out_aligned.tready) begin
+        if (rst_n && out_split.tvalid && out_split.tready) begin
             $fwrite(log_out_fd, "%0t: last %b data %h keep %h tuser %h\n", $time,
-                    out_aligned.tlast, out_aligned.tdata, out_aligned.tkeep,
-                    out_aligned.tuser_vendor);
+                    out_split.tlast, out_split.tdata, out_split.tkeep,
+                    out_split.tuser_vendor);
 
-            tlp_stream_out.push(out_aligned.tdata, out_aligned.tkeep, out_aligned.tlast,
-                                out_aligned_tuser.vendor, out_aligned.tlast,
-                                out_aligned_tuser.hvalid, out_aligned_tuser.hdr);
+            tlp_stream_out.push(out_split.tdata, out_split.tkeep, out_split.tlast,
+                                { '0, out_split.tuser_vendor[0] },
+                                { '0, out_split.tlast },
+                                { '0, out_sop },
+                                out_tuser_hdr);
 
-            out_sop <= out_aligned.tlast;
+            out_sop <= out_split.tlast;
         end
 
         if (!rst_n) begin
@@ -210,10 +199,10 @@ module test_rx_seg_align
 
     always_ff @(posedge clk) begin
         if (!done && stop_stream && (tlp_ref_queue.size() == 0)) begin
-            $fwrite(log_out_fd, "\nPass seg_align data width %0d, num seg %0d, %0s headers, %0d packets\n",
-                    DATA_WIDTH, NUM_OF_SEG, SB_STRING, cnt);
-            $display("Pass seg_align data width %0d, num seg %0d, %0s headers, %0d packets",
-                     DATA_WIDTH, NUM_OF_SEG, SB_STRING, cnt);
+            $fwrite(log_out_fd, "\nPass ib2sb data width %0d, num seg %0d, %0d packets\n",
+                    DATA_WIDTH, NUM_OF_SEG, cnt);
+            $display("Pass ib2sb data width %0d, num seg %0d, %0d packets",
+                     DATA_WIDTH, NUM_OF_SEG, cnt);
             $fflush(log_in_fd);
             $fflush(log_out_fd);
             done <= 1'b1;

@@ -59,6 +59,12 @@ module top_tb ();
     logic test5_done;
     logic test6_en = 1'b0;
     logic test6_done;
+    logic test7_en = 1'b0;
+    logic test7_done;
+    logic test8_en = 1'b0;
+    logic test8_done;
+    logic test9_en = 1'b0;
+    logic test9_done;
 
 `define RUN_TEST(enable_flag, done_flag) \
     enable_flag = 1'b1;                  \
@@ -87,6 +93,10 @@ module top_tb ();
         `RUN_TEST(test5_en, test5_done);
         `RUN_TEST(test6_en, test6_done);
 
+        `RUN_TEST(test7_en, test7_done);
+        `RUN_TEST(test8_en, test8_done);
+        `RUN_TEST(test9_en, test9_done);
+
         $finish;
     end
 
@@ -100,5 +110,10 @@ module top_tb ();
     test_rx_seg_align#(.DATA_WIDTH(512),  .SB_HEADERS(0)) test4(.clk, .rst_n(rst_n && test4_en), .csr_clk, .csr_rst_n, .done(test4_done));
     test_rx_seg_align#(.DATA_WIDTH(1024), .SB_HEADERS(1)) test5(.clk, .rst_n(rst_n && test5_en), .csr_clk, .csr_rst_n, .done(test5_done));
     test_rx_seg_align#(.DATA_WIDTH(1024), .SB_HEADERS(0)) test6(.clk, .rst_n(rst_n && test6_en), .csr_clk, .csr_rst_n, .done(test6_done));
+
+    // in-band to side-band module test
+    test_ib2sb#(.DATA_WIDTH(512))  test7(.clk, .rst_n(rst_n && test7_en), .csr_clk, .csr_rst_n, .done(test7_done));
+    test_ib2sb#(.DATA_WIDTH(1024)) test8(.clk, .rst_n(rst_n && test8_en), .csr_clk, .csr_rst_n, .done(test8_done));
+    test_ib2sb#(.DATA_WIDTH(2048)) test9(.clk, .rst_n(rst_n && test9_en), .csr_clk, .csr_rst_n, .done(test9_done));
 
 endmodule

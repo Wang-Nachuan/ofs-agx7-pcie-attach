@@ -107,7 +107,7 @@ module test_sb2ib
                 $fwrite(log_in_fd, "\n%0t: %0s\n", $time, tlp.sfmt());
 
                 cnt <= cnt + 1;
-                if (cnt == 100000-1)
+                if (cnt == 10000-1)
                     stop_stream <= 1'b1;
             end
         end
