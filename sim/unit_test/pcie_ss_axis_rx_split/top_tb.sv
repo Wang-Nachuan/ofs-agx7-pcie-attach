@@ -65,13 +65,28 @@ module top_tb ();
     logic test8_done;
     logic test9_en = 1'b0;
     logic test9_done;
+    logic test10_en = 1'b0;
+    logic test10_done;
+    logic test11_en = 1'b0;
+    logic test11_done;
+    logic test12_en = 1'b0;
+    logic test12_done;
+    logic test13_en = 1'b0;
+    logic test13_done;
+    logic test14_en = 1'b0;
+    logic test14_done;
+    logic test15_en = 1'b0;
+    logic test15_done;
+    logic test16_en = 1'b0;
+    logic test16_done;
 
-`define RUN_TEST(enable_flag, done_flag) \
-    enable_flag = 1'b1;                  \
+`define RUN_TEST(test) \
+    $display("Running %0s:", `"test`");  \
+    test``_en = 1'b1;                    \
     async_rst_n = 1'b1;                  \
     fork begin                           \
         fork                             \
-            wait(done_flag);             \
+            wait(test``_done);           \
             begin                        \
                 #(`TIMEOUT);             \
                 $fatal(1, "TIMEOUT!");   \
@@ -79,23 +94,37 @@ module top_tb ();
         join_any                         \
         disable fork;                    \
     end join                             \
-    enable_flag = 1'b0;                  \
+    test``_en = 1'b0;                    \
     async_rst_n = 1'b0;                  \
     #1us
 
     initial begin
-        `RUN_TEST(test0_en, test0_done);
-        `RUN_TEST(test1_en, test1_done);
-        `RUN_TEST(test2_en, test2_done);
+        //
+        // Sequencer for all tests. If you are debugging one that fails,
+        // earlier tests can be temporarily disabled by commenting out
+        // RUN_TEST.
+        //
 
-        `RUN_TEST(test3_en, test3_done);
-        `RUN_TEST(test4_en, test4_done);
-        `RUN_TEST(test5_en, test5_done);
-        `RUN_TEST(test6_en, test6_done);
+        `RUN_TEST(test0);
+        `RUN_TEST(test1);
+        `RUN_TEST(test2);
 
-        `RUN_TEST(test7_en, test7_done);
-        `RUN_TEST(test8_en, test8_done);
-        `RUN_TEST(test9_en, test9_done);
+        `RUN_TEST(test3);
+        `RUN_TEST(test4);
+        `RUN_TEST(test5);
+        `RUN_TEST(test6);
+
+        `RUN_TEST(test7);
+        `RUN_TEST(test8);
+        `RUN_TEST(test9);
+        `RUN_TEST(test10);
+
+        `RUN_TEST(test11);
+        `RUN_TEST(test12);
+        `RUN_TEST(test13);
+        `RUN_TEST(test14);
+        `RUN_TEST(test15);
+        `RUN_TEST(test16);
 
         $finish;
     end
@@ -112,8 +141,16 @@ module top_tb ();
     test_rx_seg_align#(.DATA_WIDTH(1024), .SB_HEADERS(0)) test6(.clk, .rst_n(rst_n && test6_en), .csr_clk, .csr_rst_n, .done(test6_done));
 
     // in-band to side-band module test
-    test_ib2sb#(.DATA_WIDTH(512))  test7(.clk, .rst_n(rst_n && test7_en), .csr_clk, .csr_rst_n, .done(test7_done));
-    test_ib2sb#(.DATA_WIDTH(1024)) test8(.clk, .rst_n(rst_n && test8_en), .csr_clk, .csr_rst_n, .done(test8_done));
-    test_ib2sb#(.DATA_WIDTH(2048)) test9(.clk, .rst_n(rst_n && test9_en), .csr_clk, .csr_rst_n, .done(test9_done));
+    test_ib2sb#(.DATA_WIDTH(512), .NUM_OF_SEG(1)) test7(.clk, .rst_n(rst_n && test7_en), .csr_clk, .csr_rst_n, .done(test7_done));
+    test_ib2sb#(.DATA_WIDTH(512))  test8(.clk, .rst_n(rst_n && test8_en), .csr_clk, .csr_rst_n, .done(test8_done));
+    test_ib2sb#(.DATA_WIDTH(1024)) test9(.clk, .rst_n(rst_n && test9_en), .csr_clk, .csr_rst_n, .done(test9_done));
+    test_ib2sb#(.DATA_WIDTH(2048)) test10(.clk, .rst_n(rst_n && test10_en), .csr_clk, .csr_rst_n, .done(test10_done));
+
+    test_rx_dual_stream#(.DATA_WIDTH(512), .NUM_OF_SEG(1), .SB_HEADERS(1)) test11(.clk, .rst_n(rst_n && test11_en), .csr_clk, .csr_rst_n, .done(test11_done));
+    test_rx_dual_stream#(.DATA_WIDTH(512), .SB_HEADERS(1))  test12(.clk, .rst_n(rst_n && test12_en), .csr_clk, .csr_rst_n, .done(test12_done));
+    test_rx_dual_stream#(.DATA_WIDTH(1024), .SB_HEADERS(1)) test13(.clk, .rst_n(rst_n && test13_en), .csr_clk, .csr_rst_n, .done(test13_done));
+    test_rx_dual_stream#(.DATA_WIDTH(512), .NUM_OF_SEG(1), .SB_HEADERS(0)) test14(.clk, .rst_n(rst_n && test14_en), .csr_clk, .csr_rst_n, .done(test14_done));
+    test_rx_dual_stream#(.DATA_WIDTH(512), .SB_HEADERS(0))  test15(.clk, .rst_n(rst_n && test15_en), .csr_clk, .csr_rst_n, .done(test15_done));
+    test_rx_dual_stream#(.DATA_WIDTH(1024), .SB_HEADERS(0)) test16(.clk, .rst_n(rst_n && test16_en), .csr_clk, .csr_rst_n, .done(test16_done));
 
 endmodule

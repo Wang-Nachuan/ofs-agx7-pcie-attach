@@ -45,8 +45,8 @@ module test_sb2ib
     rand_tlp_pkg::rand_tlp tlp_ref;
 
     initial begin
-        log_in_fd = $fopen($sformatf("%0s_%0d_in.tsv", FILE_PREFIX, DATA_WIDTH), "w");
-        log_out_fd = $fopen($sformatf("%0s_%0d_out.tsv", FILE_PREFIX, DATA_WIDTH), "w");
+        log_in_fd = $fopen($sformatf("%0s_%0d_%0d_in.tsv", FILE_PREFIX, DATA_WIDTH, NUM_OF_SEG), "w");
+        log_out_fd = $fopen($sformatf("%0s_%0d_%0d_out.tsv", FILE_PREFIX, DATA_WIDTH, NUM_OF_SEG), "w");
         tlp_stream_in = new();
         tlp_stream_out = new();
     end
@@ -192,7 +192,7 @@ module test_sb2ib
         if (!done && stop_stream && (tlp_ref_queue.size() == 0)) begin
             $fwrite(log_out_fd, "\nPass sb2ib data width %0d, num seg %0d, %0d packets\n",
                     DATA_WIDTH, NUM_OF_SEG, cnt);
-            $display("Pass sb2ib data width %0d, num seg %0d, %0d packets",
+            $display("  Pass sb2ib data width %0d, num seg %0d, %0d packets",
                      DATA_WIDTH, NUM_OF_SEG, cnt);
             $fflush(log_in_fd);
             $fflush(log_out_fd);

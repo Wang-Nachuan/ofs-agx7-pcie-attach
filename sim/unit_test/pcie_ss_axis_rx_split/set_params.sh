@@ -5,8 +5,9 @@ DEFINES="+define+SIM_MODE \
  +define+VCD_ON"
 
 TB_SRC="-F $OFS_ROOTDIR/ofs-common/sim/bfm/simple_pcie_ss_stream_bfm/filelist.txt \
- $TEST_BASE_DIR/test_rx_seg_align.sv \
  $TEST_BASE_DIR/test_ib2sb.sv \
+ $TEST_BASE_DIR/test_rx_dual_stream.sv \
+ $TEST_BASE_DIR/test_rx_seg_align.sv \
  $TEST_BASE_DIR/test_sb2ib.sv \
  $TEST_BASE_DIR/top_tb.sv"
 

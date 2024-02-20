@@ -8,6 +8,7 @@
 module test_ib2sb
   #(
     parameter DATA_WIDTH = 512,
+    parameter NUM_OF_SEG = DATA_WIDTH / 256,
     parameter string FILE_PREFIX = "test_stream_ib2sb"
     )
    (
@@ -20,7 +21,7 @@ module test_ib2sb
     );
 
     // The ib2sb module only supports 1 segment with SOP at bit 0.
-    localparam NUM_OF_SEG = 1;
+    localparam IN_NUM_OF_SEG = 1;
     localparam HDR_WIDTH = 256;
 
     int log_in_fd;
@@ -28,9 +29,9 @@ module test_ib2sb
 
     rand_tlp_pkg::rand_tlp tlp;
     rand_tlp_pkg::rand_tlp_stream#(.DATA_WIDTH(DATA_WIDTH),
-                                   .NUM_OF_SEG(NUM_OF_SEG),
+                                   .NUM_OF_SEG(IN_NUM_OF_SEG),
                                    .SB_HEADERS(0),
-                                   .MAX_SOP_PER_CYCLE(NUM_OF_SEG)) tlp_stream_in;
+                                   .MAX_SOP_PER_CYCLE(IN_NUM_OF_SEG)) tlp_stream_in;
 
     rand_tlp_pkg::rand_tlp tlp_out;
     rand_tlp_pkg::bus_to_tlp#(.DATA_WIDTH(DATA_WIDTH),
@@ -45,8 +46,8 @@ module test_ib2sb
     rand_tlp_pkg::rand_tlp tlp_ref;
 
     initial begin
-        log_in_fd = $fopen($sformatf("%0s_%0d_in.tsv", FILE_PREFIX, DATA_WIDTH), "w");
-        log_out_fd = $fopen($sformatf("%0s_%0d_out.tsv", FILE_PREFIX, DATA_WIDTH), "w");
+        log_in_fd = $fopen($sformatf("%0s_%0d_%0d_in.tsv", FILE_PREFIX, DATA_WIDTH, NUM_OF_SEG), "w");
+        log_out_fd = $fopen($sformatf("%0s_%0d_%0d_out.tsv", FILE_PREFIX, DATA_WIDTH, NUM_OF_SEG), "w");
         tlp_stream_in = new();
         tlp_stream_out = new();
     end
@@ -63,10 +64,10 @@ module test_ib2sb
     logic [DATA_WIDTH-1:0] in_tdata;
     logic [DATA_WIDTH/8-1:0] in_tkeep;
     logic in_tlast;
-    logic [NUM_OF_SEG-1:0] in_tuser_vendor;
-    logic [NUM_OF_SEG-1:0] in_tuser_last_segment;
-    logic [NUM_OF_SEG-1:0] in_tuser_hvalid;
-    logic [NUM_OF_SEG-1:0][HDR_WIDTH-1:0] in_tuser_hdr;
+    logic [IN_NUM_OF_SEG-1:0] in_tuser_vendor;
+    logic [IN_NUM_OF_SEG-1:0] in_tuser_last_segment;
+    logic [IN_NUM_OF_SEG-1:0] in_tuser_hvalid;
+    logic [IN_NUM_OF_SEG-1:0][HDR_WIDTH-1:0] in_tuser_hdr;
 
     always_ff @(posedge clk) begin
         if (rst_n && (in_tready || !in_tvalid)) begin
@@ -156,11 +157,21 @@ module test_ib2sb
 
     logic out_sop;
     logic [NUM_OF_SEG-1:0][HDR_WIDTH-1:0] out_tuser_hdr;
+    logic [NUM_OF_SEG-1:0] out_last_segment;
 
     always_comb begin
         out_tuser_hdr = '0;
         if (out_sop)
             out_tuser_hdr[0] = out_split.tuser_vendor[1 +: HDR_WIDTH];
+
+        // Figure out which segment is last (assuming one is)
+        out_last_segment = '0;
+        for (int i = NUM_OF_SEG-1; i >= 0; i = i - 1) begin
+            if (out_split.tkeep[(i * DATA_WIDTH/NUM_OF_SEG) / 8] || ((i == 0) && out_sop)) begin
+                out_last_segment[i] = out_split.tlast;
+                break;
+            end
+        end
     end
 
     always_ff @(posedge clk) begin
@@ -171,7 +182,7 @@ module test_ib2sb
 
             tlp_stream_out.push(out_split.tdata, out_split.tkeep, out_split.tlast,
                                 { '0, out_split.tuser_vendor[0] },
-                                { '0, out_split.tlast },
+                                out_last_segment,
                                 { '0, out_sop },
                                 out_tuser_hdr);
 
@@ -201,7 +212,7 @@ module test_ib2sb
         if (!done && stop_stream && (tlp_ref_queue.size() == 0)) begin
             $fwrite(log_out_fd, "\nPass ib2sb data width %0d, num seg %0d, %0d packets\n",
                     DATA_WIDTH, NUM_OF_SEG, cnt);
-            $display("Pass ib2sb data width %0d, num seg %0d, %0d packets",
+            $display("  Pass ib2sb data width %0d, num seg %0d, %0d packets",
                      DATA_WIDTH, NUM_OF_SEG, cnt);
             $fflush(log_in_fd);
             $fflush(log_out_fd);

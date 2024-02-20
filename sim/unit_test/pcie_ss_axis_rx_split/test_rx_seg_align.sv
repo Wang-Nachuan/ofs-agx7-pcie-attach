@@ -48,8 +48,8 @@ module test_rx_seg_align
     rand_tlp_pkg::rand_tlp tlp_ref;
 
     initial begin
-        log_in_fd = $fopen($sformatf("%0s_%0d_%0s_in.tsv", FILE_PREFIX, DATA_WIDTH, SB_STRING), "w");
-        log_out_fd = $fopen($sformatf("%0s_%0d_%0s_out.tsv", FILE_PREFIX, DATA_WIDTH, SB_STRING), "w");
+        log_in_fd = $fopen($sformatf("%0s_%0d_%0d_%0s_in.tsv", FILE_PREFIX, DATA_WIDTH, NUM_OF_SEG, SB_STRING), "w");
+        log_out_fd = $fopen($sformatf("%0s_%0d_%0d_%0s_out.tsv", FILE_PREFIX, DATA_WIDTH, NUM_OF_SEG, SB_STRING), "w");
         tlp_stream_in = new();
         tlp_stream_out = new();
     end
@@ -212,7 +212,7 @@ module test_rx_seg_align
         if (!done && stop_stream && (tlp_ref_queue.size() == 0)) begin
             $fwrite(log_out_fd, "\nPass seg_align data width %0d, num seg %0d, %0s headers, %0d packets\n",
                     DATA_WIDTH, NUM_OF_SEG, SB_STRING, cnt);
-            $display("Pass seg_align data width %0d, num seg %0d, %0s headers, %0d packets",
+            $display("  Pass seg_align data width %0d, num seg %0d, %0s headers, %0d packets",
                      DATA_WIDTH, NUM_OF_SEG, SB_STRING, cnt);
             $fflush(log_in_fd);
             $fflush(log_out_fd);
