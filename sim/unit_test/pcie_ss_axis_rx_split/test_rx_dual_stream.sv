@@ -4,6 +4,10 @@
 //
 // RX dual stream fork test -- separating CplD from other traffic
 //
+// RX credit tracking is tested in one case: in-band headers and
+// NUM_OF_SEG == 1. That is the only case where the credit tracker
+// is used in OFS.
+//
 
 module test_rx_dual_stream
   #(
@@ -143,9 +147,11 @@ module test_rx_dual_stream
     pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W($bits(axi_in_seg_tuser))) axi_in(clk, rst_n);
 
     ofs_fim_pcie_ss_shims_pkg::t_tuser_seg [NUM_OF_SEG-1:0] out_cpld_tuser;
+    pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W($bits(out_cpld_tuser))) split_cpld(clk, rst_n);
     pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W($bits(out_cpld_tuser))) out_cpld(clk, rst_n);
 
     ofs_fim_pcie_ss_shims_pkg::t_tuser_seg [NUM_OF_SEG-1:0] out_req_tuser;
+    pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W($bits(out_req_tuser))) split_req(clk, rst_n);
     pcie_ss_axis_if#(.DATA_W(DATA_WIDTH), .USER_W($bits(out_req_tuser))) out_req(clk, rst_n);
 
     for (genvar i = 0; i < NUM_OF_SEG; i += 1) begin
@@ -171,11 +177,57 @@ module test_rx_dual_stream
       rx_dual_stream
        (
         .stream_in(axi_in),
-        .stream_out_cpld(out_cpld),
-        .stream_out_req(out_req)
+        .stream_out_cpld(split_cpld),
+        .stream_out_req(split_req)
         );
 
     assign in_tready = axi_in.tready;
+
+
+    //
+    // RX credit tracking. Monitor traffic and return credits to the PCIe SS.
+    // The AXI-S input and output streams are simply wired together.
+    //
+    generate
+        //
+        // Because of the RX pipeline in OFS, the credit tracking code
+        // assumes in-band headers and one segment. Only test that case.
+        //
+        if (SB_HEADERS == 0 && NUM_OF_SEG == 1) begin : crdt
+            logic rxcrdt_tvalid;
+            logic [18:0] rxcrdt_tdata;
+
+            ofs_fim_pcie_ss_rxcrdt
+              #(
+                .NUM_OF_SEG(NUM_OF_SEG),
+                .SB_HEADERS(SB_HEADERS)
+                )
+              rx_crdt
+               (
+                .stream_in_cpld(split_cpld),
+                .stream_in_req(split_req),
+                .stream_out_cpld(out_cpld),
+                .stream_out_req(out_req),
+
+                .rxcrdt_clk(csr_clk),
+                .rxcrdt_rst_n(csr_rst_n),
+                .rxcrdt_tvalid,
+                .rxcrdt_tdata
+                );
+
+            always_ff @(posedge clk) begin
+                if (rst_n && rxcrdt_tvalid) begin
+                    $fwrite(log_in_fd, "%0t: CRDT %h\n", $time, rxcrdt_tdata);
+                end
+            end
+        end else begin : no_crdt
+            ofs_fim_axis_pipeline #(.PL_DEPTH(0), .TDATA_WIDTH(DATA_WIDTH), .TUSER_WIDTH($bits(out_cpld_tuser)))
+                conn_cpld (.clk, .rst_n, .axis_s(split_cpld), .axis_m(out_cpld));
+            ofs_fim_axis_pipeline #(.PL_DEPTH(0), .TDATA_WIDTH(DATA_WIDTH), .TUSER_WIDTH($bits(out_req_tuser)))
+                conn_req (.clk, .rst_n, .axis_s(split_req), .axis_m(out_req));
+        end
+    endgenerate
+
 
     logic [NUM_OF_SEG-1:0] out_cpld_tuser_vendor;
     logic [NUM_OF_SEG-1:0] out_cpld_tuser_last_segment;
@@ -257,7 +309,7 @@ module test_rx_dual_stream
                 $fwrite(log_out_cpld_fd, "%0t: %0s\n", $time, tlp_out_cpld.sfmt());
 
                 assert(tlp_ref_queue_cpld.size() > 0) else
-                    $fatal(1, "Output CplD TLP with no corresponding input!");
+                    $fatal(1, "ERROR: Output CplD TLP with no corresponding input!");
                 tlp_ref_cpld = tlp_ref_queue_cpld.pop_front();
                 tlp_out_cpld.compare(tlp_ref_cpld);
             end
@@ -278,8 +330,18 @@ module test_rx_dual_stream
         end
     end
 
+    // Delay finish by 512 cycles so the credit counting logic can emit the final
+    // counts.
+    logic [8:0] done_cnt;
     always_ff @(posedge clk) begin
-        if (!done && stop_stream && (tlp_ref_queue_cpld.size() == 0) && (tlp_ref_queue_req.size() == 0)) begin
+        if (!stop_stream || (tlp_ref_queue_cpld.size() != 0) || (tlp_ref_queue_req.size() != 0))
+            done_cnt <= 1;
+        else if (done_cnt != 0)
+            done_cnt <= done_cnt + 1;
+    end
+
+    always_ff @(posedge clk) begin
+        if (!done && (done_cnt == 0) && stop_stream && (tlp_ref_queue_cpld.size() == 0) && (tlp_ref_queue_req.size() == 0)) begin
             $fwrite(log_out_cpld_fd, "\nPass rx_dual_stream data width %0d, num seg %0d, %0s headers, %0d packets\n",
                     DATA_WIDTH, NUM_OF_SEG, SB_STRING, cnt);
             $fwrite(log_out_req_fd, "\nPass rx_dual_stream data width %0d, num seg %0d, %0s headers, %0d packets\n",

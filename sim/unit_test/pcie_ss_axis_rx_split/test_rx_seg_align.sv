@@ -201,7 +201,7 @@ module test_rx_seg_align
                 $fwrite(log_out_fd, "%0t: %0s\n", $time, tlp_out.sfmt());
 
                 assert(tlp_ref_queue.size() > 0) else
-                    $fatal(1, "Output TLP with no corresponding input!");
+                    $fatal(1, "ERROR: Output TLP with no corresponding input!");
                 tlp_ref = tlp_ref_queue.pop_front();
                 tlp_out.compare(tlp_ref);
             end

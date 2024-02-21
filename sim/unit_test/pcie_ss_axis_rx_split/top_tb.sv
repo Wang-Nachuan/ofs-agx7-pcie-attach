@@ -32,7 +32,7 @@ module top_tb ();
     logic csr_clk, csr_rst_n;
 
     always #100 clk = ~clk;
-    always #500 csr_clk = ~csr_clk;
+    always #210 csr_clk = ~csr_clk;
 
     initial begin
         clk = 1'b0;
@@ -89,7 +89,7 @@ module top_tb ();
             wait(test``_done);           \
             begin                        \
                 #(`TIMEOUT);             \
-                $fatal(1, "TIMEOUT!");   \
+                $fatal(1, "ERROR: TIMEOUT!");   \
             end                          \
         join_any                         \
         disable fork;                    \
@@ -126,31 +126,33 @@ module top_tb ();
         `RUN_TEST(test15);
         `RUN_TEST(test16);
 
+        // The test aborts on failure, so reaching here means it passed
+        $display("Test passed!");
         $finish;
     end
 
     // side-band to in-band module test
-    test_sb2ib#(.DATA_WIDTH(512))  test0(.clk, .rst_n(rst_n && test0_en), .csr_clk, .csr_rst_n, .done(test0_done));
-    test_sb2ib#(.DATA_WIDTH(1024)) test1(.clk, .rst_n(rst_n && test1_en), .csr_clk, .csr_rst_n, .done(test1_done));
-    test_sb2ib#(.DATA_WIDTH(2048)) test2(.clk, .rst_n(rst_n && test2_en), .csr_clk, .csr_rst_n, .done(test2_done));
+    test_sb2ib#(.DATA_WIDTH(512))  t0_sb2ib(.clk, .rst_n(rst_n && test0_en), .csr_clk, .csr_rst_n, .done(test0_done));
+    test_sb2ib#(.DATA_WIDTH(1024)) t1_sb2ib(.clk, .rst_n(rst_n && test1_en), .csr_clk, .csr_rst_n, .done(test1_done));
+    test_sb2ib#(.DATA_WIDTH(2048)) t2_sb2ib(.clk, .rst_n(rst_n && test2_en), .csr_clk, .csr_rst_n, .done(test2_done));
 
     // multiple headers per cycle to one header realignment test
-    test_rx_seg_align#(.DATA_WIDTH(512),  .SB_HEADERS(1)) test3(.clk, .rst_n(rst_n && test3_en), .csr_clk, .csr_rst_n, .done(test3_done));
-    test_rx_seg_align#(.DATA_WIDTH(512),  .SB_HEADERS(0)) test4(.clk, .rst_n(rst_n && test4_en), .csr_clk, .csr_rst_n, .done(test4_done));
-    test_rx_seg_align#(.DATA_WIDTH(1024), .SB_HEADERS(1)) test5(.clk, .rst_n(rst_n && test5_en), .csr_clk, .csr_rst_n, .done(test5_done));
-    test_rx_seg_align#(.DATA_WIDTH(1024), .SB_HEADERS(0)) test6(.clk, .rst_n(rst_n && test6_en), .csr_clk, .csr_rst_n, .done(test6_done));
+    test_rx_seg_align#(.DATA_WIDTH(512),  .SB_HEADERS(1)) t3_rx_seg_align(.clk, .rst_n(rst_n && test3_en), .csr_clk, .csr_rst_n, .done(test3_done));
+    test_rx_seg_align#(.DATA_WIDTH(512),  .SB_HEADERS(0)) t4_rx_seg_align(.clk, .rst_n(rst_n && test4_en), .csr_clk, .csr_rst_n, .done(test4_done));
+    test_rx_seg_align#(.DATA_WIDTH(1024), .SB_HEADERS(1)) t5_rx_seg_align(.clk, .rst_n(rst_n && test5_en), .csr_clk, .csr_rst_n, .done(test5_done));
+    test_rx_seg_align#(.DATA_WIDTH(1024), .SB_HEADERS(0)) t6_rx_seg_align(.clk, .rst_n(rst_n && test6_en), .csr_clk, .csr_rst_n, .done(test6_done));
 
     // in-band to side-band module test
-    test_ib2sb#(.DATA_WIDTH(512), .NUM_OF_SEG(1)) test7(.clk, .rst_n(rst_n && test7_en), .csr_clk, .csr_rst_n, .done(test7_done));
-    test_ib2sb#(.DATA_WIDTH(512))  test8(.clk, .rst_n(rst_n && test8_en), .csr_clk, .csr_rst_n, .done(test8_done));
-    test_ib2sb#(.DATA_WIDTH(1024)) test9(.clk, .rst_n(rst_n && test9_en), .csr_clk, .csr_rst_n, .done(test9_done));
-    test_ib2sb#(.DATA_WIDTH(2048)) test10(.clk, .rst_n(rst_n && test10_en), .csr_clk, .csr_rst_n, .done(test10_done));
+    test_ib2sb#(.DATA_WIDTH(512), .NUM_OF_SEG(1)) t7_ib2sb(.clk, .rst_n(rst_n && test7_en), .csr_clk, .csr_rst_n, .done(test7_done));
+    test_ib2sb#(.DATA_WIDTH(512))  t8_ib2sb(.clk, .rst_n(rst_n && test8_en), .csr_clk, .csr_rst_n, .done(test8_done));
+    test_ib2sb#(.DATA_WIDTH(1024)) t9_ib2sb(.clk, .rst_n(rst_n && test9_en), .csr_clk, .csr_rst_n, .done(test9_done));
+    test_ib2sb#(.DATA_WIDTH(2048)) t10_ib2sb(.clk, .rst_n(rst_n && test10_en), .csr_clk, .csr_rst_n, .done(test10_done));
 
-    test_rx_dual_stream#(.DATA_WIDTH(512), .NUM_OF_SEG(1), .SB_HEADERS(1)) test11(.clk, .rst_n(rst_n && test11_en), .csr_clk, .csr_rst_n, .done(test11_done));
-    test_rx_dual_stream#(.DATA_WIDTH(512), .SB_HEADERS(1))  test12(.clk, .rst_n(rst_n && test12_en), .csr_clk, .csr_rst_n, .done(test12_done));
-    test_rx_dual_stream#(.DATA_WIDTH(1024), .SB_HEADERS(1)) test13(.clk, .rst_n(rst_n && test13_en), .csr_clk, .csr_rst_n, .done(test13_done));
-    test_rx_dual_stream#(.DATA_WIDTH(512), .NUM_OF_SEG(1), .SB_HEADERS(0)) test14(.clk, .rst_n(rst_n && test14_en), .csr_clk, .csr_rst_n, .done(test14_done));
-    test_rx_dual_stream#(.DATA_WIDTH(512), .SB_HEADERS(0))  test15(.clk, .rst_n(rst_n && test15_en), .csr_clk, .csr_rst_n, .done(test15_done));
-    test_rx_dual_stream#(.DATA_WIDTH(1024), .SB_HEADERS(0)) test16(.clk, .rst_n(rst_n && test16_en), .csr_clk, .csr_rst_n, .done(test16_done));
+    test_rx_dual_stream#(.DATA_WIDTH(512), .NUM_OF_SEG(1), .SB_HEADERS(1)) t11_rx_dual_stream(.clk, .rst_n(rst_n && test11_en), .csr_clk, .csr_rst_n, .done(test11_done));
+    test_rx_dual_stream#(.DATA_WIDTH(512), .SB_HEADERS(1))  t12_rx_dual_stream(.clk, .rst_n(rst_n && test12_en), .csr_clk, .csr_rst_n, .done(test12_done));
+    test_rx_dual_stream#(.DATA_WIDTH(1024), .SB_HEADERS(1)) t13_rx_dual_stream(.clk, .rst_n(rst_n && test13_en), .csr_clk, .csr_rst_n, .done(test13_done));
+    test_rx_dual_stream#(.DATA_WIDTH(512), .NUM_OF_SEG(1), .SB_HEADERS(0)) t14_rx_dual_stream(.clk, .rst_n(rst_n && test14_en), .csr_clk, .csr_rst_n, .done(test14_done));
+    test_rx_dual_stream#(.DATA_WIDTH(512), .SB_HEADERS(0))  t15_rx_dual_stream(.clk, .rst_n(rst_n && test15_en), .csr_clk, .csr_rst_n, .done(test15_done));
+    test_rx_dual_stream#(.DATA_WIDTH(1024), .SB_HEADERS(0)) t16_rx_dual_stream(.clk, .rst_n(rst_n && test16_en), .csr_clk, .csr_rst_n, .done(test16_done));
 
 endmodule
