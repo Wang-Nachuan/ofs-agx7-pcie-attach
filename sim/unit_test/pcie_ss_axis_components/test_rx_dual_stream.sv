@@ -199,8 +199,11 @@ module test_rx_dual_stream
 
             ofs_fim_pcie_ss_rxcrdt
               #(
+                .TDATA_WIDTH(DATA_WIDTH),
                 .NUM_OF_SEG(NUM_OF_SEG),
-                .SB_HEADERS(SB_HEADERS)
+                .SB_HEADERS(SB_HEADERS),
+                .BUFFER_SB_HEADERS(1),
+                .HDR_WIDTH(HDR_WIDTH)
                 )
               rx_crdt
                (
@@ -215,8 +218,8 @@ module test_rx_dual_stream
                 .rxcrdt_tdata
                 );
 
-            always_ff @(posedge clk) begin
-                if (rst_n && rxcrdt_tvalid) begin
+            always_ff @(posedge csr_clk) begin
+                if (csr_rst_n && rxcrdt_tvalid) begin
                     $fwrite(log_in_fd, "%0t: CRDT %h\n", $time, rxcrdt_tdata);
                 end
             end
