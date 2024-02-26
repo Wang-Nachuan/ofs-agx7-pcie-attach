@@ -4,6 +4,8 @@
 `ifndef __HOST_BFM_TYPES_PKG__
 `define __HOST_BFM_TYPES_PKG__
 
+`include "ofs_ip_cfg_db.vh"
+
 package host_bfm_types_pkg; 
 
 //----------------------------------------------------------------------------------------------------
@@ -29,10 +31,8 @@ typedef struct packed {
 } pfvf_struct;
 
 parameter TUSER_WIDTH = 10;
-parameter TDATA_WIDTH = 512;
 parameter HDR_WIDTH = 256;
-//parameter TDATA_WIDTH = 1024;
-
+parameter TDATA_WIDTH = `OFS_FIM_IP_CFG_PCIE_SS_DWIDTH_BYTE * 8;
 
 // Debug Functions
 function automatic void dump_pfvf_params(
