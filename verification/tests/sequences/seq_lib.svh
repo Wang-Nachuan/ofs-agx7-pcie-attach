@@ -21,10 +21,12 @@
 `include "dfh_walking_seq.svh"
 `include "he_lpbk_seq.svh"
 `include "he_mem_lpbk_seq.svh"
+`ifdef INCLUDE_HSSI
 `include "he_hssi_tx_lpbk.svh"
 `include "he_hssi_tx_err_seq.svh"
 `include "he_hssi_rx_lpbk.svh"
 `include "he_hssi_axis_rx_lpbk_seq.svh"
+`endif
 
 `include "qsfp_csr_seq.svh"
 `include "qsfp_csr_stress_seq.svh"

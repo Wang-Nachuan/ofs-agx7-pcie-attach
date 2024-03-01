@@ -75,7 +75,8 @@ VLOG_OPT += +define+SVT_ETHERNET +define+VIP_ETHERNET_40G100G_OPT_SVT
 VLOG_OPT += +define+ETH_CAUI_25G_INTERFACE_WIDTH=8 +define+SVT_ETHERNET_CLKGEN
 VLOG_OPT += +define+VIP_ETHERNET_100G_SVT +define+SVT_ETHERNET_DEBUG_BUS_ENABLE
 endif
-VLOG_OPT += +define+INCLUDE_MEM_TG +define+INCLUDE_HSSI +define+INCLUDE_PR #Enable PCIE SS for Gen4x16 configuration
+#VLOG_OPT += +define+INCLUDE_MEM_TG +define+INCLUDE_HSSI +define+INCLUDE_PR #Enable PCIE SS for Gen4x16 configuration
+VLOG_OPT += +define+INCLUDE_MEM_TG +define+INCLUDE_PR #Enable PCIE SS for Gen4x16 configuration
 VLOG_OPT += +define+SIM_MODE +define+PU_MMIO #Enable PCIE Serial link up for p-tile and Power user MMIO for PO FIM
 VLOG_OPT += +define+SIMULATION_MODE
 VLOG_OPT += +define+bypass_address    #bypass UNIMPLEMENTED_ADDRESS
@@ -188,6 +189,10 @@ endif
 
 ifdef NO_MSIX
     VLOG_OPT += +define+NO_MSIX 
+endif
+
+ifndef NO_HSSI
+    VLOG_OPT += +define+INCLUDE_HSSI 
 endif
 
 ifdef DUMP

@@ -16,6 +16,7 @@ module passive_vip(`AXI_IF PCie2AFU_if0,`AXI_IF MUX2HE_HSSI_if1,`AXI_IF HE_HSSI2
   assign PCie2AFU_if0.slave_if[0].aresetn =  `DUT.pcie_wrapper.axi_st_rx_if.rst_n;
 
   
+`ifdef INCLUDE_HSSI
   assign MUX2HE_HSSI_if1.common_aclk          = `AFU_TOP.axis_rx_if.clk;
   assign MUX2HE_HSSI_if1.master_if[0].aresetn = `AFU_TOP.axis_rx_if.rst_n;
   assign MUX2HE_HSSI_if1.slave_if[0].aresetn  = `AFU_TOP.axis_tx_if.rst_n;
@@ -47,6 +48,7 @@ module passive_vip(`AXI_IF PCie2AFU_if0,`AXI_IF MUX2HE_HSSI_if1,`AXI_IF HE_HSSI2
   assign HE_HSSI2HSSI_if2.slave_if[6].aresetn  = `AFU_TOP.hssi_ss_st_tx[6].rst_n;
   assign HE_HSSI2HSSI_if2.master_if[7].aresetn = `AFU_TOP.hssi_ss_st_rx[7].rst_n;
   assign HE_HSSI2HSSI_if2.slave_if[7].aresetn  = `AFU_TOP.hssi_ss_st_tx[7].rst_n;
+`endif
   assign BPF_if3.common_aclk = tb_top.DUT.clk_100m;
   assign BPF_if3.master_if[0].aresetn = tb_top.DUT.rst_n_100m;
   //assign BPF_if3.master_if[1].aresetn = tb_top.DUT.rst_n_100m;
@@ -83,6 +85,7 @@ assign PCie2AFU_if0.master_if[0].tid               =8'b0000_0000;
 
 
 /////////////////////////MUX2HE_HSSI_PASSIVE_CONNECTION////////////////////////////
+`ifdef INCLUDE_HSSI
 assign MUX2HE_HSSI_if1.slave_if[0].tvalid            =`AFU_TOP.axis_tx_if.tvalid;
 assign MUX2HE_HSSI_if1.slave_if[0].tlast             =`AFU_TOP.axis_tx_if.tlast;
 assign MUX2HE_HSSI_if1.slave_if[0].tuser             =`AFU_TOP.axis_tx_if.tuser_vendor[9:0];
@@ -131,6 +134,7 @@ assign HE_HSSI2HSSI_if2.master_if[0].tdest             = 4'b0000;
 assign HE_HSSI2HSSI_if2.master_if[0].tstrb             ='b0;
 assign HE_HSSI2HSSI_if2.master_if[0].tid               =8'b0000_0000;
 assign HE_HSSI2HSSI_if2.master_if[0].tready            =1'b1;
+`endif
 /////////////////////////////////////BPF2APF_PASIVE_CONNECTION///////////////////////////////////
 assign BPF_if3.master_if[0].awaddr  =  `DUT.bpf_apf_mst_if.awaddr[17:0];
 assign BPF_if3.master_if[0].awprot  =  `DUT.bpf_apf_mst_if.awprot[2:0];
@@ -279,6 +283,7 @@ assign BPF_if3.slave_if[5].rready  =   `DUT.bpf_qsfp1_slv_if.rready;
 
 //////////////////////////////////////HE_HSSI2HSSI REMAINING PORT//////////////
 
+`ifdef INCLUDE_HSSI
 `ifdef FIM_B
 assign HE_HSSI2HSSI_if2.slave_if[1].tvalid           =`AFU_TOP.hssi_ss_st_tx_cpri[1].tx.tvalid;
 assign HE_HSSI2HSSI_if2.slave_if[1].tlast            =`AFU_TOP.hssi_ss_st_tx_cpri[1].tx.tlast;
@@ -461,6 +466,7 @@ assign HE_HSSI2HSSI_if2.master_if[7].tdest             = 4'b0000;
 assign HE_HSSI2HSSI_if2.master_if[7].tstrb             ='b0;
 assign HE_HSSI2HSSI_if2.master_if[7].tid               =8'b0000_0000;
 assign HE_HSSI2HSSI_if2.master_if[7].tready            = 1'b1;
+`endif
 //8 bit tkeep is used ,remaining tied to 0
 assign HE_HSSI2HSSI_if2.master_if[0].tkeep[15:8] ='b0;
 assign HE_HSSI2HSSI_if2.master_if[1].tkeep[15:8] ='b0;

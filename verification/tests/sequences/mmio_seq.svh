@@ -281,6 +281,7 @@ class mmio_seq extends base_seq;
         else
             `uvm_info(get_name(), $psprintf("Data match 32! addr = %0h, data = %0h", addr, rdata), UVM_LOW)
 
+        `ifdef INCLUDE_HSSI
         // HSSI DFH
         addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR;        
         mmio_read64 (.addr_(addr), .data_(rdata));
@@ -310,6 +311,7 @@ class mmio_seq extends base_seq;
             `uvm_error(get_name(), $psprintf("Data mismatch 32! Addr = %0h, Exp = %0h, Act = %0h", addr, wdata[63:32], rdata[31:0]))
         else
             `uvm_info(get_name(), $psprintf("Data match 32! addr = %0h, data = %0h", addr, rdata[31:0]), UVM_LOW)
+	`endif
 
         // PF2 = HELB
        
@@ -441,6 +443,7 @@ class mmio_seq extends base_seq;
 
         // PF0 VF1 = HE HSSI
         
+       `ifdef INCLUDE_HSSI
        `ifndef INCLUDE_CVL
         addr = tb_cfg0.PF0_VF1_BAR0+HE_HSSI_BASE_ADDR;
 	mmio_read64 (.addr_(addr), .data_(rdata));
@@ -485,6 +488,7 @@ class mmio_seq extends base_seq;
         else
             `uvm_info(get_name(), $psprintf("Data match 32! addr = %0h, data = %0h", addr, rdata[31:0]), UVM_LOW)
 
+        `endif
         `endif
 `ifndef NO_MSIX
         // PF0_BAR4 FME MSIX Space 64 bit access

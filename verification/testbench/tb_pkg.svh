@@ -133,15 +133,17 @@
     `include "tb_env.svh"
     `include "pam4_encoder_decoder.sv"
     `include "test_top_pkg.svh"
-    `include "tx_pkg.svh"
-    `include "tx_pkg_100G_200G.svh"
-    `include "tx_pkg_400G.svh"
-   `ifdef n6000_100G
-    `include "rx_pkg_100G.svh"
-   `elsif ETH_400G
-    `include "rx_pkg_400G.svh"
-   `else
-    `include "rx_pkg.svh"
+    `ifdef INCLUDE_HSSI
+      `include "tx_pkg.svh"
+      `include "tx_pkg_100G_200G.svh"
+      `include "tx_pkg_400G.svh"
+      `ifdef n6000_100G
+        `include "rx_pkg_100G.svh"
+      `elsif ETH_400G
+        `include "rx_pkg_400G.svh"
+      `else
+      `include "rx_pkg.svh"
+    `endif	   
    `endif	   
 
 
