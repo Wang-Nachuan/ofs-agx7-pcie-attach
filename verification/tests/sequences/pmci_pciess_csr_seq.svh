@@ -106,7 +106,7 @@ class pmci_pciess_csr_seq extends base_seq;
 	
 	endtask : body
 
-
+  `ifndef RTILE_SIM
      task err_pcie_inj();
      begin
              force `PCIE_SS_TOP.host_pcie.pcie_ss.pcie_ss.p0_tileif.ss_app_vf_err_ca_postedreq_s3 = 1'b1; 
@@ -152,6 +152,7 @@ class pmci_pciess_csr_seq extends base_seq;
 
      end
      endtask
+    `endif
 
 endclass : pmci_pciess_csr_seq
 

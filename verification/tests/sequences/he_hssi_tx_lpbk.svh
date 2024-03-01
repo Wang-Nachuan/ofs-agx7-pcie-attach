@@ -112,6 +112,8 @@ class he_hssi_tx_lpbk_seq extends base_seq;
          wait_for_reset_done();
          `ifdef FTILE_SIM
            wait_for_f_tile_hssi_to_ready();
+	`elsif RTILE_SIM
+           wait_for_r_tile_hssi_to_ready();
         `else
            wait_for_hssi_to_ready(len);
          `endif
@@ -461,6 +463,277 @@ task wait_for_f_tile_hssi_to_ready;
 endtask
 `endif
 
+`ifdef RTILE_SIM
+task wait_for_r_tile_hssi_to_ready;
+   logic [2:0]          bar;
+   logic                vf_active;
+   logic                error;
+   logic                result;
+   logic [31:0]         scratch;
+   begin
+      bar         = 3'h0;
+      vf_active   = 1'b0;
+      // Port-0
+      `ifdef INCLUDE_HSSI_PORT_0
+      fork begin
+        //$display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,0);
+        //wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p0_ehip_ready == 1);
+        //wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p0_ehip_ready == 1);
+        //$display ("INFO:%t	Port %0d - EHIP READY is 1", $time,0);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,0);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p0.eth_f_top_p0.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,0);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 0);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p0.eth_f_top_p0.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 0);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 0);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 0);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p0.eth_f_top_p0.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p0_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 0);
+      end
+      join_none
+      wait fork;
+
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'h000c0; //HSSI_PORT0_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 0,rdata[4],rdata[0]);
+
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_1
+      // Port-1
+      fork begin
+       // $display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,1);
+       // wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p1_ehip_ready == 1);
+       // $display ("INFO:%t	Port %0d - EHIP READY is 1", $time,1);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,1);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p1.eth_f_top_p1.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,1);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 1);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p1.eth_f_top_p1.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 1);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 1);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 1);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p1.eth_f_top_p1.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p1_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 1);
+      end
+      join_none
+      wait fork;
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'hc4; //HSSI_PORT1_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 1,rdata[4],rdata[0]);
+
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_2
+      // Port-2
+      fork begin
+      //  $display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,2);
+      //  wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p2_ehip_ready == 1);
+      //  $display ("INFO:%t	Port %0d - EHIP READY is 1", $time,2);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,2);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p2.eth_f_top_p2.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,2);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 2);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p2.eth_f_top_p2.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 2);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 2);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 2);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p2.eth_f_top_p2.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p2_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 2);
+      end
+      join_none
+      wait fork;
+
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'hc8; //HSSI_PORT2_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 2,rdata[4],rdata[0]);
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_3
+      // Port-3
+      fork begin
+      //  $display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,3);
+      //  wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p3_ehip_ready == 1);
+      //  $display ("INFO:%t	Port %0d - EHIP READY is 1", $time,3);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,3);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p3.eth_f_top_p3.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,2);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 2);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p3.eth_f_top_p3.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 2);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 2);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 2);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p3.eth_f_top_p3.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p2_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 2);
+      end
+      join_none
+      wait fork;
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'hcc; //HSSI_PORT3_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 3,rdata[4],rdata[0]);
+
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_4
+     // Port-4
+      fork begin
+       // $display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,4);
+       // wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p4_ehip_ready == 1);
+       // $display ("INFO:%t	Port %0d - EHIP READY is 1", $time,4);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,4);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p4.eth_f_top_p4.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,4);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 4);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p4.eth_f_top_p4.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 4);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 4);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 4);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p4.eth_f_top_p4.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p4_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 4);
+      end
+      join_none
+      wait fork;
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'hd0; //HSSI_PORT4_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 4,rdata[4],rdata[0]);
+
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_5
+     // Port-5
+      fork begin
+       // $display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,5);
+       // wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p5_ehip_ready == 1);
+       // $display ("INFO:%t	Port %0d - EHIP READY is 1", $time,5);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,5);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p5.eth_f_top_p5.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,5);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 5);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p5.eth_f_top_p5.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 5);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 5);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 5);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p5.eth_f_top_p5.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p5_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 5);
+      end
+      join_none
+      wait fork;
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'hd4; //HSSI_PORT5_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 5,rdata[4],rdata[0]);
+
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_6
+      // Port-6
+      fork begin
+        //$display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,6);
+        //wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p6_ehip_ready == 1);
+        //$display ("INFO:%t	Port %0d - EHIP READY is 1", $time,6);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,6);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p6.eth_f_top_p6.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,6);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 6);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p6.eth_f_top_p6.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 6);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 6);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 6);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p6.eth_f_top_p6.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p6_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 6);
+      end
+      join_none
+      wait fork;
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'hd8; //HSSI_PORT6_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 6,rdata[4],rdata[0]);
+
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_7
+      // Port-7
+      fork begin
+       // $display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,7);
+       // wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p7_ehip_ready == 1);
+       // $display ("INFO:%t	Port %0d - EHIP READY is 1", $time,7);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,7);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p7.eth_f_top_p7.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,7);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 7);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p7.eth_f_top_p7.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 7);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 7);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 7);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p7.eth_f_top_p7.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p7_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 7);
+      end
+      join_none
+      wait fork;
+
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'hdc; //HSSI_PORT7_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 7,rdata[4],rdata[0]);
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_8
+      //port-8
+      fork begin
+        //$display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,8);
+        //wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p0_ehip_ready == 1);
+        //wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p0_ehip_ready == 1);
+        //$display ("INFO:%t	Port %0d - EHIP READY is 1", $time,8);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,8);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p8.eth_f_top_p8.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,8);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 8);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p8.eth_f_top_p8.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 8);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 8);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 8);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p8.eth_f_top_p8.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p8_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 8);
+      end
+      join_none
+      wait fork;
+
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'h000e0; //HSSI_PORT8_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 8,rdata[4],rdata[0]);
+
+      `endif
+      `ifdef INCLUDE_HSSI_PORT_12
+      // Port-12
+      fork begin
+       // $display ("INFO:%t	Port %0d - Waiting for EHIP READY", $time,12);
+       // wait(tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_hssi_ss_ip_wrapper.o_p1_ehip_ready == 1);
+       // $display ("INFO:%t	Port %0d - EHIP READY is 1", $time,12);
+        $display ("INFO:%t	Port %0d - Waiting for EHIP RX Block Lock", $time,12);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p12.eth_f_top_p12.sip_inst.o_rx_block_lock  === 1'b1);
+        $display ("INFO:%t	Port %0d - EHIP RX Block Lock  is high", $time,12);
+        $display ("INFO:%t	Port %0d - Waiting for RX PCS Ready", $time, 12);
+        while (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p12.eth_f_top_p12.sip_inst.o_rx_pcs_ready !== 1'b1) @(negedge tb_top.DUT.hssi_wrapper.hssi_ss.app_ss_lite_clk);
+        $display ("INFO:%t	Port %0d - RX deskew locked", $time, 12);
+        $display ("INFO:%t	Port %0d - RX lane aligmnent locked", $time, 12);
+        $display ("INFO:%t	Port %0d - Waiting for TX Lanes Stable", $time, 12);
+        wait (tb_top.DUT.hssi_wrapper.hssi_ss.hssi_ss.U_eth_f_inst_p12.eth_f_top_p12.sip_inst.o_tx_lanes_stable === 1'b1);
+        @(posedge tb_top.DUT.hssi_wrapper.hssi_ss.o_p12_clk_pll);
+        $display ("INFO:%t	Port %0d - TX enabled", $time, 12);
+      end
+      join_none
+      wait fork;
+       addr = tb_cfg0.PF0_BAR0+HSSI_BASE_ADDR+'he4; //HSSI_PORT12_STATUS
+       mmio_read32 (.addr_(addr), .data_(rdata));
+      $display("INFO:%t	Port %0d - EHIP RX Block Status bit is %d and EHIP Ready Bit is %d", $time, 12,rdata[4],rdata[0]);
+
+      `endif
+      #5us;
+      // Check rx pcs ready, tx lane stable and pll lock by reading register
+      
+   end
+endtask
+`endif
+
 task wait_for_reset_done;
    bit [63:0]   wdata, rdata, mask, addr;     
    bit[63:0] expdata;
@@ -485,6 +758,7 @@ task wait_for_reset_done;
 endtask
 
 `ifndef FTILE_SIM
+`ifndef RTILE_SIM
 task wait_for_hssi_to_ready;
    input int            len;
    logic [2:0]          bar;
@@ -713,6 +987,7 @@ task wait_for_hssi_to_ready;
       
    end
 endtask
+`endif
 `endif
 
 task traffic_200G_400G;

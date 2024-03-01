@@ -41,7 +41,12 @@ export RALDIR = $(VERDIR)/testbench/ral
 ifdef FTILE_SIM
 VLOG_OPT = -kdb -full64 -error=noMPD -ntb_opts uvm-1.2 +vcs+initreg+random +vcs+lic+wait -ntb_opts dtm -sverilog -timescale=1ps/1ps +libext+.v+.sv -l vlog.log -assert enable_diag -ignore unique_checks
 else 
+ifdef RTILE_SIM
+VLOG_OPT = -kdb -full64 -error=noMPD -ntb_opts uvm-1.2 +vcs+initreg+random +vcs+lic+wait -ntb_opts dtm -sverilog -timescale=1ps/1ps +libext+.v+.sv -l vlog.log -assert enable_diag -ignore unique_checks
+VLOG_OPT += +define+INCLUDE_PCIE_SS +define+PCIE_GEN5X8 +define+FIM_C +define+SIM_VIP +define+INCLUDE_PCIE_GEN5_2X8
+else 
 VLOG_OPT = -kdb -full64 -error=noMPD -ntb_opts uvm-1.2 +vcs+initreg+random +vcs+lic+wait -ntb_opts dtm -sverilog -timescale=1ns/1fs +libext+.v+.sv -l vlog.log -assert enable_diag -ignore unique_checks
+endif
 endif
 VLOG_OPT += -Mdir=./csrc +warn=noBCNACMBP -CFLAGS -y $(VERDIR)/vip/pcie_vip/src/verilog/vcs -y $(VERDIR)/vip/pcie_vip/src/sverilog/vcs -P $(VERIF_SCRIPTS_DIR)/vip/pli.tab $(WORKDIR)/scripts/vip/msglog.o -notice  +incdir+./
 ifneq ($(PARTCMP),1)
@@ -63,7 +68,9 @@ VLOG_OPT += +define+INCLUDE_CVL +define+ENABLE_8_TO_15_PORTS +define+ETH_100G +d
 VLOG_OPT += +define+SVT_ETHERNET
 VLOG_OPT += +define+SVT_ETHERNET_DEBUG_BUS_ENABLE
 else
+ifndef RTILE_SIM
 VLOG_OPT += +define+INCLUDE_PCIE_SS +define+PCIE_GEN4X16 +define+FIM_C +define+SIM_VIP 
+endif
 VLOG_OPT += +define+SVT_ETHERNET +define+VIP_ETHERNET_40G100G_OPT_SVT
 VLOG_OPT += +define+ETH_CAUI_25G_INTERFACE_WIDTH=8 +define+SVT_ETHERNET_CLKGEN
 VLOG_OPT += +define+VIP_ETHERNET_100G_SVT +define+SVT_ETHERNET_DEBUG_BUS_ENABLE
@@ -100,6 +107,20 @@ VLOG_OPT += +define+SRC_SPEC_SPEED_UP
 VLOG_OPT += +define+__SRC_TEST__
 VLOG_OPT += +define+gdrb_TIMESCALE_EN +define+RTLSIM +define+gdrb_INTC_FUNCTIONAL +define+SSM_SEQUENCE
 endif
+ifdef RTILE_SIM
+VLOG_OPT += +define+RTILE_SIM
+#VLOG_OPT += +define+RTILE_SIM +define+IP7581SERDES_UX_SIMSPEED
+VLOG_OPT += +define+INCLUDE_RTILE
+VLOG_OPT += +define+TOP_LEVEL_ENTITY_INSTANCE_PATH=tb_top.DUT
+#VLOG_OPT += +define+QUARTUS_ENABLE_DPI_FORCE
+#VLOG_OPT += +define+SPEC_FORCE
+#VLOG_OPT += +define+IP7581SERDES_UXS2T1R1PGD_PIPE_SPEC_FORCE
+#VLOG_OPT += +define+IP7581SERDES_UXS2T1R1PGD_PIPE_SIMULATION
+#VLOG_OPT += +define+IP7581SERDES_UXS2T1R1PGD_PIPE_FAST_SIM
+#VLOG_OPT += +define+SRC_SPEC_SPEED_UP
+#VLOG_OPT += +define+__SRC_TEST__
+#VLOG_OPT += +define+gdrb_TIMESCALE_EN +define+RTLSIM +define+gdrb_INTC_FUNCTIONAL +define+SSM_SEQUENCE
+endif
 VLOG_OPT += +define+ETH_FORCE_FS_TIME_PRECISION
 VLOG_OPT += +define+BASE_AFU=dummy_afu+
 VLOG_OPT += +incdir+$(WORKDIR)/ofs-common/src/common/includes
@@ -119,7 +140,13 @@ ifdef FTILE_SIM
 VCS_OPT +=-pvalue+tb_top.DUT.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_top.emif_cal_top.emif_cal.IOSSM_USE_MODEL=0 
 VCS_OPT +=-debug_access+all -debug_region+cell+encrypt -debug_region+cell+lib
 else
+ifdef RTILE_SIM
+#VCS_OPT +=-pvalue+tb_top.DUT.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_location_top_row.emif_cal.IOSSM_USE_MODEL=0 
+VCS_OPT +=-pvalue+tb_top.DUT.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_top.emif_cal_top.emif_cal.IOSSM_USE_MODEL=0 
+VCS_OPT +=-debug_access+all -debug_region+cell+encrypt -debug_region+cell+lib
+else
 VCS_OPT +=-debug_access+f
+endif
 endif
 VLOG_OPT += -debug_access+f
 VLOG_OPT += -debug_access+all
@@ -301,6 +328,10 @@ else ifeq ($(n6000_25G),1)
 else ifeq ($(n6000_100G),1)
 	sh $(OFS_ROOTDIR)/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFS_ROOTDIR)/tools/ofss_config/n6000.ofss n6000
 	#sh $(OFS_ROOTDIR)/ofs-common/scripts/common/sim/gen_sim_files.sh n6000 
+else ifeq ($(RTILE_SIM),1)
+#Temporary FIX to avoid calibration hang,changed interface value to 2 in file ipss/mem/qip/presets/mem_presets.qprs (#MR https://github.com/intel-innersource/applications.fpga.ofs.reference-fims/pull/1027)
+	#@grep -l 'name="NUM_OF_PHYSICAL_INTERFACES" value="3"' $(OFS_ROOTDIR)/ipss/mem/qip/presets/mem_presets.qprs | xargs sed -i 's/name="NUM_OF_PHYSICAL_INTERFACES" value="3"/name="NUM_OF_PHYSICAL_INTERFACES" value="2"/g'
+	sh $(OFS_ROOTDIR)/ofs-common/scripts/common/sim/gen_sim_files.sh  --ofss $(OFS_ROOTDIR)/tools/ofss_config/iseries-dk.ofss,$(OFS_ROOTDIR)/tools/ofss_config/hssi/hssi_8x25_ftile.ofss iseries-dk
 else
 	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh n6001 #Default
 endif	
@@ -393,7 +424,12 @@ else
 ifdef INCLUDE_CVL
 	cd $(VERDIR)/sim && mkdir $(TEST_DIR) && cd $(TEST_DIR) && cp -f ../*.hex . && cp -f $(OFS_ROOTDIR)/ofs-common/src/common/fme_id_rom/fme_id.mif . && cp -f $(VERIF_SCRIPTS_DIR)/fme_id.ver . && cp -f $(OFS_ROOTDIR)/sim/scripts/qip_gen/ofs-common/src/fpga_family/agilex/user_clock/qph_user_clk_iopll_reconfig/altera_iopll_reconfig_1940/sim/recalibration.mif . && cp -f $(VERIF_SCRIPTS_DIR)/recalibration.ver . && cp -f $(VERDIR)/sim/serdes.firmware.rom . && ../simv $(SIMV_OPT) $(SIMV_OPT_EXTRA)
 else
+ifdef RTILE_SIM
+	#cd $(VERDIR)/sim && mkdir $(TEST_DIR) && cd $(TEST_DIR) && cp -f ../*.hex . && cp -f $(VERIF_SCRIPTS_DIR)/RTILE_HEX/*.hex . && cp -f $(VERIF_SCRIPTS_DIR)/RTILE_HEX/*.mif . && cp -f $(OFS_ROOTDIR)/ofs-common/src/common/fme_id_rom/fme_id.mif . && cp -f $(VERIF_SCRIPTS_DIR)/fme_id.ver . && cp -f $(VERIF_SCRIPTS_DIR)/recalibration.ver . && ../simv $(SIMV_OPT) $(SIMV_OPT_EXTRA)
+	cd $(VERDIR)/sim && mkdir $(TEST_DIR) && cd $(TEST_DIR) && cp -f ../*.hex . && cp -f $(OFS_ROOTDIR)/ofs-common/src/common/fme_id_rom/fme_id.mif . && cp -f $(VERIF_SCRIPTS_DIR)/fme_id.ver . && cp -f $(VERIF_SCRIPTS_DIR)/recalibration.ver . && ../simv $(SIMV_OPT) $(SIMV_OPT_EXTRA)
+else
 	cd $(VERDIR)/sim && mkdir $(TEST_DIR) && cd $(TEST_DIR) && cp -f ../*.hex . && cp -f $(OFS_ROOTDIR)/ofs-common/src/common/fme_id_rom/fme_id.mif . && cp -f $(VERIF_SCRIPTS_DIR)/fme_id.ver . && cp -f $(VERIF_SCRIPTS_DIR)/recalibration.ver . && cp -f $(VERDIR)/sim/serdes.firmware.rom . && ../simv $(SIMV_OPT) $(SIMV_OPT_EXTRA)
+endif
 endif
 endif
 endif
