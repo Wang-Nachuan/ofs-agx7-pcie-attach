@@ -10,13 +10,14 @@
 // connected. The user is instructed to utilize the PFVF_ROUTING_TABLE parameter
 // to access all information regarding a specific endpoint with a PID.
 // 
-// The default PID mapping is as follows:
+// The default PID mapping for LINK 0 is as follows:
 //    PID 0  - PF1       - HE-NULL
 //    PID 2  - PF2       - HE-LB
 //    PID 3  - PF3       - VIO
-//    PID 4  - PF4       - HPS-CE
+//    PID 4  - PF4       - HPS-CE (LINK 0 ONLY)
 //    PID 5+ - PF5+/VF1+ - HE-NULL
 //    
+// HE-NULL will be instantiated on each function of LINK 1+
 
 `include "fpga_defines.vh"
 import top_cfg_pkg::*;
@@ -32,16 +33,18 @@ module fim_afu_instances # (
    // PF/VF routing: the OFS configuration package provides a routing table structure of 1 port
    // per PV/VF of this partition, meaning that NUM_MUX_PORTS = the number of routing table entries
    parameter NUM_MUX_PORTS = top_cfg_pkg::NUM_SR_PORTS,
-   parameter pf_vf_mux_pkg::t_pfvf_rtable_entry [NUM_MUX_PORTS-1:0] PFVF_ROUTING_TABLE
+   parameter pf_vf_mux_pkg::t_pfvf_rtable_entry [NUM_MUX_PORTS-1:0] PFVF_ROUTING_TABLE,
+
+   parameter PCIE_NUM_LINKS = 1
 )(
    input  logic clk,
-   input  logic rst_n,
+   input  logic [PCIE_NUM_LINKS-1:0] rst_n,
 
-   input  t_axis_pcie_flr flr_req,
-   output t_axis_pcie_flr flr_rsp,
+   input  t_axis_pcie_flr flr_req [PCIE_NUM_LINKS-1:0],
+   output t_axis_pcie_flr flr_rsp [PCIE_NUM_LINKS-1:0],
 
    input  logic clk_csr,
-   input  logic rst_n_csr,      
+   input  logic [PCIE_NUM_LINKS-1:0] rst_n_csr,
 
 `ifdef INCLUDE_HPS
     //HPS Interfaces 
@@ -52,14 +55,14 @@ module fim_afu_instances # (
 
    // PCIe A ports are the standard TLP channels. All host responses
    // arrive on the RX A port.
-   pcie_ss_axis_if.source        afu_axi_tx_a_if,
-   pcie_ss_axis_if.sink          afu_axi_rx_a_if,
+   pcie_ss_axis_if.source        afu_axi_tx_a_if [PCIE_NUM_LINKS-1:0],
+   pcie_ss_axis_if.sink          afu_axi_rx_a_if [PCIE_NUM_LINKS-1:0],
    // PCIe B ports are a second channel on which reads and interrupts
    // may be sent from the AFU. To improve throughput, reads on B may flow
    // around writes on A through PF/VF MUX trees until writes are committed
    // to the PCIe subsystem. AFUs may tie off the B port and send all
    // messages to A.
-   pcie_ss_axis_if.source        afu_axi_tx_b_if,
+   pcie_ss_axis_if.source        afu_axi_tx_b_if [PCIE_NUM_LINKS-1:0],
    // Write commits are signaled here on the RX B port, indicating the
    // point at which the A and B channels become ordered within the FIM.
    // Commits are signaled after tlast of a write on TX A, after arbitration
@@ -67,29 +70,34 @@ module fim_afu_instances # (
    // returning the tag value from the write request. AFUs that do not
    // need local write commits may ignore this port, but must set
    // tready to 1.
-   pcie_ss_axis_if.sink          afu_axi_rx_b_if
+   pcie_ss_axis_if.sink          afu_axi_rx_b_if [PCIE_NUM_LINKS-1:0]
 );
-   
 // Port definitions
 `ifdef USE_NULL_HE_LB
 localparam HLB_PID = -1;
 `else
-localparam HLB_PID = (top_cfg_pkg::PG_VFS > 0) ? 1 : 0; 
+localparam HLB_PID = (top_cfg_pkg::PG_VFS > 0) ? 1 : 0;
 `endif
-localparam VIO_PID = (top_cfg_pkg::PG_VFS > 0) ? 2 : 1; 
-localparam HPS_PID = (top_cfg_pkg::PG_VFS > 0) ? 3 : 2; 
+localparam VIO_PID = (top_cfg_pkg::PG_VFS > 0) ? 2 : 1;
+localparam HPS_PID = (top_cfg_pkg::PG_VFS > 0) ? 3 : 2;
 
-localparam TDATA_WIDTH = afu_axi_rx_a_if.DATA_W;
-localparam TUSER_WIDTH = afu_axi_rx_a_if.USER_W;
+localparam TDATA_WIDTH = afu_axi_rx_a_if[0].DATA_W;
+localparam TUSER_WIDTH = afu_axi_rx_a_if[0].USER_W;
+
+
+// Get the VF function level reset if VF is active for the function.
+// If VF is not active, return a constant: not in reset.
+`define GET_FUNC_VF_RST_N(PF, VF, VF_ACTIVE) ((VF_ACTIVE != 0) ? vf_flr_rst_n[PF][VF] : 1'b1)
+
 
 // AXI-ST ports
 pcie_ss_axis_if #(
    .DATA_W (TDATA_WIDTH),
    .USER_W (TUSER_WIDTH))
-   mux_rx_a_if [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n)),
-   mux_rx_b_if [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n)),
-   mux_tx_a_if [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n)),
-   mux_tx_b_if [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n));
+   mux_rx_a_if [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n[0])),
+   mux_rx_b_if [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n[0])),
+   mux_tx_a_if [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n[0])),
+   mux_tx_b_if [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n[0]));
 
 // Primary PF/VF MUX ("A" ports). Map individual TX A ports from
 // AFUs down to a single, merged A channel. The RX port from host
@@ -101,12 +109,12 @@ pf_vf_mux_w_params  #(
    .NUM_RTABLE_ENTRIES (NUM_MUX_PORTS),
    .PFVF_ROUTING_TABLE (PFVF_ROUTING_TABLE)
 ) pf_vf_mux_a (
-   .clk             (clk             ),
-   .rst_n           (rst_n           ),
-   .ho2mx_rx_port   (afu_axi_rx_a_if ),
-   .mx2ho_tx_port   (afu_axi_tx_a_if ),
-   .mx2fn_rx_port   (mux_rx_a_if     ),
-   .fn2mx_tx_port   (mux_tx_a_if     ),
+   .clk             (clk                ),
+   .rst_n           (rst_n           [0]),
+   .ho2mx_rx_port   (afu_axi_rx_a_if [0]),
+   .mx2ho_tx_port   (afu_axi_tx_a_if [0]),
+   .mx2fn_rx_port   (mux_rx_a_if        ),
+   .fn2mx_tx_port   (mux_tx_a_if        ),
    .out_fifo_err    (),
    .out_fifo_perr   ()
 );
@@ -121,29 +129,22 @@ pf_vf_mux_w_params   #(
    .NUM_RTABLE_ENTRIES (NUM_MUX_PORTS),
    .PFVF_ROUTING_TABLE (PFVF_ROUTING_TABLE)
 ) pf_vf_mux_b (
-   .clk             (clk             ),
-   .rst_n           (rst_n           ),
-   .ho2mx_rx_port   (afu_axi_rx_b_if ),
-   .mx2ho_tx_port   (afu_axi_tx_b_if ),
-   .mx2fn_rx_port   (mux_rx_b_if     ),
-   .fn2mx_tx_port   (mux_tx_b_if     ),
+   .clk             (clk                ),
+   .rst_n           (rst_n           [0]),
+   .ho2mx_rx_port   (afu_axi_rx_b_if [0]),
+   .mx2ho_tx_port   (afu_axi_tx_b_if [0]),
+   .mx2fn_rx_port   (mux_rx_b_if        ),
+   .fn2mx_tx_port   (mux_tx_b_if        ),
    .out_fifo_err    (),
    .out_fifo_perr   ()
 );
 
+   
 // FLR to reset vector 
 //
 // Macros for mapping port defintions to PF/VF resets. We use macros instead
 // of functions to avoid problems with continuous assignment.
 //
-
-// Get the VF function level reset if VF is active for the function.
-// If VF is not active, return a constant: not in reset.
-`define GET_FUNC_VF_RST_N(PF, VF, VF_ACTIVE) ((VF_ACTIVE != 0) ? vf_flr_rst_n[PF][VF] : 1'b1)
-
-// Construct the full reset for a function, combining PF and VF resets.
-`define GET_FUNC_RST_N(PF, VF, VF_ACTIVE) (pf_flr_rst_n[PF] & `GET_FUNC_VF_RST_N(PF, VF, VF_ACTIVE))
-
 logic [NUM_MUX_PORTS-1:0]       func_pf_rst_n;
 logic [NUM_MUX_PORTS-1:0]       func_vf_rst_n;
 logic [NUM_MUX_PORTS-1:0]       port_rst_n;
@@ -151,26 +152,26 @@ logic [NUM_MUX_PORTS-1:0]       port_rst_n;
 logic [NUM_PF-1:0]              pf_flr_rst_n;
 logic [NUM_PF-1:0][NUM_VF-1:0]  vf_flr_rst_n;
 
- flr_rst_mgr #(
-    .NUM_PF     (NUM_PF),
-    .NUM_VF     (NUM_VF),
-    .MAX_NUM_VF (MAX_NUM_VF)
- ) flr_rst_mgr (
-    .clk_sys      (clk),
-    .rst_n_sys    (rst_n),
+flr_rst_mgr #(
+   .NUM_PF     (NUM_PF),
+   .NUM_VF     (NUM_VF),
+   .MAX_NUM_VF (MAX_NUM_VF)
+) flr_rst_mgr (
+   .clk_sys      (clk),
+   .rst_n_sys    (rst_n[0]),
 
-    // Clock for pcie_flr_req/rsp
-    .clk_csr      (clk_csr), 
-    .rst_n_csr    (rst_n_csr),
+   // Clock for pcie_flr_req/rsp
+   .clk_csr      (clk_csr), 
+   .rst_n_csr    (rst_n_csr[0]),
 
-    .pcie_flr_req (flr_req),
-    .pcie_flr_rsp (flr_rsp),
+   .pcie_flr_req (flr_req[0]),
+   .pcie_flr_rsp (flr_rsp[0]),
 
-    .pf_flr_rst_n (pf_flr_rst_n),
-    .vf_flr_rst_n (vf_flr_rst_n)
- );
+   .pf_flr_rst_n (pf_flr_rst_n),
+   .vf_flr_rst_n (vf_flr_rst_n)
+);
 
-generate for (genvar p = 0; p < NUM_MUX_PORTS; p++) begin : sr_flr_port_map
+for (genvar p = 0; p < NUM_MUX_PORTS; p++) begin : port_map
    assign func_pf_rst_n[p] =       pf_flr_rst_n[PFVF_ROUTING_TABLE[p].pf];
    assign func_vf_rst_n[p] = `GET_FUNC_VF_RST_N(PFVF_ROUTING_TABLE[p].pf,
                                                 PFVF_ROUTING_TABLE[p].vf,
@@ -181,15 +182,14 @@ generate for (genvar p = 0; p < NUM_MUX_PORTS; p++) begin : sr_flr_port_map
    // - PF Flr 
    // - VF Flr
    // - PCIe system reset
-   always @(posedge clk) port_rst_n[p] <= func_pf_rst_n[p] && func_vf_rst_n[p] && rst_n;
-end : sr_flr_port_map
-endgenerate 
+   always @(posedge clk) port_rst_n[p] <= func_pf_rst_n[p] && func_vf_rst_n[p] && rst_n[0];
+end : port_map
    
 // ---------------------------------------------------------------------------
 // Generate the AFU on a given port. A loop is used to simplify the inclusion
 // of null exercisers on ports with no explicitly attached behavior.
 // ---------------------------------------------------------------------------
-generate for(genvar p = 0; p < NUM_MUX_PORTS; p++) begin : afu_gen
+for(genvar p = 0; p < NUM_MUX_PORTS; p++) begin : afu_gen
    if (p == HLB_PID) begin : hlb_gen
       he_lb_top #(
          .PF_ID       (PFVF_ROUTING_TABLE[p].pf),
@@ -229,16 +229,16 @@ generate for(genvar p = 0; p < NUM_MUX_PORTS; p++) begin : afu_gen
       pcie_ss_axis_if #(
          .DATA_W (TDATA_WIDTH),
          .USER_W (TUSER_WIDTH))
-         ce_rx_a_if (.clk(clk), .rst_n(rst_n)),
-         ce_rx_b_if (.clk(clk), .rst_n(rst_n)),
-         ce_tx_a_if (.clk(clk), .rst_n(rst_n));
+         ce_rx_a_if (.clk(clk), .rst_n(rst_n[0])),
+         ce_rx_b_if (.clk(clk), .rst_n(rst_n[0])),
+         ce_tx_a_if (.clk(clk), .rst_n(rst_n[0]));
       
       ofs_fim_axis_pipeline #(
          .TUSER_WIDTH (TUSER_WIDTH),
          .TDATA_WIDTH (TDATA_WIDTH)
       ) ce_rx_a_bridge (
          .clk,
-         .rst_n,
+         .rst_n   (rst_n[0]),
          .axis_s  (mux_rx_a_if[p]),
          .axis_m  (ce_rx_a_if)
       );
@@ -248,7 +248,7 @@ generate for(genvar p = 0; p < NUM_MUX_PORTS; p++) begin : afu_gen
          .TDATA_WIDTH (TDATA_WIDTH)
       ) ce_rx_b_bridge (
          .clk,
-         .rst_n,
+         .rst_n   (rst_n[0]),
          .axis_s  (mux_rx_b_if[p]),
          .axis_m  (ce_rx_b_if)
       );
@@ -258,7 +258,7 @@ generate for(genvar p = 0; p < NUM_MUX_PORTS; p++) begin : afu_gen
          .TDATA_WIDTH (TDATA_WIDTH)
       ) ce_tx_a_bridge (
          .clk,
-         .rst_n,
+         .rst_n   (rst_n[0]),
          .axis_s  (ce_tx_a_if),
          .axis_m  (mux_tx_a_if[p])
       );
@@ -292,7 +292,6 @@ generate for(genvar p = 0; p < NUM_MUX_PORTS; p++) begin : afu_gen
       assign mux_tx_b_if[p].tvalid = 1'b0;
    end : hps_ce_gen
 `endif
-
    else begin : null_gen
       he_null #(
          .PF_ID     (PFVF_ROUTING_TABLE[p].pf),
@@ -309,6 +308,37 @@ generate for(genvar p = 0; p < NUM_MUX_PORTS; p++) begin : afu_gen
       assign mux_rx_b_if[p].tready = 1'b1;
    end : null_gen
 end : afu_gen
-endgenerate
+
+// Generate one HE-Null instance for LINK 1+
+for(genvar l = 1; l < PCIE_NUM_LINKS; l++) begin : link_null_afu
+   logic link_rst_n;
+
+   always_ff @ (posedge clk_csr) begin
+      flr_rsp[l].tvalid <=  flr_req[l].tvalid;
+      flr_rsp[l].tdata  <=  flr_req[l].tdata;
+   end
+
+   fim_resync #(
+      .SYNC_CHAIN_LENGTH(3),
+      .WIDTH(3),
+      .INIT_VALUE(0),
+      .NO_CUT(1)
+   ) link_flr_sync (
+      .clk,
+      .reset (!rst_n[l]),
+      .d     (!flr_req[l].tvalid),
+      .q     (link_rst_n)
+   );
    
+   he_null he_null_inst (
+      .clk     (clk),
+      .rst_n   (link_rst_n),
+      .i_rx_if (afu_axi_rx_a_if[l]),
+      .o_tx_if (afu_axi_tx_a_if[l])
+   );
+   // Tie off the TX/RX B port
+   assign afu_axi_tx_b_if[l].tvalid = 1'b0;
+   assign afu_axi_rx_b_if[l].tready = 1'b1;
+end : link_null_afu
+
 endmodule

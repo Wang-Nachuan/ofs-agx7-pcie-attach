@@ -44,6 +44,15 @@ set_global_assignment -name IP_FILE   $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/
 set_global_assignment -name QSYS_FILE $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/bpf.qsys
 
 #--------------------
-# SDC
+# P1 APF
 #--------------------
+set_global_assignment -name QSYS_FILE $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/p1_apf.qsys
+set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/ip/p1_apf/p1_apf_clock_bridge.ip
+set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/ip/p1_apf/p1_apf_reset_bridge.ip
+set_global_assignment -name IP_FILE   $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/ip/p1_apf/p1_apf_default_slv.ip
 
+
+set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/ip/p1_apf/p1_apf_dummy_slv.ip
+set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/ip/p1_apf/p1_apf_st2mm_mst.ip
+set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/ip/p1_apf/p1_apf_st2mm_slv.ip
+set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/src/pd_qsys/fabric/ip/p1_apf/p1_apf_achk_slv.ip

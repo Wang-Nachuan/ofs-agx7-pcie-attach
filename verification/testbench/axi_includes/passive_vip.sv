@@ -11,9 +11,9 @@ module passive_vip(`AXI_IF PCie2AFU_if0,`AXI_IF MUX2HE_HSSI_if1,`AXI_IF HE_HSSI2
      //assign axi_if.common_aclk = tb_top.DUT.clk_100m;
     // assign axi_if.slave_if[6].aresetn      = tb_top.DUT.rst_n_100m;
 
-  assign PCie2AFU_if0.common_aclk = `DUT.pcie_wrapper.axi_st_tx_if.clk;
-  assign PCie2AFU_if0.master_if[0].aresetn = `DUT.pcie_wrapper.axi_st_tx_if.rst_n;
-  assign PCie2AFU_if0.slave_if[0].aresetn =  `DUT.pcie_wrapper.axi_st_rx_if.rst_n;
+  assign PCie2AFU_if0.common_aclk          = `DUT.pcie_wrapper.axi_st_tx_if[0].clk;
+  assign PCie2AFU_if0.master_if[0].aresetn = `DUT.pcie_wrapper.axi_st_tx_if[0].rst_n;
+  assign PCie2AFU_if0.slave_if[0].aresetn  = `DUT.pcie_wrapper.axi_st_rx_if[0].rst_n;
 
   
 `ifdef INCLUDE_HSSI
@@ -50,35 +50,35 @@ module passive_vip(`AXI_IF PCie2AFU_if0,`AXI_IF MUX2HE_HSSI_if1,`AXI_IF HE_HSSI2
   assign HE_HSSI2HSSI_if2.slave_if[7].aresetn  = `AFU_TOP.hssi_ss_st_tx[7].rst_n;
 `endif
   assign BPF_if3.common_aclk = tb_top.DUT.clk_100m;
-  assign BPF_if3.master_if[0].aresetn = tb_top.DUT.rst_n_100m;
+  assign BPF_if3.master_if[0].aresetn = tb_top.DUT.rst_n_100m[0];
   //assign BPF_if3.master_if[1].aresetn = tb_top.DUT.rst_n_100m;
-  assign BPF_if3.master_if[2].aresetn = tb_top.DUT.rst_n_100m;
+  assign BPF_if3.master_if[2].aresetn = tb_top.DUT.rst_n_100m[0];
   //assign BPF_if3.slave_if[0].aresetn =  tb_top.DUT.rst_n_100m;
-  assign BPF_if3.slave_if[1].aresetn =  tb_top.DUT.rst_n_100m;
-  assign BPF_if3.slave_if[2].aresetn =  tb_top.DUT.rst_n_100m;
-  assign BPF_if3.slave_if[3].aresetn =  tb_top.DUT.rst_n_100m;
-  assign BPF_if3.slave_if[4].aresetn =  tb_top.DUT.rst_n_100m;
-  assign BPF_if3.slave_if[5].aresetn =  tb_top.DUT.rst_n_100m;
+  assign BPF_if3.slave_if[1].aresetn  = tb_top.DUT.rst_n_100m[0];
+  assign BPF_if3.slave_if[2].aresetn  = tb_top.DUT.rst_n_100m[0];
+  assign BPF_if3.slave_if[3].aresetn  = tb_top.DUT.rst_n_100m[0];
+  assign BPF_if3.slave_if[4].aresetn  = tb_top.DUT.rst_n_100m[0];
+  assign BPF_if3.slave_if[5].aresetn  = tb_top.DUT.rst_n_100m[0];
 
 //////////////////PCIE2AFU PASSIVE CONNECTION////////////////////////////////////////
 //clk               =`DUT.pcie_wrapper.axi_st_rx_if.clk
 //rst_n             =`DUT.pcie_wrapper.axi_st_rx_if.rst_n
-assign PCie2AFU_if0.slave_if[0].tvalid            =`DUT.pcie_wrapper.axi_st_rx_if.tvalid;
-assign PCie2AFU_if0.slave_if[0].tlast             =`DUT.pcie_wrapper.axi_st_rx_if.tlast;
-assign PCie2AFU_if0.slave_if[0].tuser             =`DUT.pcie_wrapper.axi_st_rx_if.tuser_vendor[9:0];
-assign PCie2AFU_if0.slave_if[0].tdata[511:0]      =`DUT.pcie_wrapper.axi_st_rx_if.tdata[511:0];
-assign PCie2AFU_if0.slave_if[0].tkeep[63:0]       =`DUT.pcie_wrapper.axi_st_rx_if.tkeep[63:0];
-assign PCie2AFU_if0.slave_if[0].tready            =`DUT.pcie_wrapper.axi_st_rx_if.tready;
+assign PCie2AFU_if0.slave_if[0].tvalid            =`DUT.pcie_wrapper.axi_st_rx_if[0].tvalid;
+assign PCie2AFU_if0.slave_if[0].tlast             =`DUT.pcie_wrapper.axi_st_rx_if[0].tlast;
+assign PCie2AFU_if0.slave_if[0].tuser             =`DUT.pcie_wrapper.axi_st_rx_if[0].tuser_vendor[9:0];
+assign PCie2AFU_if0.slave_if[0].tdata[511:0]      =`DUT.pcie_wrapper.axi_st_rx_if[0].tdata[511:0];
+assign PCie2AFU_if0.slave_if[0].tkeep[63:0]       =`DUT.pcie_wrapper.axi_st_rx_if[0].tkeep[63:0];
+assign PCie2AFU_if0.slave_if[0].tready            =`DUT.pcie_wrapper.axi_st_rx_if[0].tready;
 assign PCie2AFU_if0.slave_if[0].tdest             = 4'b0000;
 assign PCie2AFU_if0.slave_if[0].tstrb             ='b0;
 assign PCie2AFU_if0.slave_if[0].tid               =8'b0000_0000;
 
-assign PCie2AFU_if0.master_if[0].tvalid            =`DUT.pcie_wrapper.axi_st_tx_if.tvalid;
-assign PCie2AFU_if0.master_if[0].tlast             =`DUT.pcie_wrapper.axi_st_tx_if.tlast;
-assign PCie2AFU_if0.master_if[0].tuser             =`DUT.pcie_wrapper.axi_st_tx_if.tuser_vendor[9:0];
-assign PCie2AFU_if0.master_if[0].tdata[511:0]      =`DUT.pcie_wrapper.axi_st_tx_if.tdata[511:0];
-assign PCie2AFU_if0.master_if[0].tkeep[63:0]       =`DUT.pcie_wrapper.axi_st_tx_if.tkeep[63:0];
-assign PCie2AFU_if0.master_if[0].tready            =`DUT.pcie_wrapper.axi_st_tx_if.tready;
+assign PCie2AFU_if0.master_if[0].tvalid            =`DUT.pcie_wrapper.axi_st_tx_if[0].tvalid;
+assign PCie2AFU_if0.master_if[0].tlast             =`DUT.pcie_wrapper.axi_st_tx_if[0].tlast;
+assign PCie2AFU_if0.master_if[0].tuser             =`DUT.pcie_wrapper.axi_st_tx_if[0].tuser_vendor[9:0];
+assign PCie2AFU_if0.master_if[0].tdata[511:0]      =`DUT.pcie_wrapper.axi_st_tx_if[0].tdata[511:0];
+assign PCie2AFU_if0.master_if[0].tkeep[63:0]       =`DUT.pcie_wrapper.axi_st_tx_if[0].tkeep[63:0];
+assign PCie2AFU_if0.master_if[0].tready            =`DUT.pcie_wrapper.axi_st_tx_if[0].tready;
 assign PCie2AFU_if0.master_if[0].tdest             = 4'b0000;
 assign PCie2AFU_if0.master_if[0].tstrb             ='b0;
 assign PCie2AFU_if0.master_if[0].tid               =8'b0000_0000;
@@ -219,25 +219,25 @@ assign BPF_if3.slave_if[2].rvalid  =  `DUT.bpf_pmci_slv_if.rvalid;
 assign BPF_if3.slave_if[2].rready  =  `DUT.bpf_pmci_slv_if.rready;
 
 /////////////////////////////////////BPF2PCIe_PASIVE_CONNECTION///////////////////////////////////
-assign BPF_if3.slave_if[3].awaddr  =  `DUT.bpf_pcie_slv_if.awaddr;
-assign BPF_if3.slave_if[3].awprot  =  `DUT.bpf_pcie_slv_if.awprot;
-assign BPF_if3.slave_if[3].awvalid =  `DUT.bpf_pcie_slv_if.awvalid ;
-assign BPF_if3.slave_if[3].awready =  `DUT.bpf_pcie_slv_if.awready ;
-assign BPF_if3.slave_if[3].wdata   =  `DUT.bpf_pcie_slv_if.wdata;
-assign BPF_if3.slave_if[3].wstrb   =  `DUT.bpf_pcie_slv_if.wstrb;
-assign BPF_if3.slave_if[3].wvalid  =  `DUT.bpf_pcie_slv_if.wvalid;
-assign BPF_if3.slave_if[3].wready  =  `DUT.bpf_pcie_slv_if.wready;
-assign BPF_if3.slave_if[3].bresp   =  `DUT.bpf_pcie_slv_if.bresp; 
-assign BPF_if3.slave_if[3].bvalid  =  `DUT.bpf_pcie_slv_if.bvalid ;
-assign BPF_if3.slave_if[3].bready  =  `DUT.bpf_pcie_slv_if.bready;
-assign BPF_if3.slave_if[3].araddr  =  `DUT.bpf_pcie_slv_if.araddr;
-assign BPF_if3.slave_if[3].arprot  =  `DUT.bpf_pcie_slv_if.arprot;
-assign BPF_if3.slave_if[3].arvalid =  `DUT.bpf_pcie_slv_if.arvalid;
-assign BPF_if3.slave_if[3].arready =  `DUT.bpf_pcie_slv_if.arready ;
-assign BPF_if3.slave_if[3].rdata   =  `DUT.bpf_pcie_slv_if.rdata;
-assign BPF_if3.slave_if[3].rresp   =  `DUT.bpf_pcie_slv_if.rresp;
-assign BPF_if3.slave_if[3].rvalid  =  `DUT.bpf_pcie_slv_if.rvalid; 
-assign BPF_if3.slave_if[3].rready  =  `DUT.bpf_pcie_slv_if.rready; 
+assign BPF_if3.slave_if[3].awaddr  =  `DUT.bpf_pcie_slv_if[0].awaddr;
+assign BPF_if3.slave_if[3].awprot  =  `DUT.bpf_pcie_slv_if[0].awprot;
+assign BPF_if3.slave_if[3].awvalid =  `DUT.bpf_pcie_slv_if[0].awvalid ;
+assign BPF_if3.slave_if[3].awready =  `DUT.bpf_pcie_slv_if[0].awready ;
+assign BPF_if3.slave_if[3].wdata   =  `DUT.bpf_pcie_slv_if[0].wdata;
+assign BPF_if3.slave_if[3].wstrb   =  `DUT.bpf_pcie_slv_if[0].wstrb;
+assign BPF_if3.slave_if[3].wvalid  =  `DUT.bpf_pcie_slv_if[0].wvalid;
+assign BPF_if3.slave_if[3].wready  =  `DUT.bpf_pcie_slv_if[0].wready;
+assign BPF_if3.slave_if[3].bresp   =  `DUT.bpf_pcie_slv_if[0].bresp; 
+assign BPF_if3.slave_if[3].bvalid  =  `DUT.bpf_pcie_slv_if[0].bvalid ;
+assign BPF_if3.slave_if[3].bready  =  `DUT.bpf_pcie_slv_if[0].bready;
+assign BPF_if3.slave_if[3].araddr  =  `DUT.bpf_pcie_slv_if[0].araddr;
+assign BPF_if3.slave_if[3].arprot  =  `DUT.bpf_pcie_slv_if[0].arprot;
+assign BPF_if3.slave_if[3].arvalid =  `DUT.bpf_pcie_slv_if[0].arvalid;
+assign BPF_if3.slave_if[3].arready =  `DUT.bpf_pcie_slv_if[0].arready ;
+assign BPF_if3.slave_if[3].rdata   =  `DUT.bpf_pcie_slv_if[0].rdata;
+assign BPF_if3.slave_if[3].rresp   =  `DUT.bpf_pcie_slv_if[0].rresp;
+assign BPF_if3.slave_if[3].rvalid  =  `DUT.bpf_pcie_slv_if[0].rvalid; 
+assign BPF_if3.slave_if[3].rready  =  `DUT.bpf_pcie_slv_if[0].rready; 
 /////////////////////////////////////BPF2QSFP0_PASIVE_CONNECTION///////////////////////////////////
 assign BPF_if3.slave_if[4].awaddr  =   `DUT.bpf_qsfp0_slv_if.awaddr; 
 assign BPF_if3.slave_if[4].awprot  =   `DUT.bpf_qsfp0_slv_if.awprot; 

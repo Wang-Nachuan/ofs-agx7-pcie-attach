@@ -12,6 +12,7 @@
 //-----------------------------------------------------------------------------------------------
 
                    `include "fpga_defines.vh"
+                   `include "ofs_ip_cfg_db.vh"
                     import   ofs_fim_cfg_pkg::*      ;
                     import   ofs_fim_if_pkg::*       ;
                     import   pcie_ss_axis_pkg::*     ;
@@ -27,6 +28,7 @@
 
 module top 
    import ofs_fim_mem_if_pkg::*;
+   import top_cfg_pkg::*;
 (
                     input                                       SYS_REFCLK                        ,// System Reference Clock (100MHz)
                                       
@@ -116,6 +118,7 @@ module top
 
 localparam MM_ADDR_WIDTH = ofs_fim_cfg_pkg::MMIO_ADDR_WIDTH;
 localparam MM_DATA_WIDTH = ofs_fim_cfg_pkg::MMIO_DATA_WIDTH;
+localparam PCIE_NUM_LINKS = top_cfg_pkg::FIM_NUM_LINKS;
 
 //-----------------------------------------------------------------------------------------------
 // Internal signals
@@ -132,22 +135,22 @@ logic h2f_reset, h2f_reset_q;
 // reset signals
 logic pll_locked;
 logic ninit_done;
-logic pcie_reset_status;
-logic pcie_cold_rst_ack_n;
-logic pcie_warm_rst_ack_n;
-logic pcie_cold_rst_n;
-logic pcie_warm_rst_n;
-logic rst_n_sys;
-logic rst_n_sys_pcie;
-logic rst_n_sys_afu;
+logic [PCIE_NUM_LINKS-1:0] pcie_reset_status;
+logic [PCIE_NUM_LINKS-1:0] pcie_cold_rst_ack_n;
+logic [PCIE_NUM_LINKS-1:0] pcie_warm_rst_ack_n;
+logic [PCIE_NUM_LINKS-1:0] pcie_cold_rst_n;
+logic [PCIE_NUM_LINKS-1:0] pcie_warm_rst_n;
+logic [PCIE_NUM_LINKS-1:0] rst_n_sys;
+logic [PCIE_NUM_LINKS-1:0] rst_n_sys_pcie;
+logic [PCIE_NUM_LINKS-1:0] rst_n_sys_afu;
 logic rst_n_sys_mem;
 logic rst_n_sys_hps;
-logic rst_n_100m;
-logic rst_n_50m;
-logic rst_n_ptp_slv;
-logic rst_n_csr;
-logic pwr_good_n;
-logic pwr_good_csr_clk_n;
+logic [PCIE_NUM_LINKS-1:0] rst_n_100m;
+logic [PCIE_NUM_LINKS-1:0] rst_n_50m;
+logic [PCIE_NUM_LINKS-1:0] rst_n_ptp_slv;
+logic [PCIE_NUM_LINKS-1:0] rst_n_csr;
+logic [PCIE_NUM_LINKS-1:0] pwr_good_n;
+logic [PCIE_NUM_LINKS-1:0] pwr_good_csr_clk_n;
 
 //Ctrl Shadow ports
 logic         p0_ss_app_st_ctrlshadow_tvalid;
@@ -156,8 +159,8 @@ logic [39:0]  p0_ss_app_st_ctrlshadow_tdata;
 always_ff @(posedge clk_sys) begin
   rst_n_sys_pcie <= rst_n_sys;
   rst_n_sys_afu  <= rst_n_sys;
-  rst_n_sys_mem  <= rst_n_sys;
-  rst_n_sys_hps  <= rst_n_sys;
+  rst_n_sys_mem  <= rst_n_sys[0];
+  rst_n_sys_hps  <= rst_n_sys[0];
 
   h2f_reset_q <= h2f_reset;
 end
@@ -196,24 +199,35 @@ ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_fme_mst_address_width)
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_fme_slv_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_fme_slv_address_width)) bpf_fme_slv_if();
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_pmci_mst_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_pmci_mst_address_width)) bpf_pmci_mst_if();
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_pmci_slv_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_pmci_slv_address_width)) bpf_pmci_slv_if();
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_pcie_slv_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_pcie_slv_address_width)) bpf_pcie_slv_if();
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_pcie_slv_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_pcie_slv_address_width)) bpf_pcie_slv_if[PCIE_NUM_LINKS-1:0]();
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_qsfp0_slv_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_qsfp0_slv_address_width)) bpf_qsfp0_slv_if();
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_qsfp1_slv_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_qsfp1_slv_address_width)) bpf_qsfp1_slv_if();
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_pmci_lpbk_mst_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_pmci_lpbk_mst_address_width)) bpf_pmci_lpbk_mst_if ();
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_qsfp0_slv_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_qsfp0_slv_address_width)) bpf_hssi_slv_if();
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(fabric_width_pkg::bpf_emif_slv_address_width), .ARADDR_WIDTH(fabric_width_pkg::bpf_emif_slv_address_width)) bpf_emif_slv_if();
 
+
+
 // AXIS PCIe Subsystem Interface
-pcie_ss_axis_if   pcie_ss_axis_rx_if(.clk (clk_sys), .rst_n(rst_n_sys_pcie));
-pcie_ss_axis_if   pcie_ss_axis_tx_if(.clk (clk_sys), .rst_n(rst_n_sys_pcie));
-pcie_ss_axis_if   pcie_ss_axis_rxreq_if(.clk (clk_sys), .rst_n(rst_n_sys_pcie));
+pcie_ss_axis_if   pcie_ss_axis_rx_if [PCIE_NUM_LINKS-1:0] (.clk (clk_sys));
+pcie_ss_axis_if   pcie_ss_axis_tx_if [PCIE_NUM_LINKS-1:0] (.clk (clk_sys));
+pcie_ss_axis_if   pcie_ss_axis_rxreq_if [PCIE_NUM_LINKS-1:0] (.clk (clk_sys));
 // TXREQ is only headers (read requests)
 pcie_ss_axis_if #(
    .DATA_W(pcie_ss_hdr_pkg::HDR_WIDTH),
    .USER_W(ofs_fim_cfg_pkg::PCIE_TUSER_WIDTH)
-) pcie_ss_axis_txreq_if(.clk (clk_sys), .rst_n(rst_n_sys_pcie));
-t_axis_pcie_flr   pcie_flr_req;
-t_axis_pcie_flr   pcie_flr_rsp;
+) pcie_ss_axis_txreq_if[PCIE_NUM_LINKS-1:0] (.clk (clk_sys));
+
+// Assign correct rst_n
+for (genvar j=0; j<PCIE_NUM_LINKS; j++) begin : RST_N
+    assign pcie_ss_axis_rx_if[j].rst_n = rst_n_sys_pcie[j];
+    assign pcie_ss_axis_tx_if[j].rst_n = rst_n_sys_pcie[j];
+    assign pcie_ss_axis_rxreq_if[j].rst_n = rst_n_sys_pcie[j];
+    assign pcie_ss_axis_txreq_if[j].rst_n = rst_n_sys_pcie[j];
+end
+
+t_axis_pcie_flr   pcie_flr_req[PCIE_NUM_LINKS-1:0];
+t_axis_pcie_flr   pcie_flr_rsp[PCIE_NUM_LINKS-1:0];
 
 // Partial Reconfiguration FIFO Parity Error from PR Controller
 logic pr_parity_error;
@@ -229,10 +243,11 @@ ofs_uart_if host_uart_if();
 `endif
 
 //Completion Timeout Interface
-t_axis_pcie_cplto         axis_cpl_timeout;
+t_axis_pcie_cplto         axis_cpl_timeout[PCIE_NUM_LINKS-1:0];
 
 //Tag Mode
-t_pcie_tag_mode    tag_mode;
+t_pcie_tag_mode    tag_mode[PCIE_NUM_LINKS-1:0];
+
 
 `ifdef INCLUDE_DDR4
 localparam AFU_MEM_CHANNELS = ofs_fim_mem_if_pkg::NUM_MEM_CHANNELS;
@@ -283,7 +298,7 @@ dummy_csr #(
    .END_OF_LIST      (fabric_width_pkg::bpf_hssi_slv_eol)
 ) hssi_dummy_csr (
    .clk         (clk_csr),
-   .rst_n       (rst_n_csr),
+   .rst_n       (rst_n_csr[0]),
    .csr_lite_if (bpf_hssi_slv_if)
 );
 
@@ -294,7 +309,7 @@ dummy_csr #(
    .END_OF_LIST      (fabric_width_pkg::bpf_qsfp0_slv_eol)
 ) qsfp0_dummy_csr (
    .clk         (clk_csr),
-   .rst_n       (rst_n_csr),
+   .rst_n       (rst_n_csr[0]),
    .csr_lite_if (bpf_qsfp0_slv_if)
 );
 
@@ -305,7 +320,7 @@ dummy_csr #(
    .END_OF_LIST      (fabric_width_pkg::bpf_qsfp1_slv_eol)
 ) qsfp1_dummy_csr (
    .clk         (clk_csr),
-   .rst_n       (rst_n_csr),
+   .rst_n       (rst_n_csr[0]),
    .csr_lite_if (bpf_qsfp1_slv_if)
 );
 `else
@@ -327,7 +342,7 @@ ofs_fim_hssi_ptp_rx_ingrts_if     hssi_ptp_rx_ingrts [MAX_NUM_ETH_CHANNELS-1:0](
 
 hssi_wrapper hssi_wrapper (
    .clk_csr                (clk_csr),
-   .rst_n_csr              (rst_n_csr),
+   .rst_n_csr              (rst_n_csr[0]),
    .csr_lite_if            (bpf_hssi_slv_if),
    .hssi_ss_st_tx          (hssi_ss_st_tx),
    .hssi_ss_st_rx          (hssi_ss_st_rx),
@@ -400,7 +415,7 @@ qsfp_top #(
    .END_OF_LIST      (fabric_width_pkg::bpf_qsfp0_slv_eol)
 ) qsfp_0 (
    .clk (clk_csr),
-   .reset(~rst_n_csr),
+   .reset(~rst_n_csr[0]),
 `ifdef INCLUDE_FTILE
    .modprsl(~qsfpa_modprsln),
 `else
@@ -426,7 +441,7 @@ qsfp_top #(
    .END_OF_LIST      (fabric_width_pkg::bpf_qsfp1_slv_eol)
 ) qsfp_1 (
    .clk (clk_csr),
-   .reset(~rst_n_csr),
+   .reset(~rst_n_csr[0]),
 `ifdef INCLUDE_FTILE
    .modprsl(~qsfpb_modprsln),
 `else
@@ -479,26 +494,29 @@ sys_pll sys_pll (
 //-----------------------------------------------------------------------------------------------
 // Reset controller
 //-----------------------------------------------------------------------------------------------
-rst_ctrl rst_ctrl (
-   .clk_sys             (clk_sys                  ),
-   .clk_100m            (clk_100m                 ),
-   .clk_50m             (clk_50m                  ),
-   .clk_ptp_slv         (clk_ptp_slv              ),
-   .pll_locked          (pll_locked               ),
-   .pcie_reset_status   (pcie_reset_status        ),
-   .pcie_cold_rst_ack_n (pcie_cold_rst_ack_n      ),
-   .pcie_warm_rst_ack_n (pcie_warm_rst_ack_n      ),
-                                                 
-   .ninit_done          (ninit_done               ),
-   .rst_n_sys           (rst_n_sys                ),  // system reset synchronous to clk_sys
-   .rst_n_100m          (rst_n_100m               ),  // system reset synchronous to clk_100m
-   .rst_n_50m           (rst_n_50m                ),  // system reset synchronous to clk_50m
-   .rst_n_ptp_slv       (rst_n_ptp_slv            ),  // system reset synchronous to clk_ptp_slv 
-   .pwr_good_n          (pwr_good_n               ),  // system reset synchronous to clk_100m
-   .pwr_good_csr_clk_n  (pwr_good_csr_clk_n       ),  // power good reset synchronous to clk_sys 
-   .pcie_cold_rst_n     (pcie_cold_rst_n          ),
-   .pcie_warm_rst_n     (pcie_warm_rst_n          )
-); 
+
+for (genvar j=0; j<PCIE_NUM_LINKS; j++) begin : PCIE_RST_CTRL
+    rst_ctrl rst_ctrl (
+    .clk_sys             (clk_sys                  ),
+    .clk_100m            (clk_100m                 ),
+    .clk_50m             (clk_50m                  ),
+    .clk_ptp_slv         (clk_ptp_slv              ),
+    .pll_locked          (pll_locked               ),
+    .pcie_reset_status   (pcie_reset_status[j]     ),
+    .pcie_cold_rst_ack_n (pcie_cold_rst_ack_n[j]   ),
+    .pcie_warm_rst_ack_n (pcie_warm_rst_ack_n[j]   ),
+                                                  
+    .ninit_done          (ninit_done               ),
+    .rst_n_sys           (rst_n_sys[j]             ),  // system reset synchronous to clk_sys
+    .rst_n_100m          (rst_n_100m[j]            ),  // system reset synchronous to clk_100m
+    .rst_n_50m           (rst_n_50m[j]             ),  // system reset synchronous to clk_50m
+    .rst_n_ptp_slv       (rst_n_ptp_slv[j]         ),  // system reset synchronous to clk_ptp_slv 
+    .pwr_good_n          (pwr_good_n[j]            ),  // system reset synchronous to clk_100m
+    .pwr_good_csr_clk_n  (pwr_good_csr_clk_n[j]    ),  // power good reset synchronous to clk_sys 
+    .pcie_cold_rst_n     (pcie_cold_rst_n[j]       ),
+    .pcie_warm_rst_n     (pcie_warm_rst_n[j]       )
+    ); 
+end 
 
 //-----------------------------------------------------------------------------------------------
 // PCIe Subsystem - this IP instantiates the QHIP and builds various features around it such
@@ -512,6 +530,7 @@ rst_ctrl rst_ctrl (
 `else
      .PCIE_LANES       (16),
 `endif
+     .PCIE_NUM_LINKS   (PCIE_NUM_LINKS),
      .MM_ADDR_WIDTH    (MM_ADDR_WIDTH),
      .MM_DATA_WIDTH    (MM_DATA_WIDTH),
      .FEAT_ID          (12'h020),
@@ -525,28 +544,28 @@ rst_ctrl rst_ctrl (
    .csr_rst_n                      (rst_n_csr                ),
    .ninit_done                     (ninit_done               ),
    .reset_status                   (pcie_reset_status        ),  
-   .p0_subsystem_cold_rst_n        (pcie_cold_rst_n          ),     
-   .p0_subsystem_warm_rst_n        (pcie_warm_rst_n          ),
-   .p0_subsystem_cold_rst_ack_n    (pcie_cold_rst_ack_n      ),
-   .p0_subsystem_warm_rst_ack_n    (pcie_warm_rst_ack_n      ),
+   .subsystem_cold_rst_n        (pcie_cold_rst_n          ),     
+   .subsystem_warm_rst_n        (pcie_warm_rst_n          ),
+   .subsystem_cold_rst_ack_n    (pcie_cold_rst_ack_n      ),
+   .subsystem_warm_rst_ack_n    (pcie_warm_rst_ack_n      ),
    .pin_pcie_refclk0_p             (PCIE_REFCLK0             ),
    .pin_pcie_refclk1_p             (PCIE_REFCLK1             ),
    .pin_pcie_in_perst_n            (PCIE_RESET_N             ),   // connected to HIP
    .pin_pcie_rx_p                  (PCIE_RX_P                ),
    .pin_pcie_rx_n                  (PCIE_RX_N                ),
    .pin_pcie_tx_p                  (PCIE_TX_P                ),                
-   .pin_pcie_tx_n                  (PCIE_TX_N                ),   
-   .p0_ss_app_st_ctrlshadow_tvalid (p0_ss_app_st_ctrlshadow_tvalid ),
-   .p0_ss_app_st_ctrlshadow_tdata  (p0_ss_app_st_ctrlshadow_tdata  ),
+   .pin_pcie_tx_n                  (PCIE_TX_N                ),  
+   .ss_app_st_ctrlshadow_tvalid     (ss_app_st_ctrlshadow_tvalid ),
+   .ss_app_st_ctrlshadow_tdata      (ss_app_st_ctrlshadow_tdata  ),
    .axi_st_rxreq_if                (pcie_ss_axis_rxreq_if    ),
    .axi_st_rx_if                   (pcie_ss_axis_rx_if       ),
    .axi_st_tx_if                   (pcie_ss_axis_tx_if       ),
    .axi_st_txreq_if                (pcie_ss_axis_txreq_if    ),
-   .csr_lite_if                    (bpf_pcie_slv_if          ),
-   .axi_st_flr_req                 (pcie_flr_req             ),
-   .axi_st_flr_rsp                 (pcie_flr_rsp             ),
-   .axis_cpl_timeout               (axis_cpl_timeout         ),
-   .tag_mode                       (tag_mode                 )
+   .csr_lite_if                    (bpf_pcie_slv_if          ), 
+   .axi_st_flr_req                 (pcie_flr_req                ),
+   .axi_st_flr_rsp                 (pcie_flr_rsp                ),
+   .axis_cpl_timeout               (axis_cpl_timeout            ),
+   .tag_mode                       (tag_mode                    )
 );
 
 
@@ -572,7 +591,7 @@ pmci_wrapper #(
      .pmci_csr_FEAT_ID         (18)
 ) pmci_wrapper (
       .clk_csr                   (clk_csr                 ),                               
-      .reset_csr                 (!rst_n_csr              ),                               
+      .reset_csr                 (!rst_n_csr[0]           ),                               
       .csr_lite_slv_if           (bpf_pmci_slv_if         ),
       .csr_lite_mst_if           (bpf_pmci_mst_if         ),
       .qspi_dclk                 (qspi_dclk               ),                               
@@ -610,7 +629,7 @@ pmci_wrapper #(
       .END_OF_LIST      (fabric_width_pkg::bpf_pmci_slv_eol)
    ) pmci_dummy_csr (
       .clk         (clk_csr),
-      .rst_n       (rst_n_csr),
+      .rst_n       (rst_n_csr[0]),
       .csr_lite_if (bpf_pmci_slv_if)
    );
   `ifdef SIM_VIP   
@@ -641,9 +660,9 @@ pmci_wrapper #(
      .NEXT_DFH_OFFSET (fabric_width_pkg::bpf_fme_slv_next_dfh_offset)
   ) fme_top(
           .clk               (clk_csr                   ),
-          .rst_n             (rst_n_csr                 ),
+          .rst_n             (rst_n_csr[0]              ),
           .pr_parity_error   (pr_parity_error           ),
-          .pwr_good_n        (pwr_good_n                ),
+          .pwr_good_n        (pwr_good_n[0]             ),
           .axi_lite_m_if     (bpf_fme_mst_if            ),
           .axi_lite_s_if     (bpf_fme_slv_if            )
          );
@@ -662,8 +681,9 @@ pmci_wrapper #(
 //                       by the customer to instantiate the PR workloads
 //-----------------------------------------------------------------------------------------------
   afu_top #(
+          .PCIE_NUM_LINKS      (PCIE_NUM_LINKS)
 `ifdef INCLUDE_DDR4
-         .AFU_MEM_CHANNEL     (AFU_MEM_CHANNELS   )
+         ,.AFU_MEM_CHANNEL     (AFU_MEM_CHANNELS   )
 `endif
   )afu_top(
          .SYS_REFCLK          (SYS_REFCLK                   ),
@@ -673,7 +693,7 @@ pmci_wrapper #(
          .rst_n_csr           (rst_n_csr                    ),
          .clk_50m             (clk_50m                      ),
          .rst_n_50m           (rst_n_50m                    ),
-         .pwr_good_csr_clk_n  (pwr_good_csr_clk_n           ), // power good reset synchronous to csr_clk
+         .pwr_good_csr_clk_n  (pwr_good_csr_clk_n[0]        ), // power good reset synchronous to csr_clk
          .clk_div2            (clk_sys_div2                 ),
          .clk_div4            (clk_sys_div4                 ),
 
@@ -722,6 +742,8 @@ pmci_wrapper #(
          .i_hssi_clk_pll       (hssi_clk_pll            )
 `endif 
          );
+
+
 //-----------------------------------------------------------------------------------------------
 // HPS SS - the HPS SS instantiates the embedded Hard Processor that is available on the device.
 // The HPS is connected to a DRAM and also some peripherals such as UART, SPI Master etc.
@@ -867,7 +889,7 @@ assign host_uart_if.ri_n = 1'b0;
    bpf 
    bpf (
           .clk_clk              (clk_csr                   ),
-          .rst_n_reset_n        (rst_n_csr                 ),
+          .rst_n_reset_n        (rst_n_csr[0]              ),
           
           .bpf_apf_mst_awaddr   (bpf_apf_mst_if.awaddr     ),
           .bpf_apf_mst_awprot   (bpf_apf_mst_if.awprot     ),
@@ -928,26 +950,27 @@ assign host_uart_if.ri_n = 1'b0;
           .bpf_fme_slv_rresp    (bpf_fme_slv_if.rresp      ),
           .bpf_fme_slv_rvalid   (bpf_fme_slv_if.rvalid     ),
           .bpf_fme_slv_rready   (bpf_fme_slv_if.rready     ),
-          
-          .bpf_pcie_slv_awaddr  (bpf_pcie_slv_if.awaddr    ), 
-          .bpf_pcie_slv_awprot  (bpf_pcie_slv_if.awprot    ), 
-          .bpf_pcie_slv_awvalid (bpf_pcie_slv_if.awvalid   ), 
-          .bpf_pcie_slv_awready (bpf_pcie_slv_if.awready   ), 
-          .bpf_pcie_slv_wdata   (bpf_pcie_slv_if.wdata     ), 
-          .bpf_pcie_slv_wstrb   (bpf_pcie_slv_if.wstrb     ), 
-          .bpf_pcie_slv_wvalid  (bpf_pcie_slv_if.wvalid    ), 
-          .bpf_pcie_slv_wready  (bpf_pcie_slv_if.wready    ), 
-          .bpf_pcie_slv_bresp   (bpf_pcie_slv_if.bresp     ), 
-          .bpf_pcie_slv_bvalid  (bpf_pcie_slv_if.bvalid    ), 
-          .bpf_pcie_slv_bready  (bpf_pcie_slv_if.bready    ), 
-          .bpf_pcie_slv_araddr  (bpf_pcie_slv_if.araddr    ), 
-          .bpf_pcie_slv_arprot  (bpf_pcie_slv_if.arprot    ), 
-          .bpf_pcie_slv_arvalid (bpf_pcie_slv_if.arvalid   ), 
-          .bpf_pcie_slv_arready (bpf_pcie_slv_if.arready   ), 
-          .bpf_pcie_slv_rdata   (bpf_pcie_slv_if.rdata     ), 
-          .bpf_pcie_slv_rresp   (bpf_pcie_slv_if.rresp     ), 
-          .bpf_pcie_slv_rvalid  (bpf_pcie_slv_if.rvalid    ), 
-          .bpf_pcie_slv_rready  (bpf_pcie_slv_if.rready    ), 
+         
+          // PCIe Link0 csr tied for fabric, other links are tied off 
+          .bpf_pcie_slv_awaddr  (bpf_pcie_slv_if[0].awaddr    ), 
+          .bpf_pcie_slv_awprot  (bpf_pcie_slv_if[0].awprot    ), 
+          .bpf_pcie_slv_awvalid (bpf_pcie_slv_if[0].awvalid   ), 
+          .bpf_pcie_slv_awready (bpf_pcie_slv_if[0].awready   ), 
+          .bpf_pcie_slv_wdata   (bpf_pcie_slv_if[0].wdata     ), 
+          .bpf_pcie_slv_wstrb   (bpf_pcie_slv_if[0].wstrb     ), 
+          .bpf_pcie_slv_wvalid  (bpf_pcie_slv_if[0].wvalid    ), 
+          .bpf_pcie_slv_wready  (bpf_pcie_slv_if[0].wready    ), 
+          .bpf_pcie_slv_bresp   (bpf_pcie_slv_if[0].bresp     ), 
+          .bpf_pcie_slv_bvalid  (bpf_pcie_slv_if[0].bvalid    ), 
+          .bpf_pcie_slv_bready  (bpf_pcie_slv_if[0].bready    ), 
+          .bpf_pcie_slv_araddr  (bpf_pcie_slv_if[0].araddr    ), 
+          .bpf_pcie_slv_arprot  (bpf_pcie_slv_if[0].arprot    ), 
+          .bpf_pcie_slv_arvalid (bpf_pcie_slv_if[0].arvalid   ), 
+          .bpf_pcie_slv_arready (bpf_pcie_slv_if[0].arready   ), 
+          .bpf_pcie_slv_rdata   (bpf_pcie_slv_if[0].rdata     ), 
+          .bpf_pcie_slv_rresp   (bpf_pcie_slv_if[0].rresp     ), 
+          .bpf_pcie_slv_rvalid  (bpf_pcie_slv_if[0].rvalid    ), 
+          .bpf_pcie_slv_rready  (bpf_pcie_slv_if[0].rready    ), 
 
           .bpf_pmci_mst_awaddr   (bpf_pmci_mst_if.awaddr   ),
           .bpf_pmci_mst_awprot   (bpf_pmci_mst_if.awprot   ),
@@ -1134,6 +1157,21 @@ assign host_uart_if.ri_n = 1'b0;
 
    );
 
+
+// Only Link0 CSR connected to BPF fabric. Rest are tied off
+generate
+    for (genvar j=1; j<PCIE_NUM_LINKS; j++) begin :PCIE_CSR_TIEOFF
+        always_comb
+        begin  
+            bpf_pcie_slv_if[j].awvalid  = 1'b0;
+            bpf_pcie_slv_if[j].wvalid   = 1'b0;
+            bpf_pcie_slv_if[j].bready   = 1'b0;  
+            bpf_pcie_slv_if[j].arvalid  = 1'b0;
+            bpf_pcie_slv_if[j].rready   = 1'b0;
+        end
+    end
+endgenerate 
+
 //-----------------------------------------------------------------------------------------------
 // Memory Subsystem - the memory SS wraps the memory channels on the board and sets up the 
 // timing parameters etc. It provides a standard AXI interface to connect to workloads.
@@ -1164,7 +1202,7 @@ assign host_uart_if.ri_n = 1'b0;
 
        // CSR interfaces
       .clk_csr     (clk_csr),
-      .rst_n_csr   (rst_n_csr),
+      .rst_n_csr   (rst_n_csr[0]),
       .csr_lite_if (bpf_emif_slv_if)
    );
 `else
@@ -1176,7 +1214,7 @@ assign host_uart_if.ri_n = 1'b0;
       .END_OF_LIST      (fabric_width_pkg::bpf_emif_slv_eol)
    ) emif_dummy_csr (
       .clk         (clk_csr),
-      .rst_n       (rst_n_csr),
+      .rst_n       (rst_n_csr[0]),
       .csr_lite_if (bpf_emif_slv_if)
    );
 `endif

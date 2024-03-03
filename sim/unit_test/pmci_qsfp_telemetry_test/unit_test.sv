@@ -8,6 +8,7 @@ import host_bfm_types_pkg::*;
 
 module unit_test #(
    parameter SOC_ATTACH = 0,
+   parameter LINK_NUMBER = 0,
    parameter type pf_type = default_pfs, 
    parameter pf_type pf_list = '{1'b1}, 
    parameter type vf_type = default_vfs, 
@@ -80,6 +81,14 @@ pfvf_struct pfvf;
 parameter MAX_TEST = 100;
 //parameter TIMEOUT = 1.5ms;
 parameter TIMEOUT = 10.0ms;
+localparam NUMBER_OF_LINKS = `OFS_FIM_IP_CFG_PCIE_SS_NUM_LINKS;
+localparam string unit_test_name = "PMCI QSFP Telemetry Test";
+
+//---------------------------------------------------------
+// Mailbox 
+//---------------------------------------------------------
+mailbox #(host_bfm_types_pkg::mbx_message_t) mbx = new();
+host_bfm_types_pkg::mbx_message_t mbx_msg;
 
 
 typedef struct packed {
@@ -94,6 +103,7 @@ t_test_info [MAX_TEST-1:0] test_summary;
 logic reset_test;
 logic [7:0] checker_err_count;
 logic test_done;
+logic all_tests_done;
 logic test_result;
 
 //---------------------------------------------------------
@@ -153,9 +163,10 @@ endtask
 task print_test_header;
    input [1024*8-1:0] test_name;
 begin
-   $display("\n********************************************");
+   $display("\n");
+   $display("****************************************************************");
    $display(" Running TEST(%0d) : %0s", test_id, test_name);
-   $display("********************************************");   
+   $display("****************************************************************");
    test_summary[test_id].name = test_name;
 end
 endtask
@@ -390,6 +401,7 @@ begin
    reset_test = 1'b0;
    test_id = '0;
    test_done = 1'b0;
+   all_tests_done = 1'b0;
    test_result = 1'b0;
 end
 
@@ -408,9 +420,10 @@ begin
  
    wait (test_done==1) begin
       // Test summary
-      $display("\n********************");
-      $display("  Test summary");
-      $display("********************");
+      $display("\n");
+      $display("***************************");
+      $display("  Test summary for link %0d", LINK_NUMBER);
+      $display("***************************");
       for (int i=0; i < test_id; i=i+1) 
       begin
          if (test_summary[i].result)
@@ -421,41 +434,129 @@ begin
 
       if(get_err_count() == 0) 
       begin
+          $display("");
+          $display("");
+          $display("-----------------------------------------------------");
           $display("Test passed!");
+          $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+          $display("-----------------------------------------------------");
+          $display("");
+          $display("");
+          $display("      '||''|.      |      .|'''.|   .|'''.|  ");
+          $display("       ||   ||    |||     ||..  '   ||..  '  ");
+          $display("       ||...|'   |  ||     ''|||.    ''|||.  ");
+          $display("       ||       .''''|.  .     '|| .     '|| ");
+          $display("      .||.     .|.  .||. |'....|'  |'....|'  ");
+          $display("");
+          $display("");
       end 
       else 
       begin
           if (get_err_count() != 0) 
           begin
+             $display("");
+             $display("");
+             $display("-----------------------------------------------------");
              $display("Test FAILED! %d errors reported.\n", get_err_count());
+             $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+             $display("-----------------------------------------------------");
+             $display("");
+             $display("");
+             $display("      '||''''|     |     '||' '||'      ");
+             $display("       ||  .      |||     ||   ||       ");
+             $display("       ||''|     |  ||    ||   ||       ");
+             $display("       ||       .''''|.   ||   ||       ");
+             $display("      .||.     .|.  .||. .||. .||.....| ");
+             $display("");
+             $display("");
           end
        end
    end
    
    join_any    
-   $finish();  
+   if (LINK_NUMBER == 0)
+   begin
+      wait (all_tests_done);
+      $finish();  
+   end
 end
 
-always begin : main   
-   $display("Start of MAIN Always.");
-   #10000;
-   $display("MAIN Always - After Delay");
-   wait (rst_n);
-   $display("MAIN Always - After Wait for rst_n.");
-   wait (csr_rst_n);
-   $display("MAIN Always - After Wait for csr_rst_n.");
-   //-------------------------
-   // deassert port reset
-   //-------------------------
-   deassert_afu_reset();
-   $display("MAIN Always - After Deassert of AFU Reset.");
-   //-------------------------
-   // Test scenarios 
-   //-------------------------
-   main_test(test_result);
-   $display("MAIN Always - After Main Task.");
-   test_done = 1'b1;
-end
+generate
+   if (LINK_NUMBER != 0)
+   begin // This block covers the scenario where there is more than one link and link N needs to coordinate execution with link0.
+      always begin : main   
+         #10000;
+         wait (rst_n);
+         wait (csr_rst_n);
+         $display(">>> Link #%0d: Sending READY to Link0.  Waiting for release.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(READY);
+         mbx_msg = START;
+         while (mbx_msg != GO)
+         begin
+            $display("Mailbox #%0d State: %s", LINK_NUMBER, mbx_msg.name());
+            mbx.get(mbx_msg);
+         end
+         $display(">>> No PMCI on Link %0d...", LINK_NUMBER);
+         $display(">>> Returning execution back to Link 0.  Link %0d actions completed.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(DONE);
+      end
+   end
+   else
+   begin
+      if (NUMBER_OF_LINKS > 1)
+      begin // This block covers the scenario where there is more than one link and link0 needs to communicate with the other links.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            #1000
+            $display(">>> Link #0: Getting status from Link #1 Mailbox, testing for READY");
+            mbx.try_get(mbx_msg);
+            $display(">>> Link #0: Link #1 shows status as %s.", mbx_msg.name());
+            $display(">>> Link #0: %s complete.  Sending GO to Link #1.", unit_test_name);
+            mbx_msg = READY;
+            host_gen_block1.pcie_top_host1.unit_test.mbx.put(GO);
+            while (mbx_msg != DONE)
+            begin
+               $display("Mailbox #0 State: %s", mbx_msg.name());
+               mbx.get(mbx_msg);
+            end
+            all_tests_done = 1'b1;
+         end
+      end
+      else
+      begin  // This block covers the scenario where there is only one link and no mailbox communication is required.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            all_tests_done = 1'b1;
+         end
+      end
+   end
+endgenerate
 
 
 task test_mmio_addr32;
@@ -560,8 +661,6 @@ begin
       force top_tb.DUT.qsfpa_modprsln = 1'b0;   
       force top_tb.DUT.qsfpb_modprsln = 1'b0;   
    
-      //WRITE32(ADDR32, PMCI_QSFP_BA, 0, 1'b0, 0, 0, 'h0001_2000);	
-      //WRITE32(ADDR32, PMCI_QSFP2_BA, 0, 1'b0, 0, 0, 'h0001_3000);	
       host_bfm_top.host_bfm.write32(PMCI_QSFP_BA,  'h0001_2000);
       host_bfm_top.host_bfm.write32(PMCI_QSFP2_BA, 'h0001_3000);
         fork
@@ -681,17 +780,13 @@ begin
          for (int i=0;i<4;i++) begin
 
            wdata = 'h8000_1048 + 'h4*i;
-           //WRITE32(ADDR32, PMCI_SPI_AR, 0, 1'b0, 0, 0, wdata);	
-           //WRITE32(ADDR32, PMCI_SPI_CSR, 0, 1'b0, 0, 0, 'h0000_0001);	
            host_bfm_top.host_bfm.write32(PMCI_SPI_AR, wdata);
            host_bfm_top.host_bfm.write32(PMCI_SPI_CSR, 'h0000_0001);
 
            do begin
-             //READ32(ADDR32, PMCI_SPI_CSR, 0, 1'b0, 0, 0, ack, error);	
              host_bfm_top.host_bfm.read32_with_completion_status(PMCI_SPI_CSR, ack, error, cpl_status);
            end while(ack[2] != 1'b1);
 
-           //READ32(ADDR32, PMCI_SPI_RD_DR, 0, 1'b0, 0, 0, rdata, error);	
            host_bfm_top.host_bfm.read32_with_completion_status(PMCI_SPI_RD_DR, rdata, error, cpl_status);
            if(i==0||i==2) begin
               exp_data ='d180;
@@ -708,7 +803,6 @@ begin
               result = 1'b0;
            end
 
-           //WRITE32(ADDR32, PMCI_SPI_CSR, 0, 1'b0, 0, 0, 'h0000_0000);	
            host_bfm_top.host_bfm.write32(PMCI_SPI_CSR, 'h0000_0000);
            
          end
@@ -716,17 +810,13 @@ begin
          for (int i=0;i<4;i++) begin
 
            wdata = 'h8000_10b0 + 'h4*i;
-           //WRITE32(ADDR32, PMCI_SPI_AR, 0, 1'b0, 0, 0, wdata);	
-           //WRITE32(ADDR32, PMCI_SPI_CSR, 0, 1'b0, 0, 0, 'h0000_0001);	
            host_bfm_top.host_bfm.write32(PMCI_SPI_AR, wdata);
            host_bfm_top.host_bfm.write32(PMCI_SPI_CSR, 'h0000_0001);
 
            do begin
-             //READ32(ADDR32, PMCI_SPI_CSR, 0, 1'b0, 0, 0, ack, error);	
              host_bfm_top.host_bfm.read32_with_completion_status(PMCI_SPI_CSR, ack, error, cpl_status);
            end while(ack[2] != 1'b1);
 
-           //READ32(ADDR32, PMCI_SPI_RD_DR, 0, 1'b0, 0, 0, rdata, error);	
            host_bfm_top.host_bfm.read32_with_completion_status(PMCI_SPI_RD_DR, rdata, error, cpl_status);
            if(i==0||i==2) begin
               exp_data ='d90;
@@ -743,24 +833,19 @@ begin
               result = 1'b0;
            end
 
-           //WRITE32(ADDR32, PMCI_SPI_CSR, 0, 1'b0, 0, 0, 'h0000_0000);
            host_bfm_top.host_bfm.write32(PMCI_SPI_CSR, 'h0000_0000);
 	
         end 
 
         wdata ='h8000_1004;
-        //WRITE32(ADDR32, PMCI_SPI_AR, 0, 1'b0, 0, 0, wdata);	
-        //WRITE32(ADDR32, PMCI_SPI_CSR, 0, 1'b0, 0, 0, 'h0000_0001);
         host_bfm_top.host_bfm.write32(PMCI_SPI_AR, wdata);
         host_bfm_top.host_bfm.write32(PMCI_SPI_CSR, 'h0000_0001);
 	
         do begin
-          //READ32(ADDR32, PMCI_SPI_CSR, 0, 1'b0, 0, 0, ack, error);	
           host_bfm_top.host_bfm.read32_with_completion_status(PMCI_SPI_CSR, ack, error, cpl_status);
         end while(ack[2] != 1'b1);
        
         exp_data = 2'b11;
-        //READ32(ADDR32, PMCI_SPI_RD_DR, 0, 1'b0, 0, 0, rdata, error);	
         host_bfm_top.host_bfm.read32_with_completion_status(PMCI_SPI_RD_DR, rdata, error, cpl_status);
         if(rdata[8:7] == exp_data) begin
            $display("DATA MATCH:QSFP Primary and Secondary is UP");
@@ -785,7 +870,7 @@ endtask
 task main_test;
    output logic test_result;
    begin
-      $display("Entering PMCI CSR Test.");
+      $display("Entering %s.", unit_test_name);
       host_bfm_top.host_bfm.set_mmio_mode(PU_METHOD_TRANSACTION);
       host_bfm_top.host_bfm.set_dm_mode(DM_AUTO_TRANSACTION);
       pfvf = '{0,0,0}; // Set PFVF to PF0

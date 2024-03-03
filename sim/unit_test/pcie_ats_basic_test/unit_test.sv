@@ -11,6 +11,7 @@ import host_bfm_types_pkg::*;
 
 module unit_test #(
    parameter SOC_ATTACH = 0,
+   parameter LINK_NUMBER = 0,
    parameter type pf_type = default_pfs, 
    parameter pf_type pf_list = '{1'b1}, 
    parameter type vf_type = default_vfs, 
@@ -48,6 +49,14 @@ localparam logic PCIE_PASID_CAP_EN[PCIE_NUM_PFS] = { `OFS_FIM_IP_CFG_PCIE_SS_PAS
 parameter MAX_TEST = 100;
 parameter TIMEOUT = 10.0ms;
 parameter RP_MAX_TAGS = 64;
+localparam NUMBER_OF_LINKS = `OFS_FIM_IP_CFG_PCIE_SS_NUM_LINKS;
+localparam string unit_test_name = "PCIe ATS Basic Test";
+
+//---------------------------------------------------------
+// Mailbox 
+//---------------------------------------------------------
+mailbox #(host_bfm_types_pkg::mbx_message_t) mbx = new();
+host_bfm_types_pkg::mbx_message_t mbx_msg;
 
 typedef struct packed {
     logic result;
@@ -64,6 +73,7 @@ t_test_info [MAX_TEST-1:0] test_summary;
 logic reset_test;
 logic [7:0] checker_err_count;
 logic test_done;
+logic all_tests_done;
 logic test_result;
 
 //---------------------------------------------------------
@@ -258,6 +268,7 @@ begin
     reset_test = 1'b0;
     test_id = '0;
     test_done = 1'b0;
+    all_tests_done = 1'b0;
     test_result = 1'b0;
 end
 
@@ -276,9 +287,10 @@ begin
         
         wait (test_done==1) begin
             // Test summary
-            $display("\n********************");
-            $display("  Test summary");
-            $display("********************");
+            $display("\n");
+            $display("***************************");
+            $display("  Test summary for link %0d", LINK_NUMBER);
+            $display("***************************");
             for (int i=0; i < test_id; i=i+1) 
             begin
                 if (test_summary[i].result)
@@ -289,61 +301,175 @@ begin
 
             if(get_err_count() == 0) 
             begin
+                $display("");
+                $display("");
+                $display("-----------------------------------------------------");
                 $display("Test passed!");
+                $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+                $display("-----------------------------------------------------");
+                $display("");
+                $display("");
+                $display("      '||''|.      |      .|'''.|   .|'''.|  ");
+                $display("       ||   ||    |||     ||..  '   ||..  '  ");
+                $display("       ||...|'   |  ||     ''|||.    ''|||.  ");
+                $display("       ||       .''''|.  .     '|| .     '|| ");
+                $display("      .||.     .|.  .||. |'....|'  |'....|'  ");
+                $display("");
+                $display("");
             end 
             else 
             begin
                 if (get_err_count() != 0) 
                 begin
+                    $display("");
+                    $display("");
+                    $display("-----------------------------------------------------");
                     $display("Test FAILED! %d errors reported.\n", get_err_count());
+                    $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+                    $display("-----------------------------------------------------");
+                    $display("");
+                    $display("");
+                    $display("      '||''''|     |     '||' '||'      ");
+                    $display("       ||  .      |||     ||   ||       ");
+                    $display("       ||''|     |  ||    ||   ||       ");
+                    $display("       ||       .''''|.   ||   ||       ");
+                    $display("      .||.     .|.  .||. .||. .||.....| ");
+                    $display("");
+                    $display("");
                 end
             end
         end
-    join_any    
-    $finish();  
-end
-
-always begin : main   
-    #10000;
-    wait (rst_n);
-    $display("MAIN Always - After Wait for rst_n.");
-    wait (csr_rst_n);
-    $display("MAIN Always - After Wait for csr_rst_n.");
-
-`ifndef OFS_FIM_IP_CFG_PCIE_SS_ATS_CAP
-    $display("PCIe ATS not enabled - nothing to test.");
-`else
-    for (int pf = 0; pf < PCIE_NUM_PFS; pf = pf + 1) begin
-        if (PCIE_ATS_CAP_EN[pf]) begin
-            if (! PCIE_PRS_CAP_EN[pf]) begin
-                $display("ERROR: ATS is enabled on PF%0d but PRS is not!", pf);
-                incr_err_count();
-            end
-
-            if (! PCIE_PASID_CAP_EN[pf]) begin
-                $display("ERROR: ATS is enabled on PF%0d but PASID is not!", pf);
-                incr_err_count();
-            end
-        end
+    join_any
+   if (LINK_NUMBER == 0)
+   begin
+      wait (all_tests_done);
+       $finish();
     end
-
-    if (err_count != 0)
-        $finish;
-
-    //-------------------------
-    // deassert port reset
-    //-------------------------
-    deassert_afu_reset();
-    $display("MAIN Always - After Deassert of AFU Reset.");
-    //-------------------------
-    // Test scenarios 
-    //-------------------------
-    main_test(test_result);
-    $display("MAIN Always - After Main Task.");
-`endif
-
-    test_done = 1'b1;
 end
+
+generate
+   if (LINK_NUMBER != 0)
+   begin // This block covers the scenario where there is more than one link and link N needs to coordinate execution with link0.
+      always begin : main   
+         #10000;
+         wait (rst_n);
+         wait (csr_rst_n);
+         $display(">>> Link #%0d: Sending READY to Link0.  Waiting for release.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(READY);
+         mbx_msg = START;
+         while (mbx_msg != GO)
+         begin
+            $display("Mailbox #%0d State: %s", LINK_NUMBER, mbx_msg.name());
+            mbx.get(mbx_msg);
+         end
+         $display(">>> No PCIe ATS enabled on Link %0d...", LINK_NUMBER);
+         $display(">>> Returning execution back to Link 0.  Link %0d actions completed.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(DONE);
+      end
+   end
+   else
+   begin
+      if (NUMBER_OF_LINKS > 1)
+      begin // This block covers the scenario where there is more than one link and link0 needs to communicate with the other links.
+         always begin : main   
+             #10000;
+             wait (rst_n);
+             wait (csr_rst_n);
+
+         `ifndef OFS_FIM_IP_CFG_PCIE_SS_ATS_CAP
+             $display("PCIe ATS not enabled - nothing to test.");
+         `else
+             for (int pf = 0; pf < PCIE_NUM_PFS; pf = pf + 1) begin
+                 if (PCIE_ATS_CAP_EN[pf]) begin
+                     if (! PCIE_PRS_CAP_EN[pf]) begin
+                         $display("ERROR: ATS is enabled on PF%0d but PRS is not!", pf);
+                         incr_err_count();
+                     end
+
+                     if (! PCIE_PASID_CAP_EN[pf]) begin
+                         $display("ERROR: ATS is enabled on PF%0d but PASID is not!", pf);
+                         incr_err_count();
+                     end
+                 end
+             end
+
+             if (err_count != 0)
+                 $finish;
+
+             //-------------------------
+             // deassert port reset
+             //-------------------------
+             deassert_afu_reset();
+             //-------------------------
+             // Test scenarios 
+             //-------------------------
+             $display(">>> Running %s on Link 0...", unit_test_name);
+             main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+         `endif
+             test_done = 1'b1;
+             if (NUMBER_OF_LINKS > 1)
+             begin
+                #1000
+                $display(">>> Link #0: Getting status from Link #1 Mailbox, testing for READY");
+                mbx.try_get(mbx_msg);
+                $display(">>> Link #0: Link #1 shows status as %s.", mbx_msg.name());
+                $display(">>> Link #0: %s complete.  Sending GO to Link #1.", unit_test_name);
+                mbx_msg = READY;
+                host_gen_block1.pcie_top_host1.unit_test.mbx.put(GO);
+                while (mbx_msg != DONE)
+                begin
+                   $display("Mailbox #0 State: %s", mbx_msg.name());
+                   mbx.get(mbx_msg);
+                end
+             end
+             all_tests_done = 1'b1;
+         end
+      end
+      else
+      begin  // This block covers the scenario where there is only one link and no mailbox communication is required.
+         always begin : main   
+             #10000;
+             wait (rst_n);
+             wait (csr_rst_n);
+
+         `ifndef OFS_FIM_IP_CFG_PCIE_SS_ATS_CAP
+             $display("PCIe ATS not enabled - nothing to test.");
+         `else
+             for (int pf = 0; pf < PCIE_NUM_PFS; pf = pf + 1) begin
+                 if (PCIE_ATS_CAP_EN[pf]) begin
+                     if (! PCIE_PRS_CAP_EN[pf]) begin
+                         $display("ERROR: ATS is enabled on PF%0d but PRS is not!", pf);
+                         incr_err_count();
+                     end
+
+                     if (! PCIE_PASID_CAP_EN[pf]) begin
+                         $display("ERROR: ATS is enabled on PF%0d but PASID is not!", pf);
+                         incr_err_count();
+                     end
+                 end
+             end
+
+             if (err_count != 0)
+                 $finish;
+
+             //-------------------------
+             // deassert port reset
+             //-------------------------
+             deassert_afu_reset();
+             //-------------------------
+             // Test scenarios 
+             //-------------------------
+             $display(">>> Running %s on Link 0...", unit_test_name);
+             main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+         `endif
+             test_done = 1'b1;
+             all_tests_done = 1'b1;
+         end
+      end
+   end
+endgenerate
 
 
 //---------------------------------------------------------
@@ -382,6 +508,7 @@ task main_test;
     va_to_pa = {>>byte_t{64'h42645d8003}};
     host_bfm_top.host_memory.initialize_data(va, va_to_pa);
     pfvf = new(0,0,0);
+    $display("Entering %s.", unit_test_name);
 
     // The AFUs for testing are in the port gasket.
     for (int p = 0; p < top_cfg_pkg::PG_NUM_RTABLE_ENTRIES; p = p + 1) begin

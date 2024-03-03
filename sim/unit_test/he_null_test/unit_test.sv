@@ -8,6 +8,7 @@ import host_bfm_types_pkg::*;
 
 module unit_test #(
    parameter SOC_ATTACH = 0,
+   parameter LINK_NUMBER = 0,
    parameter type pf_type = default_pfs, 
    parameter pf_type pf_list = '{1'b1}, 
    parameter type vf_type = default_vfs, 
@@ -80,6 +81,14 @@ pfvf_struct pfvf;
 parameter MAX_TEST = 100;
 parameter TIMEOUT = 10.0ms;
 parameter RP_MAX_TAGS = 64;
+localparam NUMBER_OF_LINKS = `OFS_FIM_IP_CFG_PCIE_SS_NUM_LINKS;
+localparam string unit_test_name = "Port Gasket Test";
+
+//---------------------------------------------------------
+// Mailbox 
+//---------------------------------------------------------
+mailbox #(host_bfm_types_pkg::mbx_message_t) mbx = new();
+host_bfm_types_pkg::mbx_message_t mbx_msg;
 
 typedef struct packed {
    logic result;
@@ -96,6 +105,7 @@ t_test_info [MAX_TEST-1:0] test_summary;
 logic reset_test;
 logic [7:0] checker_err_count;
 logic test_done;
+logic all_tests_done;
 logic test_result;
 
 //---------------------------------------------------------
@@ -155,9 +165,10 @@ endtask
 task print_test_header;
    input [1024*8-1:0] test_name;
 begin
-   $display("\n********************************************");
+   $display("\n");
+   $display("****************************************************************");
    $display(" Running TEST(%0d) : %0s", test_id, test_name);
-   $display("********************************************");   
+   $display("****************************************************************");
    test_summary[test_id].name = test_name;
 end
 endtask
@@ -359,49 +370,54 @@ begin
    //-----------
    // BPF slaves
    //-----------
-   $display("\n---------------------------------------");
-   $display("Test CSR access to HE-MEM-NULL (PF0-VF0)");
-   $display("---------------------------------------\n");
+   if (LINK_NUMBER == 0)
+   begin
+      $display("\n---------------------------------------");
+      $display("Test CSR access to HE-MEM-NULL (PF0-VF0)");
+      $display("---------------------------------------\n");
       pfvf = '{0,0,1}; // Set PFVF to PF0-VF0
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
       test_csr_access_64(result, addr_mode, HE_NULL_SCRATCHPAD, 'h1111_2222_3333_4444);
       test_csr_access_32(result, addr_mode, HE_NULL_SCRATCHPAD, 'haa05_05aa);   
-   
-   $display("\n---------------------------------------");
-   $display("Test CSR access to HE-HSSI (PF0-VF1)");
-   $display("---------------------------------------\n");
+      
+      $display("\n---------------------------------------");
+      $display("Test CSR access to HE-HSSI (PF0-VF1)");
+      $display("---------------------------------------\n");
       pfvf = '{0,1,1}; // Set PFVF to PF0-VF1
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
       test_csr_access_64(result, addr_mode, HE_NULL_SCRATCHPAD, 'h1111_2222_3333_4444);
       test_csr_access_32(result, addr_mode, HE_NULL_SCRATCHPAD, 'haa06_06aa);   
 
-   $display("\n---------------------------------------");
-   $display("Test CSR access to MEM-TG (PF0-VF2)");
-   $display("---------------------------------------\n");
+      $display("\n---------------------------------------");
+      $display("Test CSR access to MEM-TG (PF0-VF2)");
+      $display("---------------------------------------\n");
       pfvf = '{0,2,1}; // Set PFVF to PF0-VF2
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
       test_csr_access_64(result, addr_mode, HE_NULL_SCRATCHPAD, 'h1111_2222_3333_4444);
       test_csr_access_32(result, addr_mode, HE_NULL_SCRATCHPAD, 'haa07_07aa);
-   
-   $display("\n---------------------------------------");
-   $display("Test CSR access to PF1)");
-   $display("---------------------------------------\n");
+      
+      $display("\n---------------------------------------");
+      $display("Test CSR access to PF1)");
+      $display("---------------------------------------\n");
       pfvf = '{1,0,0}; // Set PFVF to PF1
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
       test_csr_access_64(result, addr_mode, HE_NULL_SCRATCHPAD, 'h1111_2222_3333_4444);
       test_csr_access_32(result, addr_mode, HE_NULL_SCRATCHPAD, 'haa02_02aa);   
+   end
       
    $display("\n---------------------------------------");
    $display("Test CSR access to HE-LB (PF2)");
    $display("---------------------------------------\n");
-      pfvf = '{2,0,0}; // Set PFVF to PF2
-      host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
-      test_csr_access_64(result, addr_mode, HE_NULL_SCRATCHPAD, 'h1111_2222_3333_4444);
-      test_csr_access_32(result, addr_mode, HE_NULL_SCRATCHPAD, 'haa04_04aa);   
+   pfvf = '{2,0,0}; // Set PFVF to PF2
+   host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
+   test_csr_access_64(result, addr_mode, HE_NULL_SCRATCHPAD, 'h1111_2222_3333_4444);
+   test_csr_access_32(result, addr_mode, HE_NULL_SCRATCHPAD, 'haa04_04aa);   
    
-   $display("\n---------------------------------------");
-   $display("Test CSR access to VIRTIO-LB (PF3)");
-   $display("---------------------------------------\n");
+   if (LINK_NUMBER == 0)
+   begin
+      $display("\n---------------------------------------");
+      $display("Test CSR access to VIRTIO-LB (PF3)");
+      $display("---------------------------------------\n");
       pfvf = '{3,0,0}; // Set PFVF to PF3
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
       test_csr_read_64(result, addr_mode, VIRTIO_DFH, 64'h1000010000000000); 
@@ -420,14 +436,14 @@ begin
       test_csr_access_64(result, addr_mode, VIRTIO_SCRATCHPAD, 'h1111_2222_3333_4444);
       test_csr_access_32(result, addr_mode, VIRTIO_SCRATCHPAD, 'haa08_08aa);   
    
-   $display("\n---------------------------------------");
-   $display("Test CSR access to HPS (PF4) CE-NULL");
-   $display("---------------------------------------\n");
+      $display("\n---------------------------------------");
+      $display("Test CSR access to HPS (PF4) CE-NULL");
+      $display("---------------------------------------\n");
       pfvf = '{4,0,0}; // Set PFVF to PF4
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
       test_csr_access_64(result, addr_mode, HE_NULL_SCRATCHPAD, 'h1111_2222_3333_4444);
       test_csr_access_32(result, addr_mode, HE_NULL_SCRATCHPAD, 'haa09_09aa);   
-      
+   end
    post_test_util(old_test_err_count);
 end
 endtask
@@ -699,6 +715,7 @@ begin
    reset_test = 1'b0;
    test_id = '0;
    test_done = 1'b0;
+   all_tests_done = 1'b0;
    test_result = 1'b0;
 end
 
@@ -717,9 +734,10 @@ begin
  
    wait (test_done==1) begin
       // Test summary
-      $display("\n********************");
-      $display("  Test summary");
-      $display("********************");
+      $display("\n");
+      $display("***************************");
+      $display("  Test summary for link %0d", LINK_NUMBER);
+      $display("***************************");
       for (int i=0; i < test_id; i=i+1) 
       begin
          if (test_summary[i].result)
@@ -730,38 +748,130 @@ begin
 
       if(get_err_count() == 0) 
       begin
+          $display("");
+          $display("");
+          $display("-----------------------------------------------------");
           $display("Test passed!");
+          $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+          $display("-----------------------------------------------------");
+          $display("");
+          $display("");
+          $display("      '||''|.      |      .|'''.|   .|'''.|  ");
+          $display("       ||   ||    |||     ||..  '   ||..  '  ");
+          $display("       ||...|'   |  ||     ''|||.    ''|||.  ");
+          $display("       ||       .''''|.  .     '|| .     '|| ");
+          $display("      .||.     .|.  .||. |'....|'  |'....|'  ");
+          $display("");
+          $display("");
       end 
       else 
       begin
           if (get_err_count() != 0) 
           begin
+             $display("");
+             $display("");
+             $display("-----------------------------------------------------");
              $display("Test FAILED! %d errors reported.\n", get_err_count());
+             $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+             $display("-----------------------------------------------------");
+             $display("");
+             $display("");
+             $display("      '||''''|     |     '||' '||'      ");
+             $display("       ||  .      |||     ||   ||       ");
+             $display("       ||''|     |  ||    ||   ||       ");
+             $display("       ||       .''''|.   ||   ||       ");
+             $display("      .||.     .|.  .||. .||. .||.....| ");
+             $display("");
+             $display("");
           end
        end
    end
    join_any    
-   $finish();  
+   if (LINK_NUMBER == 0)
+   begin
+      wait (all_tests_done);
+      $finish();  
+   end
 end
 
-always begin : main   
-   #10000;
-   wait (rst_n);
-   $display("MAIN Always - After Wait for rst_n.");
-   wait (csr_rst_n);
-   $display("MAIN Always - After Wait for csr_rst_n.");
-   //-------------------------
-   // deassert port reset
-   //-------------------------
-   deassert_afu_reset();
-   $display("MAIN Always - After Deassert of AFU Reset.");
-   //-------------------------
-   // Test scenarios 
-   //-------------------------
-   main_test(test_result);
-   $display("MAIN Always - After Main Task.");
-   test_done = 1'b1;
-end
+generate
+   if (LINK_NUMBER != 0)
+   begin // This block covers the scenario where there is more than one link and link N needs to coordinate execution with link0.
+      always begin : main   
+         #10000;
+         wait (rst_n);
+         wait (csr_rst_n);
+         $display(">>> Link #%0d: Sending READY to Link0.  Waiting for release.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(READY);
+         mbx_msg = START;
+         while (mbx_msg != GO)
+         begin
+            $display("Mailbox #%0d State: %s", LINK_NUMBER, mbx_msg.name());
+            mbx.get(mbx_msg);
+         end
+         $display(">>> Running %s on Link %0d...", unit_test_name, LINK_NUMBER);
+         main_test(test_result);
+         $display(">>> %s on Link %0d Completed.", unit_test_name, LINK_NUMBER);
+         test_done = 1'b1;
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(DONE);
+      end
+   end
+   else
+   begin
+      if (NUMBER_OF_LINKS > 1)
+      begin // This block covers the scenario where there is more than one link and link0 needs to communicate with the other links.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            #1000
+            $display(">>> Link #0: Getting status from Link #1 Mailbox, testing for READY");
+            mbx.try_get(mbx_msg);
+            $display(">>> Link #0: Link #1 shows status as %s.", mbx_msg.name());
+            $display(">>> Link #0: %s complete.  Sending GO to Link #1.", unit_test_name);
+            mbx_msg = READY;
+            host_gen_block1.pcie_top_host1.unit_test.mbx.put(GO);
+            while (mbx_msg != DONE)
+            begin
+               $display("Mailbox #0 State: %s", mbx_msg.name());
+               mbx.get(mbx_msg);
+            end
+            all_tests_done = 1'b1;
+         end
+      end
+      else
+      begin  // This block covers the scenario where there is only one link and no mailbox communication is required.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            all_tests_done = 1'b1;
+         end
+      end
+   end
+endgenerate
 
 
 //---------------------------------------------------------
@@ -770,11 +880,9 @@ end
 task main_test;
    output logic test_result;
    begin
-      $display("Entering HE Null Test.");
+      $display("Entering %s.", unit_test_name);
       host_bfm_top.host_bfm.set_mmio_mode(PU_METHOD_TRANSACTION);
       host_bfm_top.host_bfm.set_dm_mode(DM_AUTO_TRANSACTION);
-      pfvf = '{2,0,0}; // Set PFVF to PF2
-      host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
 
       test_mmio_addr32   (test_result);
       test_mmio_addr64   (test_result);

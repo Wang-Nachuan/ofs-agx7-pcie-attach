@@ -8,6 +8,7 @@ import host_bfm_types_pkg::*;
 
 module unit_test #(
    parameter SOC_ATTACH = 0,
+   parameter LINK_NUMBER = 0,
    parameter type pf_type = default_pfs, 
    parameter pf_type pf_list = '{1'b1}, 
    parameter type vf_type = default_vfs, 
@@ -89,6 +90,14 @@ parameter MAX_TEST = 100;
 //parameter TIMEOUT = 1.5ms;
 //parameter TIMEOUT = 10.0ms;
 parameter TIMEOUT = 30.0ms;
+localparam NUMBER_OF_LINKS = `OFS_FIM_IP_CFG_PCIE_SS_NUM_LINKS;
+localparam string unit_test_name = "PMCI VDM TX/RX All Random Loopback Test";
+
+//---------------------------------------------------------
+// Mailbox 
+//---------------------------------------------------------
+mailbox #(host_bfm_types_pkg::mbx_message_t) mbx = new();
+host_bfm_types_pkg::mbx_message_t mbx_msg;
 
 
 typedef struct packed {
@@ -103,6 +112,7 @@ t_test_info [MAX_TEST-1:0] test_summary;
 logic reset_test;
 logic [7:0] checker_err_count;
 logic test_done;
+logic all_tests_done;
 logic test_result;
 
 //---------------------------------------------------------
@@ -162,9 +172,10 @@ endtask
 task print_test_header;
    input [1024*8-1:0] test_name;
 begin
-   $display("\n********************************************");
+   $display("\n");
+   $display("****************************************************************");
    $display(" Running TEST(%0d) : %0s", test_id, test_name);
-   $display("********************************************");   
+   $display("****************************************************************");
    test_summary[test_id].name = test_name;
 end
 endtask
@@ -399,6 +410,7 @@ begin
    reset_test = 1'b0;
    test_id = '0;
    test_done = 1'b0;
+   all_tests_done = 1'b0;
    test_result = 1'b0;
 end
 
@@ -417,9 +429,10 @@ begin
  
    wait (test_done == 1) begin
       // Test summary
-      $display("\n********************");
-      $display("  Test summary");
-      $display("********************");
+      $display("\n");
+      $display("***************************");
+      $display("  Test summary for link %0d", LINK_NUMBER);
+      $display("***************************");
       for (int i=0; i < test_id; i=i+1) 
       begin
          if (test_summary[i].result)
@@ -430,41 +443,128 @@ begin
 
       if(get_err_count() == 0) 
       begin
+          $display("");
+          $display("");
+          $display("-----------------------------------------------------");
           $display("Test passed!");
+          $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+          $display("-----------------------------------------------------");
+          $display("");
+          $display("");
+          $display("      '||''|.      |      .|'''.|   .|'''.|  ");
+          $display("       ||   ||    |||     ||..  '   ||..  '  ");
+          $display("       ||...|'   |  ||     ''|||.    ''|||.  ");
+          $display("       ||       .''''|.  .     '|| .     '|| ");
+          $display("      .||.     .|.  .||. |'....|'  |'....|'  ");
+          $display("");
+          $display("");
       end 
       else 
       begin
           if (get_err_count() != 0) 
           begin
+             $display("");
+             $display("");
+             $display("-----------------------------------------------------");
              $display("Test FAILED! %d errors reported.\n", get_err_count());
+             $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+             $display("-----------------------------------------------------");
+             $display("");
+             $display("");
+             $display("      '||''''|     |     '||' '||'      ");
+             $display("       ||  .      |||     ||   ||       ");
+             $display("       ||''|     |  ||    ||   ||       ");
+             $display("       ||       .''''|.   ||   ||       ");
+             $display("      .||.     .|.  .||. .||. .||.....| ");
+             $display("");
+             $display("");
           end
        end
    end
-   
-   join_any    
-   $finish();  
+   join_any
+   if (LINK_NUMBER == 0)
+   begin
+      wait (all_tests_done);
+      $finish();
+   end
 end
 
-always begin : main   
-   $display("Start of MAIN Always.");
-   #10000;
-   $display("MAIN Always - After Delay");
-   wait (rst_n);
-   $display("MAIN Always - After Wait for rst_n.");
-   wait (csr_rst_n);
-   $display("MAIN Always - After Wait for csr_rst_n.");
-   //-------------------------
-   // deassert port reset
-   //-------------------------
-   deassert_afu_reset();
-   $display("MAIN Always - After Deassert of AFU Reset.");
-   //-------------------------
-   // Test scenarios 
-   //-------------------------
-   main_test(test_result);
-   $display("MAIN Always - After Main Task.");
-   test_done = 1'b1;
-end
+generate
+   if (LINK_NUMBER != 0)
+   begin // This block covers the scenario where there is more than one link and link N needs to coordinate execution with link0.
+      always begin : main   
+         #10000;
+         wait (rst_n);
+         wait (csr_rst_n);
+         $display(">>> Link #%0d: Sending READY to Link0.  Waiting for release.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(READY);
+         mbx_msg = START;
+         while (mbx_msg != GO)
+         begin
+            $display("Mailbox #%0d State: %s", LINK_NUMBER, mbx_msg.name());
+            mbx.get(mbx_msg);
+         end
+         $display(">>> No PMCI on Link %0d...", LINK_NUMBER);
+         $display(">>> Returning execution back to Link 0.  Link %0d actions completed.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(DONE);
+      end
+   end
+   else
+   begin
+      if (NUMBER_OF_LINKS > 1)
+      begin // This block covers the scenario where there is more than one link and link0 needs to communicate with the other links.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            #1000
+            $display(">>> Link #0: Getting status from Link #1 Mailbox, testing for READY");
+            mbx.try_get(mbx_msg);
+            $display(">>> Link #0: Link #1 shows status as %s.", mbx_msg.name());
+            $display(">>> Link #0: %s complete.  Sending GO to Link #1.", unit_test_name);
+            mbx_msg = READY;
+            host_gen_block1.pcie_top_host1.unit_test.mbx.put(GO);
+            while (mbx_msg != DONE)
+            begin
+               $display("Mailbox #0 State: %s", mbx_msg.name());
+               mbx.get(mbx_msg);
+            end
+            all_tests_done = 1'b1;
+         end
+      end
+      else
+      begin  // This block covers the scenario where there is only one link and no mailbox communication is required.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            all_tests_done = 1'b1;
+         end
+      end
+   end
+endgenerate
 
 
 task test_mmio_addr32;
@@ -550,12 +650,9 @@ begin
    result = 1'b1;
 
    $display("Test VDM RX path starts");
-      //WRITE32(ADDR32, PMCI_FBM_AR, 0, 1'b0, 0, 0, {8{4'h1}});	
-      //WRITE32(ADDR32, PMCI_FBM_AR, 0, 1'b0, 0, 0, {8{4'h2}});	 
    host_bfm_top.host_bfm.write32(PMCI_FBM_AR, {8{4'h1}});
    host_bfm_top.host_bfm.write32(PMCI_FBM_AR, {8{4'h2}});
    @(posedge clk);
-      //WRITE32(ADDR32, PMCI_FBM_AR, 0, 1'b0, 0, 0, {8{4'h3}});	
    host_bfm_top.host_bfm.write32(PMCI_FBM_AR, {8{4'h3}});
    test_csr_read_64(result,addr_mode, ST2MM_DFH, 'h3000000200000014);
       //create_vdm_msg_packet('h1,'d16,'h7f,'h1ab4);
@@ -871,7 +968,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -882,7 +978,6 @@ begin
    create_vdm_err_packet(32'h010000C0,3'h7,1'b1,1'b0,2'h3,1'b1,3'h7,2'h3,8'h0,2'h0);
    #0.4ms;
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS2,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS2, rdata);
    exp_data = 16'h0001;
    if(rdata[31:16] == exp_data)
@@ -912,7 +1007,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -921,7 +1015,6 @@ begin
    create_vdm_err_packet(32'h010000C0,3'h0,1'b0,1'b0,2'h0,1'b0,3'h0,2'h0,8'hF,2'h0);
    #0.4ms;
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS2,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS2, rdata);
    exp_data = 16'h0002;
    if(rdata[31:16] == exp_data)
@@ -951,7 +1044,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -960,7 +1052,6 @@ begin
    create_vdm_err_packet(32'h000000C0,3'h0,1'b0,1'b0,2'h0,1'b0,3'h0,2'h0,8'h0,2'h0);
    #0.4ms;
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS2,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS2, rdata);
    exp_data = 16'h0001;
    if(rdata[15:0] == exp_data)
@@ -991,7 +1082,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -1000,7 +1090,6 @@ begin
    create_vdm_err_packet(32'h012100C0,3'h0,4'h0,1'b0,2'h0,1'b0,3'h0,2'h0,8'h0,2'h0);
    #0.4ms;
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS2,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS2, rdata);
    exp_data = 16'h0002;
    if(rdata[15:0] == exp_data)
@@ -1031,7 +1120,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -1041,7 +1129,6 @@ begin
    #0.4ms;
    //xfer_vdm_pmci_bmc_init_task();
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS3 ,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS3, rdata);
    exp_data = 8'h01;
    if(rdata[39:32] == exp_data)
@@ -1071,7 +1158,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -1081,7 +1167,6 @@ begin
    #0.4ms;
    //xfer_vdm_pmci_bmc_init_task();
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS3 ,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS3, rdata);
    exp_data = 8'h02;
    if(rdata[39:32] == exp_data)
@@ -1111,7 +1196,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -1121,7 +1205,6 @@ begin
    #0.4ms;
    //xfer_vdm_pmci_bmc_init_task();
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS3 ,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS3, rdata);
    exp_data = 8'h03;
    if(rdata[39:32] == exp_data)
@@ -1154,7 +1237,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -1164,7 +1246,6 @@ begin
    #0.4ms;
    //xfer_vdm_pmci_bmc_init_task();
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS3 ,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS3, rdata);
    exp_data = 8'h04;
    if(rdata[39:32] == exp_data)
@@ -1197,7 +1278,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -1208,7 +1288,6 @@ begin
    #0.4ms;
    //xfer_vdm_pmci_bmc_init_task();
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS3 ,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS3, rdata);
    exp_data = 8'h05;
    if(rdata[39:32] == exp_data)
@@ -1240,7 +1319,6 @@ begin
    result = 1'b1;
    repeat (6) @(posedge clk);
    
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
     #200us;
@@ -1251,7 +1329,6 @@ begin
    #0.4ms;
    //xfer_vdm_pmci_bmc_init_task();
    //Read the CSR from HOST
-   //READ64(ADDR64,PMCI_VDM_TLP_STS3 ,0,1'b0,0,0,rdata,error);
    host_bfm_top.host_bfm.read64(PMCI_VDM_TLP_STS3, rdata);
    exp_data = 8'h0006;
    if(rdata[39:32] == exp_data)
@@ -1448,7 +1525,6 @@ begin
    $display("Test MCTP VDM TX-RX Loopback ");
    repeat (6) @(posedge clk);
 
-   //WRITE32(ADDR32, PMCI_VDM_BA, 0, 1'b0, 0, 0, 'h0004_2000);
    host_bfm_top.host_bfm.write32(PMCI_VDM_BA, 'h0004_2000);
     
    begin @(negedge top_tb.bmc_m10.m10_clk);
@@ -1716,7 +1792,7 @@ endtask
 task main_test;
    output logic test_result;
    begin
-      $display("Entering PMCI VDM TX/RX Random Loopback Test.");
+      $display("Entering %s.", unit_test_name);
       host_bfm_top.host_bfm.set_mmio_mode(PU_METHOD_TRANSACTION);
       host_bfm_top.host_bfm.set_dm_mode(DM_AUTO_TRANSACTION);
       pfvf = '{0,0,0}; // Set PFVF to PF0

@@ -29,6 +29,26 @@ typedef struct packed {
    bit [10:0] vfn;
    bit        vfa;
 } pfvf_struct;
+typedef enum {
+   START,
+   START_ACK,
+   STOP,
+   STOP_ACK,
+   READY,
+   READY_ACK,
+   GO,
+   GO_ACK,
+   WAIT,
+   WAIT_ACK,
+   RUNNING,
+   ERROR,
+   PASS,
+   FAIL,
+   HALT,
+   HALT_ACK,
+   DONE,
+   DONE_ACK
+} mbx_message_t;
 
 parameter TUSER_WIDTH = 10;
 parameter HDR_WIDTH = 256;

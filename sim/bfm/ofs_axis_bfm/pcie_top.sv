@@ -15,21 +15,22 @@ import ofs_fim_pcie_pkg::*;
 import host_bfm_types_pkg::*;
 
 module pcie_top # (
-   parameter            PCIE_LANES           = 16,
-   parameter            NUM_PF               = 1,
-   parameter            NUM_VF               = 1,
-   parameter            MAX_NUM_VF           = 1,
-   parameter            SOC_ATTACH           = 0,
+   parameter            PCIE_LANES      = 16,
+   parameter            NUM_PF          = 1,
+   parameter            NUM_VF          = 1,
+   parameter            MAX_NUM_VF      = 1,
+   parameter            SOC_ATTACH      = 0,
+   parameter            LINK_NUMBER     = 0,
    parameter type       PF_ENABLED_VEC_T     = default_pfs,
    parameter PF_ENABLED_VEC_T PF_ENABLED_VEC = '{1'b1},
    parameter type       PF_NUM_VFS_VEC_T     = default_vfs,
    parameter PF_NUM_VFS_VEC_T PF_NUM_VFS_VEC = '{0},
-   parameter            MM_ADDR_WIDTH        = 19,
-   parameter            MM_DATA_WIDTH        = 64,
-   parameter bit [11:0] FEAT_ID              = 12'h0,
-   parameter bit [3:0]  FEAT_VER             = 4'h0,
-   parameter bit [23:0] NEXT_DFH_OFFSET      = 24'h1000,
-   parameter bit        END_OF_LIST          = 1'b0
+   parameter            MM_ADDR_WIDTH   = 19,
+   parameter            MM_DATA_WIDTH   = 64,
+   parameter bit [11:0] FEAT_ID         = 12'h0,
+   parameter bit [3:0]  FEAT_VER        = 4'h0,
+   parameter bit [23:0] NEXT_DFH_OFFSET = 24'h1000,
+   parameter bit        END_OF_LIST     = 1'b0
 ) (
    input  logic                    fim_clk,
    input  logic                    fim_rst_n,
@@ -119,7 +120,6 @@ end
 
 // Connections to Host BFM via AXI-ST Streaming Interfaces
 host_bfm_top #(
-   //.SOC_ATTACH       (SOC_ATTACH),
    .pf_type (PF_ENABLED_VEC_T),
    .pf_list (PF_ENABLED_VEC),
    .vf_type (PF_NUM_VFS_VEC_T),
@@ -134,7 +134,6 @@ host_bfm_top #(
 
 // Connections to Function-Level Reset (FLR) Manager
 host_flr_top #(
-   //.SOC_ATTACH       (SOC_ATTACH),
    .pf_type(PF_ENABLED_VEC_T),
    .pf_list(PF_ENABLED_VEC),
    .vf_type(PF_NUM_VFS_VEC_T),
@@ -149,6 +148,7 @@ host_flr_top #(
 // Instantiation of Unit Test
 unit_test #(
    .SOC_ATTACH(SOC_ATTACH),
+   .LINK_NUMBER(LINK_NUMBER),
    .pf_type(PF_ENABLED_VEC_T),
    .pf_list(PF_ENABLED_VEC),
    .vf_type(PF_NUM_VFS_VEC_T),
@@ -159,7 +159,6 @@ unit_test #(
    .csr_clk(csr_clk),
    .csr_rst_n(csr_rst_n)
 );
-
 
 
 endmodule

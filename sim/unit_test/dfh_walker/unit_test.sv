@@ -8,6 +8,7 @@ import host_bfm_types_pkg::*;
 
 module unit_test #(
    parameter SOC_ATTACH = 0,
+   parameter LINK_NUMBER = 0,
    parameter type pf_type = default_pfs, 
    parameter pf_type pf_list = '{1'b1}, 
    parameter type vf_type = default_vfs, 
@@ -79,7 +80,14 @@ pfvf_struct pfvf;
 //---------------------------------------------------------
 parameter MAX_TEST = 100;
 parameter TIMEOUT = 10ms;
+localparam NUMBER_OF_LINKS = `OFS_FIM_IP_CFG_PCIE_SS_NUM_LINKS;
+localparam string unit_test_name = "DFH Walker Test";
 
+//---------------------------------------------------------
+// Mailbox 
+//---------------------------------------------------------
+mailbox #(host_bfm_types_pkg::mbx_message_t) mbx = new();
+host_bfm_types_pkg::mbx_message_t mbx_msg;
 
 typedef struct packed {
    logic result;
@@ -92,6 +100,7 @@ t_test_info [MAX_TEST-1:0] test_summary;
 logic reset_test;
 logic [7:0] checker_err_count;
 logic test_done;
+logic all_tests_done;
 logic test_result;
 
 //---------------------------------------------------------
@@ -203,9 +212,9 @@ begin
    reset_test = 1'b0;
    test_id = '0;
    test_done = 1'b0;
+   all_tests_done = 1'b0;
    test_result = 1'b0;
 end
-
 
 initial 
 begin
@@ -221,9 +230,10 @@ begin
  
    wait (test_done==1) begin
       // Test summary
-      $display("\n********************");
-      $display("  Test summary");
-      $display("********************");
+      $display("\n");
+      $display("***************************");
+      $display("  Test summary for link %0d", LINK_NUMBER);
+      $display("***************************");
       for (int i=0; i < test_id; i=i+1) 
       begin
          if (test_summary[i].result)
@@ -234,37 +244,150 @@ begin
 
       if(get_err_count() == 0) 
       begin
-          $display("Test passed!");
+         $display("");
+         $display("");
+         $display("-----------------------------------------------------");
+         $display("Test passed!");
+         $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+         $display("-----------------------------------------------------");
+         $display("");
+         $display("");
+         $display("      '||''|.      |      .|'''.|   .|'''.|  ");
+         $display("       ||   ||    |||     ||..  '   ||..  '  ");
+         $display("       ||...|'   |  ||     ''|||.    ''|||.  ");
+         $display("       ||       .''''|.  .     '|| .     '|| ");
+         $display("      .||.     .|.  .||. |'....|'  |'....|'  ");
+         $display("");
+         $display("");
       end 
       else 
       begin
           if (get_err_count() != 0) 
           begin
-             $display("Test FAILED! %d errors reported.\n", get_err_count());
+             $display("");
+             $display("");
+             $display("-----------------------------------------------------");
+             $display("Test FAILED! %0d errors reported.", get_err_count());
+             $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+             $display("-----------------------------------------------------");
+             $display("");
+             $display("");
+             $display("      '||''''|     |     '||' '||'      ");
+             $display("       ||  .      |||     ||   ||       ");
+             $display("       ||''|     |  ||    ||   ||       ");
+             $display("       ||       .''''|.   ||   ||       ");
+             $display("      .||.     .|.  .||. .||. .||.....| ");
+             $display("");
+             $display("");
           end
        end
    end
    
-   join_any    
-   $finish();  
+   join_any
+   if (LINK_NUMBER == 0)
+   begin
+      wait (all_tests_done);
+      $finish();  
+   end
 end
 
-always begin : main   
-   #10000;
-   wait (rst_n);
-   //@(posedge clk iff (rst_n === 1'b1));
-   wait (csr_rst_n);
-   //@(posedge csr_clk iff (csr_rst_n === 1'b1));
-   //-------------------------
-   // deassert port reset
-   //-------------------------
-   deassert_afu_reset();
-   //-------------------------
-   // Test scenarios 
-   //-------------------------
-   main_test(test_result);
-   test_done = 1'b1;
-end
+
+generate
+   if (LINK_NUMBER != 0)
+   begin // This block covers the scenario where there is more than one link and link N needs to coordinate execution with link0.
+      logic [31:0] old_test_err_count;
+      logic result;
+      logic [63:0] addr;
+      logic [63:0] scratch;
+      always begin : main   
+         #10000;
+         wait (rst_n);
+         wait (csr_rst_n);
+         //deassert_afu_reset();
+         $display(">>> Link #%0d: Sending READY to Link0.  Waiting for release.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(READY);
+         mbx_msg = START;
+         while (mbx_msg != GO)
+         begin
+            $display("Mailbox #%0d State: %s", LINK_NUMBER, mbx_msg.name());
+            mbx.get(mbx_msg);
+         end
+         $display(">>> Running %s on Link %0d...", unit_test_name, LINK_NUMBER);
+         // Checking for Dummy DFH in Link #1
+         print_test_header("test_dfh_walking-link1");
+         old_test_err_count = get_err_count();
+         addr = 64'h0;
+         host_bfm_top.host_bfm.read64(addr,scratch);
+         $display("DUMMY DFH");
+         $display("   Address   (0x%0x)", addr);
+         $display("   DFH value (0x%0x)\n", scratch);
+         if (scratch != 64'h1000_0100_0000_0000)
+         begin
+            incr_err_count();
+         end
+         post_test_util(old_test_err_count);
+         $display(">>> %s on Link %0d Completed.", unit_test_name, LINK_NUMBER);
+         test_done = 1'b1;
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(DONE);
+      end
+   end
+   else
+   begin
+      if (NUMBER_OF_LINKS > 1)
+      begin // This block covers the scenario where there is more than one link and link0 needs to communicate with the other links.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            $display("*** Number of Links: %0d", NUMBER_OF_LINKS);
+            #1000
+            $display(">>> Link #0: Getting status from Link #1 Mailbox, testing for READY");
+            mbx.try_get(mbx_msg);
+            $display(">>> Link #0: Link #1 shows status as %s.", mbx_msg.name());
+            $display(">>> Link #0: %s complete.  Sending GO to Link #1.", unit_test_name);
+            mbx_msg = READY;
+            host_gen_block1.pcie_top_host1.unit_test.mbx.put(GO);
+            while (mbx_msg != DONE)
+            begin
+               $display("Mailbox #0 State: %s", mbx_msg.name());
+               mbx.get(mbx_msg);
+            end
+            all_tests_done = 1'b1;
+         end
+      end
+      else
+      begin  // This block covers the scenario where there is only one link and no mailbox communication is required.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            all_tests_done = 1'b1;
+         end
+      end
+   end
+endgenerate
 
 
 //---------------------------------------------------------
@@ -287,7 +410,7 @@ task test_dfh_walking;
    logic [31:0] addr;
    logic [31:0] old_test_err_count;
 begin
-   print_test_header("test_dfh_walking");
+   print_test_header("test_dfh_walking-link0");
    
    old_test_err_count = get_err_count();
    result = 1'b1;
@@ -349,10 +472,12 @@ begin
    post_test_util(old_test_err_count);
 end
 endtask
+
+
 task main_test;
    output logic test_result;
    begin
-      $display("Entering DFH Walker Test.");
+      $display("Entering %s.", unit_test_name);
       host_bfm_top.host_bfm.set_mmio_mode(PU_METHOD_TRANSACTION);
       host_bfm_top.host_bfm.set_dm_mode(DM_AUTO_TRANSACTION);
 

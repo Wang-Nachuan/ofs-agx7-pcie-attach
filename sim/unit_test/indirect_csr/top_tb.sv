@@ -29,6 +29,8 @@ localparam CMD_NOOP   = 2'h0;
 localparam CMD_READ   = 2'h1;
 localparam CMD_WRITE  = 2'h2;
 
+localparam string unit_test_name = "Indirect CSR";
+
 logic rst_n;
 logic csr_clk, csr_rst_n;
 
@@ -102,9 +104,37 @@ initial begin
       csr_read(DFH, DFH_VALUE);
 
       if(get_err_count() == 0) begin
+          $display("");
+          $display("");
+          $display("-----------------------------------------------------");
           $display("Test passed!");
+          $display("Test:%s", unit_test_name);
+          $display("-----------------------------------------------------");
+          $display("");
+          $display("");
+          $display("      '||''|.      |      .|'''.|   .|'''.|  ");
+          $display("       ||   ||    |||     ||..  '   ||..  '  ");
+          $display("       ||...|'   |  ||     ''|||.    ''|||.  ");
+          $display("       ||       .''''|.  .     '|| .     '|| ");
+          $display("      .||.     .|.  .||. |'....|'  |'....|'  ");
+          $display("");
+          $display("");
       end else begin
-          $display("Test FAILED! %d errors reported.\n", get_err_count());
+          $display("");
+          $display("");
+          $display("-----------------------------------------------------");
+          $display("Test FAILED! %0d errors reported.", get_err_count());
+          $display("Test:%s", unit_test_name);
+          $display("-----------------------------------------------------");
+          $display("");
+          $display("");
+          $display("      '||''''|     |     '||' '||'      ");
+          $display("       ||  .      |||     ||   ||       ");
+          $display("       ||''|     |  ||    ||   ||       ");
+          $display("       ||       .''''|.   ||   ||       ");
+          $display("      .||.     .|.  .||. .||. .||.....| ");
+          $display("");
+          $display("");
       end
    end
    join_any

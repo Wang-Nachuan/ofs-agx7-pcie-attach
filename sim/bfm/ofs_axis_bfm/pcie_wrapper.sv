@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 `include "fpga_defines.vh"
+`include "ofs_ip_cfg_db.vh"
 
 
 module pcie_wrapper 
@@ -18,6 +19,7 @@ import pcie_ss_axis_pkg::*;
 import ofs_fim_pcie_hdr_def::*;
 #(
    parameter            PCIE_LANES      = 16,
+   parameter            PCIE_NUM_LINKS  = 1,
    parameter            MM_ADDR_WIDTH   = 19,
    parameter            MM_DATA_WIDTH   = 64,
    parameter bit [11:0] FEAT_ID         = 12'h0,
@@ -26,152 +28,205 @@ import ofs_fim_pcie_hdr_def::*;
    parameter bit        END_OF_LIST     = 1'b0,
    parameter            SOC_ATTACH      = 0
 )(
-   input  logic                     fim_clk,
-   input  logic                     fim_rst_n,
+   input  logic                      fim_clk,
+   input  logic [PCIE_NUM_LINKS-1:0] fim_rst_n,
 
-   input  logic                     csr_clk,
-   input  logic                     csr_rst_n,
+   input  logic                      csr_clk,
+   input  logic [PCIE_NUM_LINKS-1:0] csr_rst_n,
 
-   input  logic                     ninit_done,
-   output logic                     reset_status,
+   input  logic                      ninit_done,
+   output logic [PCIE_NUM_LINKS-1:0] reset_status,
 
-   input  logic                     p0_subsystem_cold_rst_n,    
-   input  logic                     p0_subsystem_warm_rst_n,    
-   output logic                     p0_subsystem_cold_rst_ack_n,
-   output logic                     p0_subsystem_warm_rst_ack_n,
+   input  logic [PCIE_NUM_LINKS-1:0] subsystem_cold_rst_n,    
+   input  logic [PCIE_NUM_LINKS-1:0] subsystem_warm_rst_n,    
+   output logic [PCIE_NUM_LINKS-1:0] subsystem_cold_rst_ack_n,
+   output logic [PCIE_NUM_LINKS-1:0] subsystem_warm_rst_ack_n,
    
    // PCIe pins
-   input  logic                     pin_pcie_refclk0_p,
-   input  logic                     pin_pcie_refclk1_p,
-   input  logic                     pin_pcie_in_perst_n,   // connected to HIP
-   input  logic [PCIE_LANES-1:0]    pin_pcie_rx_p,
-   input  logic [PCIE_LANES-1:0]    pin_pcie_rx_n,
-   output logic [PCIE_LANES-1:0]    pin_pcie_tx_p,
-   output logic [PCIE_LANES-1:0]    pin_pcie_tx_n,
+   input  logic                      pin_pcie_refclk0_p,
+   input  logic                      pin_pcie_refclk1_p,
+   input  logic                      pin_pcie_in_perst_n,   // connected to HIP
+   input  logic [PCIE_LANES-1:0]     pin_pcie_rx_p,
+   input  logic [PCIE_LANES-1:0]     pin_pcie_rx_n,
+   output logic [PCIE_LANES-1:0]     pin_pcie_tx_p,
+   output logic [PCIE_LANES-1:0]     pin_pcie_tx_n,
 
    //Ctrl Shadow ports
-   output logic                     p0_ss_app_st_ctrlshadow_tvalid,
-   output logic [39:0]              p0_ss_app_st_ctrlshadow_tdata,
+   output logic [PCIE_NUM_LINKS-1:0]        ss_app_st_ctrlshadow_tvalid,
+   output logic [PCIE_NUM_LINKS-1:0] [39:0] ss_app_st_ctrlshadow_tdata,
 
    // AXI-S data interfaces
-   pcie_ss_axis_if.source           axi_st_rxreq_if,   // MMIO (when PCIe SS completions are sorted)
-   pcie_ss_axis_if.source           axi_st_rx_if,      // Host memory read completions
-   pcie_ss_axis_if.sink             axi_st_tx_if,      // Any FPGA to host command or completion
-   pcie_ss_axis_if.sink             axi_st_txreq_if,   // DM-encoded reads or interrupts
+   pcie_ss_axis_if.source            axi_st_rxreq_if[PCIE_NUM_LINKS-1:0],   // MMIO (when PCIe SS completions are sorted)
+   pcie_ss_axis_if.source            axi_st_rx_if[PCIE_NUM_LINKS-1:0],      // Host memory read completions
+   pcie_ss_axis_if.sink              axi_st_tx_if[PCIE_NUM_LINKS-1:0],      // Any FPGA to host command or completion
+   pcie_ss_axis_if.sink              axi_st_txreq_if[PCIE_NUM_LINKS-1:0],   // DM-encoded reads or interrupts
 
    // AXI4-lite CSR interface
-   ofs_fim_axi_lite_if.slave        csr_lite_if,
+   ofs_fim_axi_lite_if.slave        csr_lite_if[PCIE_NUM_LINKS-1:0],
   
    //Completion Timeout Interface
-   output pcie_ss_axis_pkg::t_axis_pcie_cplto axis_cpl_timeout,
+   output pcie_ss_axis_pkg::t_axis_pcie_cplto axis_cpl_timeout[PCIE_NUM_LINKS-1:0],
  
-   output pcie_ss_axis_pkg::t_pcie_tag_mode tag_mode,
+   output pcie_ss_axis_pkg::t_pcie_tag_mode tag_mode[PCIE_NUM_LINKS-1:0],
 
    // FLR 
-   output pcie_ss_axis_pkg::t_axis_pcie_flr    axi_st_flr_req,
-   input  pcie_ss_axis_pkg::t_axis_pcie_flr    axi_st_flr_rsp
+   output pcie_ss_axis_pkg::t_axis_pcie_flr    axi_st_flr_req[PCIE_NUM_LINKS-1:0],
+   input  pcie_ss_axis_pkg::t_axis_pcie_flr    axi_st_flr_rsp[PCIE_NUM_LINKS-1:0]
+
 );  
-pcie_ss_axis_if axi_st_rxreq_if_dummy ();   // MMIO (when PCIe SS completions are sorted)
-pcie_ss_axis_if axi_st_rx_if_dummy ();      // Host memory read completions
-pcie_ss_axis_if axi_st_tx_if_dummy ();      // Any FPGA to host command or completion
-pcie_ss_axis_pkg::t_axis_pcie_flr    axi_st_flr_rsp_dummy;
 
-t_axis_pcie         axis_tx;
-logic               axis_tx_tready;
+pcie_ss_axis_if axi_st_txreq_if_dummy[PCIE_NUM_LINKS-1:0] ();   // MMIO (when PCIe SS completions are sorted)
+pcie_ss_axis_if axi_st_rxreq_if_dummy[PCIE_NUM_LINKS-1:0] ();   // MMIO (when PCIe SS completions are sorted)
+pcie_ss_axis_if axi_st_rx_if_dummy[PCIE_NUM_LINKS-1:0] ();      // Host memory read completions
+pcie_ss_axis_if axi_st_tx_if_dummy[PCIE_NUM_LINKS-1:0] ();      // Any FPGA to host command or completion
+pcie_ss_axis_pkg::t_axis_pcie_flr    axi_st_flr_rsp_dummy[PCIE_NUM_LINKS-1:0];
 
-logic               pcie_linkup;
-logic [31:0]        pcie_rx_err_code;
+t_axis_pcie         axis_tx[PCIE_NUM_LINKS-1:0];
+logic [PCIE_NUM_LINKS-1:0]   axis_tx_tready;
 
-t_pcie_ctrl_shdw    ctrl_shdw_reg;
-t_pcie_tag_mode     tag_mode_sync;
+logic [PCIE_NUM_LINKS-1:0]   pcie_linkup;
+logic [31:0]        pcie_rx_err_code[PCIE_NUM_LINKS-1:0];
 
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(20), .ARADDR_WIDTH(20), .WDATA_WIDTH(32), .RDATA_WIDTH(32)) ss_csr_lite_if();
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(20), .ARADDR_WIDTH(20), .WDATA_WIDTH(32), .RDATA_WIDTH(32)) ss_csr_lite_if_dummy();
+pcie_ss_axis_if #(
+            .DATA_W(ofs_fim_cfg_pkg::PCIE_TDATA_WIDTH),
+            .USER_W(ofs_fim_cfg_pkg::PCIE_TUSER_WIDTH)
+    ) rxreq_in[PCIE_NUM_LINKS-1:0](.clk(fim_clk));
 
-always_comb begin
-   axis_tx.tvalid = axi_st_tx_if.tvalid;
-   axis_tx.tdata  = axi_st_tx_if.tdata;
-   axis_tx.tkeep  = axi_st_tx_if.tkeep;
-   axis_tx.tlast  = axi_st_tx_if.tlast;
-   axis_tx.tuser  = axi_st_tx_if.tuser_vendor;
+       
+pcie_ss_axis_if #(
+            .DATA_W(ofs_fim_cfg_pkg::PCIE_TDATA_WIDTH),
+            .USER_W(ofs_fim_cfg_pkg::PCIE_TUSER_WIDTH)
+    ) axi_st_tx_committed[PCIE_NUM_LINKS-1:0](.clk(fim_clk));
 
-   axis_tx_tready = axi_st_tx_if.tready;
-end
 
-pcie_ss_if #(
-   .MM_ADDR_WIDTH   (MM_ADDR_WIDTH), 
-   .MM_DATA_WIDTH   (MM_DATA_WIDTH),
-   .FEAT_ID         (FEAT_ID),
-   .FEAT_VER        (FEAT_VER),
-   .NEXT_DFH_OFFSET (NEXT_DFH_OFFSET),
-   .END_OF_LIST     (END_OF_LIST)   
-) pcie_ss_if (
-   .fim_clk            (fim_clk),
-   .fim_rst_n          (fim_rst_n),
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(20), .ARADDR_WIDTH(20), .WDATA_WIDTH(32), .RDATA_WIDTH(32)) ss_csr_lite_if[PCIE_NUM_LINKS-1:0]();
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(20), .ARADDR_WIDTH(20), .WDATA_WIDTH(32), .RDATA_WIDTH(32)) ss_csr_lite_if_dummy[PCIE_NUM_LINKS-1:0]();
 
-   .csr_clk            (csr_clk),
-   .csr_rst_n          (csr_rst_n),
+import ofs_fim_if_pkg::*;
+t_sideband_from_pcie   pcie_p2c_sideband[PCIE_NUM_LINKS-1:0];
 
-   .i_axis_tx          (axis_tx),
-   .i_axis_tx_tready   (axis_tx_tready),
-
-   .i_axis_cpl_timeout (axis_cpl_timeout),
-   
-   .i_pcie_linkup      (pcie_linkup),
-   .i_rx_err_code      (pcie_rx_err_code),
+generate
+    for (genvar j=0; j<PCIE_NUM_LINKS; j++) begin : PCIE_LINKS
  
-   .csr_lite_if        (csr_lite_if),
-   .ss_csr_lite_if     (ss_csr_lite_if)
-);
+        pcie_ss_axis_if #(
+            .DATA_W(ofs_fim_cfg_pkg::PCIE_TDATA_WIDTH),
+            .USER_W(ofs_fim_cfg_pkg::PCIE_TUSER_WIDTH)
+            ) rxreq_arb_in[2](.clk(fim_clk), .rst_n(fim_rst_n[j]));
+
+       
+        always_comb 
+        begin
+            // axis tx intf
+            axis_tx[j].tvalid = axi_st_tx_if[j].tvalid;
+            axis_tx[j].tdata  = axi_st_tx_if[j].tdata;
+            axis_tx[j].tkeep  = axi_st_tx_if[j].tkeep;
+            axis_tx[j].tlast  = axi_st_tx_if[j].tlast;
+            axis_tx[j].tuser  = axi_st_tx_if[j].tuser_vendor;
+
+            axis_tx_tready[j] = axi_st_tx_if[j].tready;
+
+            // rx to arb
+            rxreq_arb_in[0].tvalid             = rxreq_in[j].tvalid;  
+            rxreq_arb_in[0].tdata              = rxreq_in[j].tdata;  
+            rxreq_arb_in[0].tkeep              = rxreq_in[j].tkeep;  
+            rxreq_arb_in[0].tlast              = rxreq_in[j].tlast;  
+            rxreq_arb_in[0].tuser_vendor       = rxreq_in[j].tuser_vendor;  
+
+            rxreq_in[j].tready                 = rxreq_arb_in[0].tready;
+
+        end
+
+        // Assign rst_n for the link
+        assign rxreq_in[j].rst_n = fim_rst_n[j];
+        assign axi_st_tx_committed[j].rst_n = fim_rst_n[j];
+
+        pcie_ss_if #(
+            .MM_ADDR_WIDTH   (MM_ADDR_WIDTH), 
+            .MM_DATA_WIDTH   (MM_DATA_WIDTH),
+            .FEAT_ID         (FEAT_ID),
+            .FEAT_VER        (FEAT_VER),
+            .NEXT_DFH_OFFSET (NEXT_DFH_OFFSET),
+            .END_OF_LIST     (END_OF_LIST)   
+        ) pcie_ss_if (
+            .fim_clk            (fim_clk),
+            .fim_rst_n          (fim_rst_n[j]),
+            
+            .csr_clk            (csr_clk),
+            .csr_rst_n          (csr_rst_n[j]),
+            
+            .i_axis_tx          (axis_tx[j]),
+            .i_axis_tx_tready   (axis_tx_tready[j]),
+            
+            .i_axis_cpl_timeout (axis_cpl_timeout[j]),
+            
+            .i_pcie_linkup      (pcie_linkup[j]),
+            .i_rx_err_code      (pcie_rx_err_code[j]),
+            
+            .csr_lite_if        (csr_lite_if[j]),
+            .ss_csr_lite_if     (ss_csr_lite_if[j])
+        );
 
 
-//
-// OFS does not guarantee the relative order of write requests on TX and read requests
-// on TXREQ until this point, where requests enter the PCIe SS. Here, a completion
-// without data is returned to the AFU as a write request commits, indicating that
-// the future reads will see the committed write data.
-//
+        // OFS does not guarantee the relative order of write requests on TX and read requests
+        // on TXREQ until this point, where requests enter the PCIe SS. Here, a completion
+        // without data is returned to the AFU as a write request commits, indicating that
+        // the future reads will see the committed write data.
+        //
 
-pcie_ss_axis_if #(
-   .DATA_W(ofs_fim_cfg_pkg::PCIE_TDATA_WIDTH),
-   .USER_W(ofs_fim_cfg_pkg::PCIE_TUSER_WIDTH)
-) axi_st_tx_committed(.clk(fim_clk), .rst_n(fim_rst_n));
+        // Generate write commits on the commit port. The TX stream toward the PCIe SS
+        // is on the source port.
+        pcie_arb_local_commit local_commit
+        (
+            .clk    ( fim_clk       ),
+            .rst_n  ( fim_rst_n     ),
+            .sink   ( axi_st_tx_if[j]  ),
+            .source ( axi_st_tx_committed[j] ),
+            .commit ( rxreq_arb_in[1] )
+        );
 
-pcie_ss_axis_if #(
-   .DATA_W(ofs_fim_cfg_pkg::PCIE_TDATA_WIDTH),
-   .USER_W(ofs_fim_cfg_pkg::PCIE_TUSER_WIDTH)
-) rxreq_arb_in[2](.clk(fim_clk), .rst_n(fim_rst_n));
+        // Combine the write commit stream and RXREQ toward the AFU.
+        pcie_ss_axis_mux #(
+            .NUM_CH ( 2 )
+        ) ho2mx_rxreq_mux (
+            .clk    ( fim_clk       ),
+            .rst_n  ( fim_rst_n[j]  ),
+            .sink   ( rxreq_arb_in  ),
+            .source ( axi_st_rxreq_if[j] )
+        );
 
-// Generate write commits on the commit port. The TX stream toward the PCIe SS
-// is on the source port.
-pcie_arb_local_commit local_commit
-(
-   .clk    ( fim_clk       ),
-   .rst_n  ( fim_rst_n     ),
-   .sink   ( axi_st_tx_if  ),
-   .source ( axi_st_tx_committed ),
-   .commit ( rxreq_arb_in[1] )
-);
+        ofs_fim_pcie_ss_tag_mode ofs_fim_pcie_ss_tag_mode (
+           .fim_clk                        (fim_clk),
+           .fim_rst_n                      (fim_rst_n[j]),
+           .csr_clk                        (csr_clk),
+           .csr_rst_n                      (csr_rst_n[j]),
+           .p0_ss_app_st_ctrlshadow_tvalid (ss_app_st_ctrlshadow_tvalid[j] ),
+           .p0_ss_app_st_ctrlshadow_tdata  (ss_app_st_ctrlshadow_tdata[j]  ),
+           .tag_mode                       (tag_mode[j])
+        );
+        
+        ofs_fim_pcie_ss_debug_log ofs_fim_pcie_ss_debug_log (
+           .fim_clk                    (fim_clk),
+           .fim_rst_n                  (fim_rst_n[j]),
+           .axi_st_rxreq_if            (axi_st_rxreq_if[j]), 
+           .axi_st_rx_if               (axi_st_rx_if[j]),    
+           .axi_st_tx_if               (axi_st_tx_if[j]),    
+           .axi_st_txreq_if            (axi_st_txreq_if[j]) 
+        
+        );
 
-// Combine the write commit stream and RXREQ toward the AFU.
-pcie_ss_axis_mux #(
-   .NUM_CH ( 2 )
-) ho2mx_rxreq_mux (
-   .clk    ( fim_clk       ),
-   .rst_n  ( fim_rst_n     ),
-   .sink   ( rxreq_arb_in  ),
-   .source ( axi_st_rxreq_if )
-);
-
-
-   import ofs_fim_if_pkg::*;
+        assign pcie_linkup[j] = pcie_p2c_sideband[j].pcie_linkup;
+        assign pcie_rx_err_code[j] = pcie_p2c_sideband[j].pcie_chk_rx_err_code;
+    end // PCIE_LINKS
+endgenerate
 
    // Include the subsystem in simulation design, but tie off all the I/O since the functionality is served by the BFM
    // This is required to compile F-Tile designs which includes tile support logic containing cross hierarchical references to the PCIe HIP
 
 `ifdef FTILE_SIM
+
    pcie_ss_top #(
       .PCIE_LANES       (ofs_fim_cfg_pkg::PCIE_LANES),
+      .PCIE_NUM_LINKS   (PCIE_NUM_LINKS),
       .SOC_ATTACH       (SOC_ATTACH)
    ) pcie_ss_top (
       .fim_clk                        ('0),
@@ -179,37 +234,42 @@ pcie_ss_axis_mux #(
       .csr_clk                        ('0),
       .csr_rst_n                      ('1),
       .ninit_done                     ('0),
-      .p0_subsystem_cold_rst_n        ('1),  
-      .p0_subsystem_warm_rst_n        ('1),    
-      .p0_subsystem_cold_rst_ack_n    (),
-      .p0_subsystem_warm_rst_ack_n    (),
+      .subsystem_cold_rst_n           ('1),
+      .subsystem_warm_rst_n           ('1),
+      .subsystem_cold_rst_ack_n       (),
+      .subsystem_warm_rst_ack_n       (),
       .pin_pcie_refclk0_p             ('0),
       .pin_pcie_refclk1_p             ('0),
-      .pin_pcie_in_perst_n            ('0),   
+      .pin_pcie_in_perst_n            ('0),
       .pin_pcie_rx_p                  (),
       .pin_pcie_rx_n                  (),
-      .p0_ss_app_st_txreq_tready      (),
-      .p0_app_ss_st_txreq_tvalid      ('0),
-      .p0_app_ss_st_txreq_tdata       ('0),
-      .p0_app_ss_st_txreq_tlast       ('0),
-      .p0_ss_app_st_ctrlshadow_tvalid (),
-      .p0_ss_app_st_ctrlshadow_tdata  (),
-      .axi_st_rxreq_if                (axi_st_rxreq_if_dummy ),
-      .axi_st_rx_if                   (axi_st_rx_if_dummy         ),
-      .axi_st_tx_if                   (axi_st_tx_if_dummy         ),
-      .ss_csr_lite_if                 (ss_csr_lite_if_dummy       ),
+      .axi_st_txreq_if                (axi_st_txreq_if_dummy       ),
+      .axi_st_rxreq_if                (axi_st_rxreq_if_dummy       ),
+      .ss_app_st_ctrlshadow_tvalid    (),
+      .ss_app_st_ctrlshadow_tdata     (),
+      .axi_st_rx_if                   (axi_st_rx_if_dummy          ),
+      .axi_st_tx_if                   (axi_st_tx_if_dummy          ),
+      .ss_csr_lite_if                 (ss_csr_lite_if_dummy        ),
       .flr_req_if                     (),
-      .flr_rsp_if                     (axi_st_flr_rsp_dummy       ),
+      .flr_rsp_if                     (axi_st_flr_rsp              ),
       .reset_status                   (),
-      .pin_pcie_tx_p                  (),                
-      .pin_pcie_tx_n                  (), 
+      .pin_pcie_tx_p                  (),
+      .pin_pcie_tx_n                  (),
       .cpl_timeout_if                 (),
       .pcie_p2c_sideband              ()
  );
-   assign axi_st_rxreq_if_dummy.tready = 1'b1;
-   assign axi_st_rx_if_dummy.tready    = 1'b1;
-   assign axi_st_tx_if_dummy.tvalid    = 1'b0;
-   assign axi_st_flr_rsp_dummy.tvalid  = 1'b0;
+   assign axi_st_rxreq_if_dummy[0].tready = 1'b1;
+   assign axi_st_rx_if_dummy[0].tready    = 1'b1;
+   assign axi_st_tx_if_dummy[0].tvalid    = 1'b0;
+   assign axi_st_flr_rsp_dummy[0].tvalid  = 1'b0;
+   if (PCIE_NUM_LINKS > 1)
+   begin
+      assign axi_st_rxreq_if_dummy[1].tready = 1'b1;
+      assign axi_st_rx_if_dummy[1].tready    = 1'b1;
+      assign axi_st_tx_if_dummy[1].tvalid    = 1'b0;
+      assign axi_st_flr_rsp_dummy[1].tvalid  = 1'b0;
+   end
+
 `endif
 
 //-------------------------------------------------------------------------------
@@ -219,11 +279,8 @@ pcie_ss_axis_mux #(
 //-------------------------------------------------------------------------------
 generate
    if (SOC_ATTACH)
-   begin
+   begin : soc_gen_block
       import ofs_fim_if_pkg::*;
-      t_sideband_from_pcie   pcie_p2c_sideband;
-      assign pcie_linkup = pcie_p2c_sideband.pcie_linkup;
-      assign pcie_rx_err_code = pcie_p2c_sideband.pcie_chk_rx_err_code;
 
       pcie_top #(
          .PCIE_LANES       (16),
@@ -231,54 +288,7 @@ generate
          .NUM_VF           (ofs_fim_pcie_pkg::NUM_VF),
          .MAX_NUM_VF       (ofs_fim_pcie_pkg::MAX_NUM_VF),
          .SOC_ATTACH       (SOC_ATTACH),
-         .PF_ENABLED_VEC_T (pfvf_def_pkg_soc::PF_ENABLED_SOC_VEC_T),
-         .PF_ENABLED_VEC   (pfvf_def_pkg_soc::PF_ENABLED_SOC_VEC),
-         .PF_NUM_VFS_VEC_T (pfvf_def_pkg_soc::PF_NUM_VFS_SOC_VEC_T),
-         .PF_NUM_VFS_VEC   (pfvf_def_pkg_soc::PF_NUM_VFS_SOC_VEC),
-         .MM_ADDR_WIDTH    (MM_ADDR_WIDTH),
-         .MM_DATA_WIDTH    (MM_DATA_WIDTH),
-         .FEAT_ID          (12'h020),
-         .FEAT_VER         (4'h0),
-         .NEXT_DFH_OFFSET  (24'h1000),
-         .END_OF_LIST      (1'b0)  
-      ) pcie_top_soc (
-         .fim_clk               (fim_clk                    ),
-         .fim_rst_n             (fim_rst_n                  ),
-         .csr_clk               (csr_clk                    ),
-         .csr_rst_n             (csr_rst_n                  ),
-         .ninit_done            (ninit_done                 ),
-         .reset_status          (reset_status               ),                 
-         .pin_pcie_refclk0_p    (pin_pcie_refclk0_p         ),
-         .pin_pcie_refclk1_p    (pin_pcie_refclk1_p         ),
-         .pin_pcie_in_perst_n   (pin_pcie_in_perst_n        ),   // connected to HIP
-         .pin_pcie_rx_p         (pin_pcie_rx_p              ),
-         .pin_pcie_rx_n         (pin_pcie_rx_n              ),
-         .pin_pcie_tx_p         (pin_pcie_tx_p              ),                
-         .pin_pcie_tx_n         (pin_pcie_tx_n              ),                
-         .axi_st_rx_if          (axi_st_rx_if               ),
-         .axi_st_tx_if          (axi_st_tx_committed        ),
-         .axi_st_txreq_if       (axi_st_txreq_if            ),
-         .axi_st_rxreq_if       (rxreq_arb_in[0]            ),
-         .csr_lite_if           (ss_csr_lite_if             ),
-         .flr_req_if            (axi_st_flr_req             ),
-         .flr_rsp_if            (axi_st_flr_rsp             ),
-         .cpl_timeout_if        (axis_cpl_timeout           ),
-         .pcie_p2c_sideband     (pcie_p2c_sideband          )
-      );
-   end
-   else
-   begin
-      import ofs_fim_if_pkg::*;
-      t_sideband_from_pcie   pcie_p2c_sideband;
-      assign pcie_linkup = pcie_p2c_sideband.pcie_linkup;
-      assign pcie_rx_err_code = pcie_p2c_sideband.pcie_chk_rx_err_code;
-
-      pcie_top #(
-         .PCIE_LANES       (16),
-         .NUM_PF           (ofs_fim_pcie_pkg::NUM_PF),
-         .NUM_VF           (ofs_fim_pcie_pkg::NUM_VF),
-         .MAX_NUM_VF       (ofs_fim_pcie_pkg::MAX_NUM_VF),
-         .SOC_ATTACH       (SOC_ATTACH),
+         .LINK_NUMBER      (0),
          .PF_ENABLED_VEC_T (pfvf_def_pkg_host::PF_ENABLED_HOST_VEC_T),
          .PF_ENABLED_VEC   (pfvf_def_pkg_host::PF_ENABLED_HOST_VEC),
          .PF_NUM_VFS_VEC_T (pfvf_def_pkg_host::PF_NUM_VFS_HOST_VEC_T),
@@ -289,180 +299,122 @@ generate
          .FEAT_VER         (4'h0),
          .NEXT_DFH_OFFSET  (24'h1000),
          .END_OF_LIST      (1'b0)  
-      ) pcie_top_host (
+      ) pcie_top_soc (
          .fim_clk               (fim_clk                    ),
-         .fim_rst_n             (fim_rst_n                  ),
+         .fim_rst_n             (fim_rst_n[0]               ),
          .csr_clk               (csr_clk                    ),
-         .csr_rst_n             (csr_rst_n                  ),
+         .csr_rst_n             (csr_rst_n[0]               ),
          .ninit_done            (ninit_done                 ),
-         .reset_status          (reset_status               ),                 
+         .reset_status          (reset_status[0]            ),                 
          .pin_pcie_refclk0_p    (pin_pcie_refclk0_p         ),
          .pin_pcie_refclk1_p    (pin_pcie_refclk1_p         ),
          .pin_pcie_in_perst_n   (pin_pcie_in_perst_n        ),   // connected to HIP
-         .pin_pcie_rx_p         (pin_pcie_rx_p              ),
-         .pin_pcie_rx_n         (pin_pcie_rx_n              ),
-         .pin_pcie_tx_p         (pin_pcie_tx_p              ),                
-         .pin_pcie_tx_n         (pin_pcie_tx_n              ),                
-         .axi_st_rx_if          (axi_st_rx_if               ),
-         .axi_st_tx_if          (axi_st_tx_committed        ),
-         .axi_st_txreq_if       (axi_st_txreq_if            ),
-         .axi_st_rxreq_if       (rxreq_arb_in[0]            ),
-         .csr_lite_if           (ss_csr_lite_if             ),
-         .flr_req_if            (axi_st_flr_req             ),
-         .flr_rsp_if            (axi_st_flr_rsp             ),
-         .cpl_timeout_if        (axis_cpl_timeout           ),
-         .pcie_p2c_sideband     (pcie_p2c_sideband          )
+         .pin_pcie_rx_p         (pin_pcie_rx_p[0]           ),
+         .pin_pcie_rx_n         (pin_pcie_rx_n[0]           ),
+         .pin_pcie_tx_p         (pin_pcie_tx_p[0]           ),                
+         .pin_pcie_tx_n         (pin_pcie_tx_n[0]           ),                
+         .axi_st_rx_if          (axi_st_rx_if[0]            ),
+         .axi_st_tx_if          (axi_st_tx_committed[0]     ),
+         .axi_st_txreq_if       (axi_st_txreq_if[0]         ),
+         .axi_st_rxreq_if       (rxreq_in[0]                ),
+         .csr_lite_if           (ss_csr_lite_if[0]          ),
+         .flr_req_if            (axi_st_flr_req[0]          ),
+         .flr_rsp_if            (axi_st_flr_rsp[0]          ),
+         .cpl_timeout_if        (axis_cpl_timeout[0]        ),
+         .pcie_p2c_sideband     (pcie_p2c_sideband[0]       )
       );
    end
+   else
+   begin : host_gen_block0
+      import ofs_fim_if_pkg::*;
+
+      pcie_top #(
+         .PCIE_LANES       (16),
+         .NUM_PF           (ofs_fim_pcie_pkg::NUM_PF),
+         .NUM_VF           (ofs_fim_pcie_pkg::NUM_VF),
+         .MAX_NUM_VF       (ofs_fim_pcie_pkg::MAX_NUM_VF),
+         .SOC_ATTACH       (SOC_ATTACH),
+         .LINK_NUMBER      (0),
+         .PF_ENABLED_VEC_T (pfvf_def_pkg_host::PF_ENABLED_HOST_VEC_T),
+         .PF_ENABLED_VEC   (pfvf_def_pkg_host::PF_ENABLED_HOST_VEC),
+         .PF_NUM_VFS_VEC_T (pfvf_def_pkg_host::PF_NUM_VFS_HOST_VEC_T),
+         .PF_NUM_VFS_VEC   (pfvf_def_pkg_host::PF_NUM_VFS_HOST_VEC),
+         .MM_ADDR_WIDTH    (MM_ADDR_WIDTH),
+         .MM_DATA_WIDTH    (MM_DATA_WIDTH),
+         .FEAT_ID          (12'h020),
+         .FEAT_VER         (4'h0),
+         .NEXT_DFH_OFFSET  (24'h1000),
+         .END_OF_LIST      (1'b0)  
+      ) pcie_top_host0 (
+         .fim_clk               (fim_clk                    ),
+         .fim_rst_n             (fim_rst_n[0]               ),
+         .csr_clk               (csr_clk                    ),
+         .csr_rst_n             (csr_rst_n[0]               ),
+         .ninit_done            (ninit_done                 ),
+         .reset_status          (reset_status[0]            ),                 
+         .pin_pcie_refclk0_p    (pin_pcie_refclk0_p         ),
+         .pin_pcie_refclk1_p    (pin_pcie_refclk1_p         ),
+         .pin_pcie_in_perst_n   (pin_pcie_in_perst_n        ),   // connected to HIP
+         .pin_pcie_rx_p         (pin_pcie_rx_p[0]           ),
+         .pin_pcie_rx_n         (pin_pcie_rx_n[0]           ),
+         .pin_pcie_tx_p         (pin_pcie_tx_p[0]           ),                
+         .pin_pcie_tx_n         (pin_pcie_tx_n[0]           ),                
+         .axi_st_rx_if          (axi_st_rx_if[0]            ),
+         .axi_st_tx_if          (axi_st_tx_committed[0]     ),
+         .axi_st_txreq_if       (axi_st_txreq_if[0]         ),
+         .axi_st_rxreq_if       (rxreq_in[0]                ),
+         .csr_lite_if           (ss_csr_lite_if[0]          ),
+         .flr_req_if            (axi_st_flr_req[0]          ),
+         .flr_rsp_if            (axi_st_flr_rsp[0]          ),
+         .cpl_timeout_if        (axis_cpl_timeout[0]        ),
+         .pcie_p2c_sideband     (pcie_p2c_sideband[0]       )
+      );
+      if (PCIE_NUM_LINKS > 1)
+      begin : host_gen_block1
+
+         pcie_top #(
+            .PCIE_LANES       (16),
+            .NUM_PF           (ofs_fim_pcie_pkg::NUM_PF),
+            .NUM_VF           (ofs_fim_pcie_pkg::NUM_VF),
+            .MAX_NUM_VF       (ofs_fim_pcie_pkg::MAX_NUM_VF),
+            .SOC_ATTACH       (SOC_ATTACH),
+            .LINK_NUMBER      (1),
+            .PF_ENABLED_VEC_T (pfvf_def_pkg_host::PF_ENABLED_HOST_VEC_T),
+            .PF_ENABLED_VEC   (pfvf_def_pkg_host::PF_ENABLED_HOST_VEC),
+            .PF_NUM_VFS_VEC_T (pfvf_def_pkg_host::PF_NUM_VFS_HOST_VEC_T),
+            .PF_NUM_VFS_VEC   (pfvf_def_pkg_host::PF_NUM_VFS_HOST_VEC),
+            .MM_ADDR_WIDTH    (MM_ADDR_WIDTH),
+            .MM_DATA_WIDTH    (MM_DATA_WIDTH),
+            .FEAT_ID          (12'h020),
+            .FEAT_VER         (4'h0),
+            .NEXT_DFH_OFFSET  (24'h1000),
+            .END_OF_LIST      (1'b0)  
+         ) pcie_top_host1 (
+            .fim_clk               (fim_clk                    ),
+            .fim_rst_n             (fim_rst_n[1]               ),
+            .csr_clk               (csr_clk                    ),
+            .csr_rst_n             (csr_rst_n[1]               ),
+            .ninit_done            (ninit_done                 ),
+            .reset_status          (reset_status[1]            ),                 
+            .pin_pcie_refclk0_p    (pin_pcie_refclk0_p         ),
+            .pin_pcie_refclk1_p    (pin_pcie_refclk1_p         ),
+            .pin_pcie_in_perst_n   (pin_pcie_in_perst_n        ),   // connected to HIP
+            .pin_pcie_rx_p         (pin_pcie_rx_p[1]           ),
+            .pin_pcie_rx_n         (pin_pcie_rx_n[1]           ),
+            .pin_pcie_tx_p         (pin_pcie_tx_p[1]           ),   // Leave dummy outputs unconnected for unit simulation
+            .pin_pcie_tx_n         (pin_pcie_tx_n[1]           ),   // Leave dummy outputs unconnected for unit simulation
+            .axi_st_rx_if          (axi_st_rx_if[1]            ),
+            .axi_st_tx_if          (axi_st_tx_committed[1]     ),
+            .axi_st_txreq_if       (axi_st_txreq_if[1]         ),
+            .axi_st_rxreq_if       (rxreq_in[1]                ),
+            .csr_lite_if           (ss_csr_lite_if_dummy[1]    ),  // CSR Interface is inactive.  RXREQ Interface is main CSR access method.
+            .flr_req_if            (axi_st_flr_req[1]          ),
+            .flr_rsp_if            (axi_st_flr_rsp[1]          ),
+            .cpl_timeout_if        (axis_cpl_timeout[1]        ),
+            .pcie_p2c_sideband     (pcie_p2c_sideband[1]       )
+         );
+      end
+   end
 endgenerate
-
-`ifdef FTILE_SIM
-always_ff@(posedge csr_clk) begin
-   if(~csr_rst_n) begin
-      ctrl_shdw_reg.tvalid               <= '0;
-   end else begin
-      ctrl_shdw_reg.tvalid               <=  p0_ss_app_st_ctrlshadow_tvalid;
-   end 
-
-   ctrl_shdw_reg.tdata.pf_num            <=  p0_ss_app_st_ctrlshadow_tdata[2:0];
-   ctrl_shdw_reg.tdata.vf_num            <=  p0_ss_app_st_ctrlshadow_tdata[13:3];
-   ctrl_shdw_reg.tdata.vf_active         <=  p0_ss_app_st_ctrlshadow_tdata[14];
-   ctrl_shdw_reg.tdata.tag_enable_10bit  <=  p0_ss_app_st_ctrlshadow_tdata[30];
-   ctrl_shdw_reg.tdata.extended_tag      <=  p0_ss_app_st_ctrlshadow_tdata[29];
-end
-
-// Track dynamic PCIe request tag size. This state is valid only for PF0.
-always_ff@(posedge csr_clk) begin
-   // Always guarantee that the tag mode encoding is 1 hot
-   if(~csr_rst_n) begin
-      tag_mode_sync.tag_5bit  <= 1'b1;
-      tag_mode_sync.tag_8bit  <= 1'b0;
-      tag_mode_sync.tag_10bit <= 1'b0;
-   end else if(ctrl_shdw_reg.tvalid && ctrl_shdw_reg.tdata.pf_num == 3'b0 &&
-               !ctrl_shdw_reg.tdata.vf_active) begin
-      if(ctrl_shdw_reg.tdata.extended_tag && ctrl_shdw_reg.tdata.tag_enable_10bit) begin
-         // PCIe extended, with 10 bit tags
-         tag_mode_sync.tag_5bit  <= 1'b0;
-         tag_mode_sync.tag_8bit  <= 1'b0;
-         tag_mode_sync.tag_10bit <= 1'b1;
-      end else if (ctrl_shdw_reg.tdata.extended_tag) begin
-         // PCIe extended, without 10 bit tags
-         tag_mode_sync.tag_5bit  <= 1'b0;
-         tag_mode_sync.tag_8bit  <= 1'b1;
-         tag_mode_sync.tag_10bit <= 1'b0;
-      end else begin
-         // Not extended -- old 5 bit tag mode
-         tag_mode_sync.tag_5bit  <= 1'b1;
-         tag_mode_sync.tag_8bit  <= 1'b0;
-         tag_mode_sync.tag_10bit <= 1'b0;
-      end 
-   end
-end
-
-localparam CSR_STAT_SYNC_WIDTH = 3;
-fim_resync #(
-   .SYNC_CHAIN_LENGTH(3),
-   .WIDTH(CSR_STAT_SYNC_WIDTH),
-   .INIT_VALUE(0),
-   .NO_CUT(1)
-) csr_resync (
-   .clk   (fim_clk),
-   .reset (1'b0),
-   .d     (tag_mode_sync),
-   .q     (tag_mode)
-);
-`else 
-always_comb begin
-   tag_mode.tag_5bit  = 1'b0;
-   tag_mode.tag_8bit  = 1'b1;
-   tag_mode.tag_10bit = 1'b0;
-end
-`endif
-
-
-//
-// Debug logging
-//
-
-// synthesis translate_off
-// Log TLP AXI-S traffic at the PCIe SS edge
-logic axi_st_rx_if_sop, axi_st_rxreq_if_sop, axi_st_tx_if_sop;
-
-initial
-begin : log
-   static int log_fd = $fopen("log_pcie_ss_edge.tsv", "w");
-
-   // Write module hierarchy to the top of the log
-   $fwrite(log_fd, "pcie_wrapper.sv: %m\n\n");
-
-   forever @(posedge fim_clk) begin
-      if (fim_rst_n && axi_st_rx_if.tvalid && axi_st_rx_if.tready) begin
-         $fwrite(log_fd, "RX:    %s\n",
-         pcie_ss_pkg::func_pcie_ss_flit_to_string(
-         axi_st_rx_if_sop, axi_st_rx_if.tlast,
-         pcie_ss_hdr_pkg::func_hdr_is_pu_mode(axi_st_rx_if.tuser_vendor),
-         axi_st_rx_if.tdata, axi_st_rx_if.tkeep));
-         $fflush(log_fd);
-      end
-
-      if (fim_rst_n && axi_st_rxreq_if.tvalid && axi_st_rxreq_if.tready) begin
-         $fwrite(log_fd, "RXREQ: %s\n",
-         pcie_ss_pkg::func_pcie_ss_flit_to_string(
-         axi_st_rxreq_if_sop, axi_st_rxreq_if.tlast,
-         pcie_ss_hdr_pkg::func_hdr_is_pu_mode(axi_st_rxreq_if.tuser_vendor),
-         axi_st_rxreq_if.tdata, axi_st_rxreq_if.tkeep));
-         $fflush(log_fd);
-      end
-
-      if (fim_rst_n && axi_st_tx_if.tvalid && axi_st_tx_if.tready) begin
-         $fwrite(log_fd, "TX:    %s\n",
-         pcie_ss_pkg::func_pcie_ss_flit_to_string(
-         axi_st_tx_if_sop, axi_st_tx_if.tlast,
-         pcie_ss_hdr_pkg::func_hdr_is_pu_mode(axi_st_tx_if.tuser_vendor),
-         axi_st_tx_if.tdata, axi_st_tx_if.tkeep));
-         $fflush(log_fd);
-      end
-      if (fim_rst_n && axi_st_txreq_if.tvalid && axi_st_txreq_if.tready) begin
-         $fwrite(log_fd, "TXREQ: %s\n",
-         pcie_ss_pkg::func_pcie_ss_flit_to_string(
-         1'b1, axi_st_txreq_if.tlast,
-         1'b0,
-         { '0, axi_st_txreq_if.tdata}, { '0, 32'hffffffff }));
-         $fflush(log_fd);
-      end
-   end
-end
-
-always_ff @(posedge fim_clk) begin
-   if (axi_st_rx_if.tvalid && axi_st_rx_if.tready)
-      axi_st_rx_if_sop <= axi_st_rx_if.tlast;
-   if (axi_st_rxreq_if.tvalid && axi_st_rxreq_if.tready)
-      axi_st_rxreq_if_sop <= axi_st_rxreq_if.tlast;
-
-   if (axi_st_tx_if.tvalid && axi_st_tx_if.tready)
-      axi_st_tx_if_sop <= axi_st_tx_if.tlast;
-
-   if (!fim_rst_n) begin
-      axi_st_rx_if_sop <= 1'b1;
-      axi_st_rxreq_if_sop <= 1'b1;
-
-      axi_st_tx_if_sop <= 1'b1;
-   end
-end
-
-pcie_ss_hdr_pkg::PCIe_ReqHdr_t txreq_hdr;
-assign txreq_hdr = pcie_ss_hdr_pkg::PCIe_ReqHdr_t'(axi_st_txreq_if.tdata[$bits(txreq_hdr)-1 : 0]);
-
-always_ff @(posedge fim_clk) begin
-  if (fim_rst_n && axi_st_txreq_if.tvalid) begin
-    assert(pcie_ss_hdr_pkg::func_hdr_is_dm_mode(axi_st_txreq_if.tuser_vendor)) else
-      $fatal(2, " ** ERROR ** %m: txreq must be DM-encoded!");
-    assert(axi_st_txreq_if.tlast) else
-      $fatal(2, " ** ERROR ** %m: txreq must be only headers!");
-    assert(pcie_ss_hdr_pkg::func_is_mrd_req(txreq_hdr.fmt_type) || pcie_ss_hdr_pkg::func_is_interrupt_req(txreq_hdr.fmt_type)) else
-      $fatal(2, " ** ERROR ** %m: txreq may only be MRd or Intr!");
-  end
-end
-// synthesis translate_on
 
 endmodule : pcie_wrapper

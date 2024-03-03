@@ -1,0 +1,6 @@
+[ip]
+type = pcie
+
+[settings]
+output_name = pcie_ss
+preset = pcie_gen5_2x8

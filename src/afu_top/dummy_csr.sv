@@ -10,6 +10,7 @@
 //-----------------------------------------------------------------------------
 
 module dummy_csr #(
+   parameter bit [3:0]  FEAT_TYPE = 4'h3,
    parameter bit [11:0] FEAT_ID = 12'h0,
    parameter bit [3:0]  FEAT_VER = 4'h0,
    parameter bit [23:0] NEXT_DFH_OFFSET = 24'h1000,
@@ -206,8 +207,8 @@ always_ff @(posedge clk) begin
                    [15:12]: If AfU, AFU Major version number (else feature #)
                    [11:0 ]: Feature ID
                 */
-               {4'h3, 8'h0, 4'h0, 7'h0, END_OF_LIST, NEXT_DFH_OFFSET, FEAT_VER, FEAT_ID},
-               {4'h3, 8'h0, 4'h0, 7'h0, END_OF_LIST, NEXT_DFH_OFFSET, FEAT_VER, FEAT_ID}
+               {FEAT_TYPE, 8'h0, 4'h0, 7'h0, END_OF_LIST, NEXT_DFH_OFFSET, FEAT_VER, FEAT_ID},
+               {FEAT_TYPE, 8'h0, 4'h0, 7'h0, END_OF_LIST, NEXT_DFH_OFFSET, FEAT_VER, FEAT_ID}
    );
 
    def_reg (CSR_OFFSET[SCRATCHPAD],

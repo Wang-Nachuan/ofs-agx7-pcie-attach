@@ -14,6 +14,7 @@
 import pcie_ss_axis_pkg::*;
 
 module afu_top #(
+   parameter PCIE_NUM_LINKS = 1,
 `ifdef INCLUDE_DDR4
    parameter AFU_MEM_CHANNEL = 1
 `else
@@ -22,24 +23,24 @@ module afu_top #(
 )(
    input wire                            SYS_REFCLK,
    input wire                            clk,
-   input wire                            rst_n,
+   input wire [PCIE_NUM_LINKS-1:0]       rst_n,
    input wire                            clk_div2,
    input wire                            clk_div4,
       
    input wire                            clk_csr,
-   input wire                            rst_n_csr,
+   input wire [PCIE_NUM_LINKS-1:0]       rst_n_csr,
    input wire                            pwr_good_csr_clk_n,
    input wire                            clk_50m,
-   input wire                            rst_n_50m,
+   input wire [PCIE_NUM_LINKS-1:0]       rst_n_50m,
 
    input wire                            cpri_refclk_184_32m, // CPRI reference clock 184.32 MHz
    input wire                            cpri_refclk_153_6m , // CPRI reference clock 153.6 MHz
 
    // FLR 
-   input  t_axis_pcie_flr                pcie_flr_req,
-   output t_axis_pcie_flr                pcie_flr_rsp,
+   input  t_axis_pcie_flr                pcie_flr_req [PCIE_NUM_LINKS-1:0],
+   output t_axis_pcie_flr                pcie_flr_rsp [PCIE_NUM_LINKS-1:0],
    output logic                          pr_parity_error,
-   input  t_pcie_tag_mode                tag_mode,
+   input  t_pcie_tag_mode                tag_mode [PCIE_NUM_LINKS-1:0],
 
    ofs_fim_axi_lite_if.master            apf_bpf_slv_if,
    ofs_fim_axi_lite_if.slave             apf_bpf_mst_if,
@@ -68,10 +69,10 @@ module afu_top #(
 `endif
 
    // PCIE AXI-S interfaces
-   pcie_ss_axis_if.sink                  pcie_ss_axis_rxreq,
-   pcie_ss_axis_if.sink                  pcie_ss_axis_rx,
-   pcie_ss_axis_if.source                pcie_ss_axis_tx,
-   pcie_ss_axis_if.source                pcie_ss_axis_txreq
+   pcie_ss_axis_if.sink                  pcie_ss_axis_rxreq [PCIE_NUM_LINKS-1:0],
+   pcie_ss_axis_if.sink                  pcie_ss_axis_rx    [PCIE_NUM_LINKS-1:0],
+   pcie_ss_axis_if.source                pcie_ss_axis_tx    [PCIE_NUM_LINKS-1:0],
+   pcie_ss_axis_if.source                pcie_ss_axis_txreq [PCIE_NUM_LINKS-1:0]
 );
 
 //-----------------------------------------------------------------------------------------------
@@ -91,6 +92,9 @@ localparam NUM_MUX_PORTS        = top_cfg_pkg::NUM_TOP_PORTS;
 localparam NUM_RTABLE_ENTRIES   = top_cfg_pkg::NUM_TOP_RTABLE_ENTRIES;
 localparam t_top_pf_vf_entry_info PFVF_ROUTING_TABLE = top_cfg_pkg::TOP_PF_VF_RTABLE;
 
+// Link 0 PF0 is the management function
+localparam LINK_0 = 0;
+
 //-----------------------------------------------------------------------------------------------
 // Internal signals
 //-----------------------------------------------------------------------------------------------
@@ -99,34 +103,73 @@ pcie_ss_axis_if #(
    .DATA_W (PCIE_TDATA_WIDTH),
    .USER_W (PCIE_TUSER_WIDTH))
    // Host channel transformation interface
-   mx2ho_tx_port     (.clk(clk), .rst_n(rst_n)),
-   ho2mx_rxreq_port  (.clk(clk), .rst_n(rst_n)),
-   // Tag remapper
-   ho2mx_rx_remap    (.clk(clk), .rst_n(rst_n)),
-   ho2mx_rxreq_remap (.clk(clk), .rst_n(rst_n)),
-   mx2ho_tx_remap[2] (.clk(clk), .rst_n(rst_n)),
-   // PF/VF Mux "A" ports
-   mx2fn_rx_a_port [NUM_MUX_PORTS-1:0](.clk(clk), .rst_n(rst_n)),
-   fn2mx_tx_a_port [NUM_MUX_PORTS-1:0](.clk(clk), .rst_n(rst_n)),
-   // PF/VF Mux "B" ports
-   mx2fn_rx_b_port [NUM_MUX_PORTS-1:0](.clk(clk), .rst_n(rst_n)),
-   fn2mx_tx_b_port [NUM_MUX_PORTS-1:0](.clk(clk), .rst_n(rst_n));
-   
+   mx2ho_tx_port     [PCIE_NUM_LINKS-1:0]                    (.clk(clk)),
+   ho2mx_rxreq_port  [PCIE_NUM_LINKS-1:0]                    (.clk(clk));
+
 // TX request interface (only DMRd, DMIntr)
 pcie_ss_axis_if #(
    .DATA_W (pcie_ss_hdr_pkg::HDR_WIDTH),
    .USER_W (PCIE_TUSER_WIDTH))
-   mx2ho_txreq_port (.clk (clk), .rst_n(rst_n));
+   mx2ho_txreq_port [PCIE_NUM_LINKS-1:0] (.clk (clk));
+
+
+// PCIe routing destinations
+pcie_ss_axis_if #(.DATA_W(PCIE_TDATA_WIDTH),
+                  .USER_W(PCIE_TUSER_WIDTH))
+   // Static region AFU interfaces
+   pf0_tx_a [PCIE_NUM_LINKS-1:0] (.clk),
+   pf0_rx_a [PCIE_NUM_LINKS-1:0] (.clk),
+   pf0_tx_b [PCIE_NUM_LINKS-1:0] (.clk),
+   pf0_rx_b [PCIE_NUM_LINKS-1:0] (.clk),
+
+   sr_tx_a  [PCIE_NUM_LINKS-1:0] (.clk),
+   sr_rx_a  [PCIE_NUM_LINKS-1:0] (.clk),
+   sr_tx_b  [PCIE_NUM_LINKS-1:0] (.clk),
+   sr_rx_b  [PCIE_NUM_LINKS-1:0] (.clk),
+   // PR region AFU interfaces
+   pg_tx_a  [PCIE_NUM_LINKS-1:0] (.clk),
+   pg_rx_a  [PCIE_NUM_LINKS-1:0] (.clk),
+   pg_tx_b  [PCIE_NUM_LINKS-1:0] (.clk),
+   pg_rx_b  [PCIE_NUM_LINKS-1:0] (.clk);
+
+   t_axis_pcie_flr pf0_flr_req [PCIE_NUM_LINKS-1:0];
+   t_axis_pcie_flr pf0_flr_rsp [PCIE_NUM_LINKS-1:0];
+
+   t_axis_pcie_flr sr_flr_req  [PCIE_NUM_LINKS-1:0];
+   t_axis_pcie_flr sr_flr_rsp  [PCIE_NUM_LINKS-1:0];
+
+   t_axis_pcie_flr pg_flr_req  [PCIE_NUM_LINKS-1:0];
+   t_axis_pcie_flr pg_flr_rsp  [PCIE_NUM_LINKS-1:0];
+
+
+generate for (genvar l = 0; l < PCIE_NUM_LINKS; l++) begin : pcie_rst
+      assign mx2ho_tx_port[l].rst_n    = rst_n[l];
+      assign ho2mx_rxreq_port[l].rst_n = rst_n[l];
+      assign mx2ho_txreq_port[l].rst_n = rst_n[l];
+      assign pf0_tx_a[l].rst_n         = rst_n[l];
+      assign pf0_rx_a[l].rst_n         = rst_n[l];
+      assign pf0_tx_b[l].rst_n         = rst_n[l];
+      assign pf0_rx_b[l].rst_n         = rst_n[l];
+      assign sr_tx_a[l].rst_n          = rst_n[l];
+      assign sr_rx_a[l].rst_n          = rst_n[l];
+      assign sr_tx_b[l].rst_n          = rst_n[l];
+      assign sr_rx_b[l].rst_n          = rst_n[l];
+      assign pg_tx_a[l].rst_n          = rst_n[l];
+      assign pg_rx_a[l].rst_n          = rst_n[l];
+      assign pg_tx_b[l].rst_n          = rst_n[l];
+      assign pg_rx_b[l].rst_n          = rst_n[l];
+end
+endgenerate
 
 // AXI4-lite interfaces
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(MM_ADDR_WIDTH), .ARADDR_WIDTH(MM_ADDR_WIDTH)) apf_st2mm_mst_if (.clk(clk), .rst_n(rst_n));
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(16), .ARADDR_WIDTH(16))                       apf_st2mm_slv_if (.clk(clk), .rst_n(rst_n));
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(16), .ARADDR_WIDTH(16))                       apf_pgsk_slv_if  (.clk(clk), .rst_n(rst_n));
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(MM_ADDR_WIDTH), .ARADDR_WIDTH(MM_ADDR_WIDTH)) apf_mctp_mst_if  (.clk(clk), .rst_n(rst_n));
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(MM_ADDR_WIDTH), .ARADDR_WIDTH(MM_ADDR_WIDTH)) apf_uart_mst_if  (.clk(clk), .rst_n(rst_n));
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(12), .ARADDR_WIDTH(12))                       apf_uart_slv_if  (.clk(clk), .rst_n(rst_n));
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(16), .ARADDR_WIDTH(16))                       apf_achk_slv_if  (.clk(clk), .rst_n(rst_n));
-ofs_fim_axi_lite_if #(.AWADDR_WIDTH(16), .ARADDR_WIDTH(16))                       apf_tod_slv_if   (.clk(clk), .rst_n(rst_n));
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(MM_ADDR_WIDTH), .ARADDR_WIDTH(MM_ADDR_WIDTH)) apf_st2mm_mst_if (.clk(clk), .rst_n(rst_n[LINK_0]));
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(16), .ARADDR_WIDTH(16))                       apf_st2mm_slv_if (.clk(clk), .rst_n(rst_n[LINK_0]));
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(16), .ARADDR_WIDTH(16))                       apf_pgsk_slv_if  (.clk(clk), .rst_n(rst_n[LINK_0]));
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(MM_ADDR_WIDTH), .ARADDR_WIDTH(MM_ADDR_WIDTH)) apf_mctp_mst_if  (.clk(clk), .rst_n(rst_n[LINK_0]));
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(MM_ADDR_WIDTH), .ARADDR_WIDTH(MM_ADDR_WIDTH)) apf_uart_mst_if  (.clk(clk), .rst_n(rst_n[LINK_0]));
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(12), .ARADDR_WIDTH(12))                       apf_uart_slv_if  (.clk(clk), .rst_n(rst_n[LINK_0]));
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(16), .ARADDR_WIDTH(16))                       apf_achk_slv_if  (.clk(clk), .rst_n(rst_n[LINK_0]));
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(16), .ARADDR_WIDTH(16))                       apf_tod_slv_if   (.clk(clk), .rst_n(rst_n[LINK_0]));
 
 // Parity for PF/VF mux
 logic [1:0] pf_vf_fifo_err;
@@ -177,21 +220,36 @@ end
 //-----------------------------------------------------------------------------------------------
 // Route FLR requests to their respective PF/VF ports.
 //-----------------------------------------------------------------------------------------------
+t_axis_pcie_flr afu_flr_req [PCIE_NUM_LINKS-1:0][NUM_MUX_PORTS-1:0];
+t_axis_pcie_flr afu_flr_rsp [PCIE_NUM_LINKS-1:0][NUM_MUX_PORTS-1:0];
+
+generate for (genvar l = 0; l < PCIE_NUM_LINKS; l++) begin : afu_pcie_flr
 t_axis_pcie_flr afu_flr_req [NUM_MUX_PORTS-1:0];
 t_axis_pcie_flr afu_flr_rsp [NUM_MUX_PORTS-1:0];
-
 flr_mux #(
    .NUM_PORT           (NUM_MUX_PORTS),
    .NUM_RTABLE_ENTRIES (NUM_RTABLE_ENTRIES),
    .PFVF_ROUTING_TABLE (PFVF_ROUTING_TABLE)
 ) flr_mux_inst (
    .clk       (clk_csr),
-   .rst_n     (rst_n_csr),
-   .h_flr_req (pcie_flr_req),
-   .h_flr_rsp (pcie_flr_rsp),
-   .a_flr_req (afu_flr_req),
-   .a_flr_rsp (afu_flr_rsp)
+   .rst_n     (rst_n_csr    [l]),
+   .h_flr_req (pcie_flr_req [l]),
+   .h_flr_rsp (pcie_flr_rsp [l]),
+   .a_flr_req (afu_flr_req     ),
+   .a_flr_rsp (afu_flr_rsp     )
 );
+// Connect static region AFU FLR
+assign pf0_flr_req[l] = afu_flr_req[PF0_MGMT_PID];
+assign afu_flr_rsp[PF0_MGMT_PID] = pf0_flr_rsp[l];
+
+assign sr_flr_req[l] = afu_flr_req[SR_SHARED_PFVF_PID];
+assign afu_flr_rsp[SR_SHARED_PFVF_PID] = sr_flr_rsp[l];
+
+// Connect PR region AFU FLR
+assign pg_flr_req[l] = afu_flr_req[PG_SHARED_VF_PID];
+assign afu_flr_rsp[PG_SHARED_VF_PID] = pg_flr_rsp[l];
+end : afu_pcie_flr
+endgenerate
 
 //-----------------------------------------------------------------------------------------------
 // PCIe ATS (address translation service) default invalidation handler
@@ -212,31 +270,37 @@ flr_mux #(
 // invalidations are generated even when the FIM is in an error state.
 //-----------------------------------------------------------------------------------------------
 pcie_ss_axis_if#(.DATA_W(PCIE_TDATA_WIDTH),
-                 .USER_W(PCIE_TUSER_WIDTH)) intf2ats_tx(.clk, .rst_n);
+                 .USER_W(PCIE_TUSER_WIDTH)) intf2ats_tx [PCIE_NUM_LINKS-1:0] (.clk);
 pcie_ss_axis_if#(.DATA_W(PCIE_TDATA_WIDTH),
-                 .USER_W(PCIE_TUSER_WIDTH)) ats2intf_rx(.clk, .rst_n);
+                 .USER_W(PCIE_TUSER_WIDTH)) ats2intf_rx [PCIE_NUM_LINKS-1:0] (.clk);
+
+generate for (genvar l = 0; l < PCIE_NUM_LINKS; l++) begin : afu_pcie_ats_inval
+
+   assign intf2ats_tx[l].rst_n = rst_n[l];
+   assign ats2intf_rx[l].rst_n = rst_n[l];
 
 ofs_fim_pcie_ats_inval_cpl ats_inval
   (
    .clk          (clk),
-   .rst_n        (rst_n),
+   .rst_n        (rst_n[l]),
    // Clocks for pcie_flr_req
    .clk_csr      (clk_csr),
-   .rst_n_csr    (rst_n_csr),
+   .rst_n_csr    (rst_n_csr[l]),
 
    // Function-level reset requests, used to reenable ATS invalidation responses
    // until an ATS request is seen from an AFU. No FLR response is generated
    // here.
-   .pcie_flr_req (pcie_flr_req),
+   .pcie_flr_req (pcie_flr_req[l]),
 
    // PCIe SS connections -- only those needed for PU-encoded ATS messages
-   .o_tx_if      (pcie_ss_axis_tx),
-   .i_rxreq_if   (pcie_ss_axis_rxreq),
+   .o_tx_if      (pcie_ss_axis_tx[l]),
+   .i_rxreq_if   (pcie_ss_axis_rxreq[l]),
    // FIM connections
-   .i_tx_if      (intf2ats_tx),
-   .o_rxreq_if   (ats2intf_rx)
+   .i_tx_if      (intf2ats_tx[l]),
+   .o_rxreq_if   (ats2intf_rx[l])
    );
-
+end // block: afu_pcie_ats_inval
+endgenerate 
 //-----------------------------------------------------------------------------------------------
 // AFU Interface and Protocol Checker
 //-----------------------------------------------------------------------------------------------
@@ -257,10 +321,11 @@ afu_intf #(
    .PCIE_EP_MAX_TAGS (ofs_pcie_ss_cfg_pkg::PCIE_TILE_MAX_TAGS + 256)
 ) afu_intf_inst (
    .clk                (clk),
-   .rst_n              (rst_n),
+   /* .rst_n              (rst_n[LINK0]), */
+   .rst_n              (rst_n[LINK_0]),
                        
    .clk_csr            (clk_csr), // Clock 100 MHz
-   .rst_n_csr          (rst_n_csr),
+   .rst_n_csr          (rst_n_csr[LINK_0]),
    .pwr_good_csr_clk_n (pwr_good_csr_clk_n),
    
    .i_afu_softreset    (afu_softreset),
@@ -269,17 +334,26 @@ afu_intf #(
    .o_read_flush_done  ( read_flush_done ),
    
    // MMIO req  
-   .h2a_axis_rx        ( ats2intf_rx ),
+   .h2a_axis_rx        ( ats2intf_rx        [LINK_0] ),
+   .a2h_axis_tx        ( intf2ats_tx        [LINK_0] ),
+   .a2h_axis_txreq     ( pcie_ss_axis_txreq [LINK_0] ),
+                       
+   .afu_axis_rx        ( ho2mx_rxreq_port   [LINK_0] ),
+   .afu_axis_tx        ( mx2ho_tx_port      [LINK_0] ),
+   .afu_axis_txreq     ( mx2ho_txreq_port   [LINK_0] ),
 
-   .a2h_axis_tx        ( intf2ats_tx ),
-   .a2h_axis_txreq     ( pcie_ss_axis_txreq ),
-                       
-   .csr_if             ( apf_achk_slv_if ),
-                       
-   .afu_axis_rx        ( ho2mx_rxreq_port ),
-   .afu_axis_tx        ( mx2ho_tx_port ),
-   .afu_axis_txreq     ( mx2ho_txreq_port )
+   .csr_if             ( apf_achk_slv_if )
 );
+
+
+   // TODO: This bypasses the protocol checker for physical interfaces > 1. The protocol checker does not support multi-link configurations.
+
+generate for(genvar l = 1; l < PCIE_NUM_LINKS; l++) begin : chkr_bypass
+   ofs_fim_axis_pipeline #(.PL_DEPTH(0)) rxreq (.clk, .rst_n(rst_n[l]), .axis_s(ats2intf_rx      [l]), .axis_m(ho2mx_rxreq_port   [l]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(0)) tx    (.clk, .rst_n(rst_n[l]), .axis_s(mx2ho_tx_port    [l]), .axis_m(intf2ats_tx        [l]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(0)) txreq (.clk, .rst_n(rst_n[l]), .axis_s(mx2ho_txreq_port [l]), .axis_m(pcie_ss_axis_txreq [l]));
+end : chkr_bypass
+endgenerate
 
 //-----------------------------------------------------------------------------------------------
 // AFU host fabric
@@ -293,20 +367,34 @@ afu_intf #(
 //
 //    - routing & arbitration: Route DMRd from "B" Port to TXREQ
 //                             arbitrate other traffic channels to TX
+generate for (genvar l = 0; l < PCIE_NUM_LINKS; l++) begin : afu_pcie_routing
+pcie_ss_axis_if#(.DATA_W(PCIE_TDATA_WIDTH),
+                 .USER_W(PCIE_TUSER_WIDTH))
+   // Tag remapper
+   ho2mx_rx_remap                        (.clk(clk), .rst_n(rst_n[l])),
+   ho2mx_rxreq_remap                     (.clk(clk), .rst_n(rst_n[l])),
+   mx2ho_tx_remap[2]                     (.clk(clk), .rst_n(rst_n[l])),
+   // PF/VF Mux "A" ports
+   mx2fn_rx_a_port   [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n[l])),
+   fn2mx_tx_a_port   [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n[l])),
+   // PF/VF Mux "B" ports
+   mx2fn_rx_b_port   [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n[l])),
+   fn2mx_tx_b_port   [NUM_MUX_PORTS-1:0] (.clk(clk), .rst_n(rst_n[l]));
+
+
 afu_host_channel afu_host_channel_inst (
-   .clk            (clk),
-   .rst_n          (rst_n),
-   .ho2mx_rx_port  (pcie_ss_axis_rx),
-   .mx2ho_tx_port,
-   .mx2ho_txreq_port,
-   .ho2mx_rx_remap,
-   .ho2mx_rxreq_port,
-   .ho2mx_rxreq_remap,
-   .mx2ho_tx_remap,
-   .tag_mode
+   .clk               (clk),
+   .rst_n             (rst_n             [l]),
+   .ho2mx_rx_port     (pcie_ss_axis_rx   [l]),
+   .mx2ho_tx_port     (mx2ho_tx_port     [l]),
+   .mx2ho_txreq_port  (mx2ho_txreq_port  [l]),
+   .ho2mx_rxreq_port  (ho2mx_rxreq_port  [l]),
+   .tag_mode          (tag_mode          [l]),
+   .ho2mx_rx_remap    (ho2mx_rx_remap       ),
+   .ho2mx_rxreq_remap (ho2mx_rxreq_remap    ),
+   .mx2ho_tx_remap    (mx2ho_tx_remap       )
 );
 
-   
 // Primary PF/VF MUX ("A" ports). Map individual TX A ports from
 // AFUs down to a single, merged A channel. The RX port from host
 // to FPGA is demultiplexed and individual connections are forwarded
@@ -318,13 +406,13 @@ pf_vf_mux_w_params  #(
    .PFVF_ROUTING_TABLE(PFVF_ROUTING_TABLE)
 ) pf_vf_mux_a (
    .clk             (clk               ),
-   .rst_n           (rst_n             ),
+   .rst_n           (rst_n[l]          ),
    .ho2mx_rx_port   (ho2mx_rxreq_remap ),
    .mx2ho_tx_port   (mx2ho_tx_remap[0] ),
-   .mx2fn_rx_port   (mx2fn_rx_a_port ),
+   .mx2fn_rx_port   (mx2fn_rx_a_port   ),
    .fn2mx_tx_port   (fn2mx_tx_a_port   ),
-   .out_fifo_err    (pf_vf_fifo_err[0] ),
-   .out_fifo_perr   (pf_vf_fifo_perr[0])
+   .out_fifo_err    ( ),
+   .out_fifo_perr   ( )
 );
 
 // Secondary PF/VF MUX ("B" ports). Only TX is implemented, since a
@@ -338,20 +426,55 @@ pf_vf_mux_w_params   #(
    .PFVF_ROUTING_TABLE(PFVF_ROUTING_TABLE)
 ) pf_vf_mux_b (
    .clk             (clk               ),
-   .rst_n           (rst_n             ),
+   .rst_n           (rst_n[l]          ),
    .ho2mx_rx_port   (ho2mx_rx_remap    ),
    .mx2ho_tx_port   (mx2ho_tx_remap[1] ),
    .mx2fn_rx_port   (mx2fn_rx_b_port   ),
    .fn2mx_tx_port   (fn2mx_tx_b_port   ),
-   .out_fifo_err    (pf_vf_fifo_err[1] ),
-   .out_fifo_perr   (pf_vf_fifo_perr[1])
+   .out_fifo_err    ( ),
+   .out_fifo_perr   ( )
 );
 
+// Connect the PF0 port
+   ofs_fim_axis_pipeline #(.PL_DEPTH(0)) conn_pf0_rx_a (.clk, .rst_n(rst_n[l]), .axis_s(mx2fn_rx_a_port[PF0_MGMT_PID]), .axis_m(pf0_rx_a[l]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(0)) conn_pf0_rx_b (.clk, .rst_n(rst_n[l]), .axis_s(mx2fn_rx_b_port[PF0_MGMT_PID]), .axis_m(pf0_rx_b[l]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(0)) conn_pf0_tx_a (.clk, .rst_n(rst_n[l]), .axis_s(pf0_tx_a[l]), .axis_m(fn2mx_tx_a_port[PF0_MGMT_PID]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(0)) conn_pf0_tx_b (.clk, .rst_n(rst_n[l]), .axis_s(pf0_tx_b[l]), .axis_m(fn2mx_tx_b_port[PF0_MGMT_PID]));
+
+// Connect the generated routing to the static region port
+if (top_cfg_pkg::NUM_SR_PORTS > 0) begin : sr_port
+   ofs_fim_axis_pipeline #(.PL_DEPTH(1)) conn_sr_rx_a (.clk, .rst_n(rst_n[l]), .axis_s(mx2fn_rx_a_port[SR_SHARED_PFVF_PID]), .axis_m(sr_rx_a[l]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(1)) conn_sr_rx_b (.clk, .rst_n(rst_n[l]), .axis_s(mx2fn_rx_b_port[SR_SHARED_PFVF_PID]), .axis_m(sr_rx_b[l]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(1)) conn_sr_tx_a (.clk, .rst_n(rst_n[l]), .axis_s(sr_tx_a[l]), .axis_m(fn2mx_tx_a_port[SR_SHARED_PFVF_PID]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(1)) conn_sr_tx_b (.clk, .rst_n(rst_n[l]), .axis_s(sr_tx_b[l]), .axis_m(fn2mx_tx_b_port[SR_SHARED_PFVF_PID]));
+end else begin
+   assign sr_tx_a[l].tvalid = '0;
+   assign sr_tx_b[l].tvalid = '0;
+   assign sr_rx_a[l].tvalid = '0;
+   assign sr_rx_b[l].tvalid = '0;
+end
+
+// Connect the generated routing to the PR region port
+if (top_cfg_pkg::PG_AFU_NUM_PORTS > 0) begin : pg_port
+   ofs_fim_axis_pipeline #(.PL_DEPTH(1)) conn_pg_rx_a (.clk, .rst_n(rst_n[l]), .axis_s(mx2fn_rx_a_port[PG_SHARED_VF_PID]), .axis_m(pg_rx_a[l]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(1)) conn_pg_rx_b (.clk, .rst_n(rst_n[l]), .axis_s(mx2fn_rx_b_port[PG_SHARED_VF_PID]), .axis_m(pg_rx_b[l]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(1)) conn_pg_tx_a (.clk, .rst_n(rst_n[l]), .axis_s(pg_tx_a[l]), .axis_m(fn2mx_tx_a_port[PG_SHARED_VF_PID]));
+   ofs_fim_axis_pipeline #(.PL_DEPTH(1)) conn_pg_tx_b (.clk, .rst_n(rst_n[l]), .axis_s(pg_tx_b[l]), .axis_m(fn2mx_tx_b_port[PG_SHARED_VF_PID]));
+end else begin
+   assign pg_tx_a[l].tvalid = '0;
+   assign pg_tx_b[l].tvalid = '0;
+   assign pg_rx_a[l].tvalid = '0;
+   assign pg_rx_b[l].tvalid = '0;
+end
+
+end : afu_pcie_routing
+endgenerate
+   
 //-----------------------------------------------------------------------------------------------
 // PCIe Streaming-to-AXI-Lite (ST2MM)
 //-----------------------------------------------------------------------------------------------
 // ST2MM translates the PCIe Subsystem TLP-over-AXI-ST channel to AXI-Lite transfers. This feature 
-// is required to be routed to PF0, which is reflected in the default routing configuration:
+// is required to be routed to PF0 on Link 0, which is reflected in the default routing configuration:
 // top_cfg_pkg::TOP_PF_VF_RTABLE
 //
 // This block maps all MMIO transfers to the `axi_m_if` port which manages device features connected
@@ -375,38 +498,61 @@ st2mm #(
    .END_OF_LIST     (fabric_width_pkg::apf_st2mm_slv_eol),
    .NEXT_DFH_OFFSET (fabric_width_pkg::apf_st2mm_slv_next_dfh_offset)
 ) st2mm (
-   .clk               (clk                         ),
-   .rst_n             (rst_n                       ),
-   .clk_csr           (clk_csr                     ),
-   .rst_n_csr         (rst_n_csr                   ),
-   .axis_rx_if        (mx2fn_rx_a_port[PF0_MGMT_PID]),
-   .axis_tx_if        (fn2mx_tx_a_port[PF0_MGMT_PID]),
-   .axi_m_pmci_vdm_if (apf_mctp_mst_if             ),
-   .axi_m_if          (apf_st2mm_mst_if            ),
-   .axi_s_if          (apf_st2mm_slv_if            )   
+   .clk               (clk               ),
+   .rst_n             (rst_n     [LINK_0]),
+   .clk_csr           (clk_csr           ),
+   .rst_n_csr         (rst_n_csr [LINK_0]),
+   .axis_rx_if        (pf0_rx_a  [LINK_0]),
+   .axis_tx_if        (pf0_tx_a  [LINK_0]),
+   .axi_m_pmci_vdm_if (apf_mctp_mst_if   ),
+   .axi_m_if          (apf_st2mm_mst_if  ),
+   .axi_s_if          (apf_st2mm_slv_if  )
 );
 // Tie-off TX/RX B port
-assign fn2mx_tx_b_port[PF0_MGMT_PID].tvalid = 1'b0;
-assign mx2fn_rx_b_port[PF0_MGMT_PID].tready = 1'b1;
+assign pf0_tx_b[LINK_0].tvalid = 1'b0;
+assign pf0_rx_b[LINK_0].tready = 1'b1;
 
-// FLR has no meaning for PF0 management, but must propagate to VFs in pg_afu
-logic pf0_flr_rst_n;
-logic pg_flr_rst_n;
+// FLR has no meaning for PCIe link 0 PF0 management, but must propagate to VFs in pg_afu
+logic pf0_flr_rst_n [PCIE_NUM_LINKS-1:0];
+logic pg_flr_rst_n  [PCIE_NUM_LINKS-1:0];
+
+generate for (genvar l = 1; l < PCIE_NUM_LINKS; l++) begin : pcie_pf0_null
+   // Attach a null component to each PCIe Link PF0. VF creation requires the driver to bind, 
+   // which requires a discoverable feature
+   he_null #(
+      .PF_ID     (0),
+      .VF_ID     (0),
+      .VF_ACTIVE (0)
+   ) he_null_pf0 (
+      .clk     (clk),
+      .rst_n   (pf0_flr_rst_n   [l]),
+      .i_rx_if (pf0_rx_a        [l]),
+      .o_tx_if (pf0_tx_a        [l])
+   );
+   // AFU does not have TX/RX B port
+   assign pf0_tx_b[l].tvalid = 1'b0;
+   assign pf0_rx_b[l].tready = 1'b1;
+end : pcie_pf0_null
+endgenerate
+   
+generate for(genvar l = 0; l < PCIE_NUM_LINKS; l++) begin : pcie_pf0_flr
 flr_rst_mgr #(
    .NUM_PF (1),
    .NUM_VF (0),
    .MAX_NUM_VF (0)
 ) pf0_flr (
    .clk_sys      (clk),
-   .rst_n_sys    (rst_n),
+   .rst_n_sys    (rst_n         [l]),
    .clk_csr      (clk_csr),
-   .rst_n_csr    (rst_n_csr),
-   .pcie_flr_req (afu_flr_req[PF0_MGMT_PID]),
-   .pcie_flr_rsp (afu_flr_rsp[PF0_MGMT_PID]),
-   .pf_flr_rst_n (pf0_flr_rst_n)
+   .rst_n_csr    (rst_n_csr     [l]),
+   .pcie_flr_req (pf0_flr_req   [l]),
+   .pcie_flr_rsp (pf0_flr_rsp   [l]),
+   .pf_flr_rst_n (pf0_flr_rst_n [l])
 );
-
-assign pg_flr_rst_n = (top_cfg_pkg::PG_VFS > 0) ? pf0_flr_rst_n : 1'b1;
+assign pg_flr_rst_n[l] = (top_cfg_pkg::PG_VFS > 0) ? pf0_flr_rst_n[l] : 1'b1;
+end : pcie_pf0_flr
+endgenerate
+   
 //-----------------------------------------------------------------------------------------------
 // Static Region (SR) AFU (fim_afu_instances)
 //-----------------------------------------------------------------------------------------------
@@ -421,13 +567,14 @@ generate if(top_cfg_pkg::NUM_SR_PORTS > 0) begin : sr_afu
       .NUM_VF             (top_cfg_pkg::FIM_NUM_VF),
       .MAX_NUM_VF         (top_cfg_pkg::FIM_MAX_NUM_VF),
       .NUM_MUX_PORTS      (top_cfg_pkg::NUM_SR_RTABLE_ENTRIES),
-      .PFVF_ROUTING_TABLE (top_cfg_pkg::SR_PF_VF_RTABLE)
+      .PFVF_ROUTING_TABLE (top_cfg_pkg::SR_PF_VF_RTABLE),
+      .PCIE_NUM_LINKS     (PCIE_NUM_LINKS)
    ) fim_afu_instances (
       .clk               (clk),
       .rst_n             (rst_n),
 
-      .flr_req           (afu_flr_req[SR_SHARED_PFVF_PID]),
-      .flr_rsp           (afu_flr_rsp[SR_SHARED_PFVF_PID]),
+      .flr_req           (sr_flr_req),
+      .flr_rsp           (sr_flr_rsp),
 
       .clk_csr           (clk_csr),
       .rst_n_csr         (rst_n_csr),
@@ -437,10 +584,10 @@ generate if(top_cfg_pkg::NUM_SR_PORTS > 0) begin : sr_afu
       .hps_ace_lite_if   (hps_ace_lite_if),
       .h2f_reset         (h2f_reset),
 `endif
-      .afu_axi_rx_a_if     (mx2fn_rx_a_port[SR_SHARED_PFVF_PID]),
-      .afu_axi_tx_a_if     (fn2mx_tx_a_port[SR_SHARED_PFVF_PID]),
-      .afu_axi_rx_b_if     (mx2fn_rx_b_port[SR_SHARED_PFVF_PID]),
-      .afu_axi_tx_b_if     (fn2mx_tx_b_port[SR_SHARED_PFVF_PID])
+      .afu_axi_rx_a_if     (sr_rx_a),
+      .afu_axi_tx_a_if     (sr_tx_a),
+      .afu_axi_rx_b_if     (sr_rx_b),
+      .afu_axi_tx_b_if     (sr_tx_b)
    );
 end : sr_afu
 endgenerate
@@ -472,8 +619,10 @@ endfunction // gen_pf_vf_map
 localparam pcie_ss_hdr_pkg::ReqHdr_pf_vf_info_t[PG_AFU_NUM_PORTS-1:0] PG_PF_VF_INFO =
    gen_prr_pf_vf_map();
 
+
 generate if (PG_AFU_NUM_PORTS > 0) begin : pg_afu
-port_gasket #( 
+port_gasket #(
+   .PG_NUM_LINKS(PCIE_NUM_LINKS), 
    .PG_NUM_PORTS(PG_AFU_NUM_PORTS),              // Number of PCIe ports to PR region
    .PORT_PF_VF_INFO(PG_PF_VF_INFO),              // PCIe port data
    .NUM_MEM_CH(AFU_MEM_CHANNEL),                 // Number of Memory Porst to PR region
@@ -489,35 +638,35 @@ port_gasket #(
    .clk_100            (clk_csr),               // 100 MHz for user clk logic
    .clk_csr            (clk_csr),               // 100 MHz CSR interface clock
 
-   .rst_n,                                      // Reset from hip
-   .rst_n_100          (rst_n_csr),             // Reset from hip on csr clk
-   .rst_n_csr          (rst_n_csr),             // Reset from hip on csr clk
+   .rst_n              (rst_n     [LINK_0]),    // Reset from hip
+   .rst_n_100          (rst_n_csr [LINK_0]),    // Reset from hip on csr clk
+   .rst_n_csr          (rst_n_csr [LINK_0]),    // Reset from hip on csr clk
 
    // FLR interface
    .pg_pf_flr_rst_n    (pg_flr_rst_n),
-   .flr_req            (afu_flr_req[PG_SHARED_VF_PID]),
-   .flr_rsp            (afu_flr_rsp[PG_SHARED_VF_PID]),
+   .flr_req            (pg_flr_req),
+   .flr_rsp            (pg_flr_rsp),
 
 `ifdef INCLUDE_DDR4
    .afu_mem_if         (ext_mem_if),             // Memory interface
 `endif
 
-   `ifdef INCLUDE_HSSI                           // Instantiates HE-HSSI in PR region   
-      .hssi_ss_st_tx  (hssi_ss_st_tx),           // HSSI Tx
-      .hssi_ss_st_rx  (hssi_ss_st_rx),           // HSSI Rx
-      .hssi_fc        (hssi_fc),                 // Flow control interface
-      .i_hssi_clk_pll (i_hssi_clk_pll),          // HSSI clocks
-   `endif
+`ifdef INCLUDE_HSSI                               // Instantiates HE-HSSI in PR region   
+   .hssi_ss_st_tx      (hssi_ss_st_tx),           // HSSI Tx
+   .hssi_ss_st_rx      (hssi_ss_st_rx),           // HSSI Rx
+   .hssi_fc            (hssi_fc),                 // Flow control interface
+   .i_hssi_clk_pll     (i_hssi_clk_pll),          // HSSI clocks
+`endif
 
    .i_sel_mmio_rsp     (sel_mmio_rsp),
    .i_read_flush_done  (read_flush_done),
    .o_afu_softreset    (afu_softreset),
-   .o_pr_parity_error  (pr_parity_error),       // Partial Reconfiguration FIFO Parity Error Indication from PR Controller.
+   .o_pr_parity_error  (pr_parity_error),          // Partial Reconfiguration FIFO Parity Error Indication from PR Controller.
 
-   .axi_rx_a_if        (mx2fn_rx_a_port[PG_SHARED_VF_PID]),
-   .axi_tx_a_if        (fn2mx_tx_a_port[PG_SHARED_VF_PID]),
-   .axi_rx_b_if        (mx2fn_rx_b_port[PG_SHARED_VF_PID]),
-   .axi_tx_b_if        (fn2mx_tx_b_port[PG_SHARED_VF_PID]),
+   .axi_rx_a_if        (pg_rx_a),
+   .axi_tx_a_if        (pg_tx_a),
+   .axi_rx_b_if        (pg_rx_b),
+   .axi_tx_b_if        (pg_tx_b),
 
    .axi_s_if           (apf_pgsk_slv_if)        // CSR interface from APF
 );
@@ -528,7 +677,7 @@ else begin
       .END_OF_LIST      (fabric_width_pkg::apf_pr_slv_eol)
    ) emif_dummy_csr (
       .clk         (clk_csr),
-      .rst_n       (rst_n_csr),
+      .rst_n       (rst_n_csr[LINK_0]),
       .csr_lite_if (apf_pgsk_slv_if)
    );
 end // else: !if(PG_AFU_NUM_PORTS > 0)
@@ -552,9 +701,9 @@ end
                               .ST2MM_DFH_MSIX_ADDR (20'h40000)
    ) vuart_top (
                               .clk_csr       (clk_csr),
-                              .rst_n_csr     (rst_n_csr),
+                              .rst_n_csr     (rst_n_csr[LINK_0]),
                               .clk_50m       (clk_50m),
-                              .rst_n_50m     (rst_n_50m),
+                              .rst_n_50m     (rst_n_50m[LINK_0]),
                               .pwr_good_csr_clk_n (pwr_good_csr_clk_n),
                               
                               .csr_lite_m_if (apf_uart_mst_if),
@@ -570,7 +719,7 @@ dummy_csr #(
    .END_OF_LIST      (fabric_width_pkg::apf_uart_slv_eol)
 ) uart_dummy_csr (
    .clk         (clk_csr),
-   .rst_n       (rst_n_csr),
+   .rst_n       (rst_n_csr[LINK_0]),
    .csr_lite_if (apf_uart_slv_if)
 );
 
@@ -613,7 +762,7 @@ end
 //-----------------------------------------------------------------------------------------------
 apf apf(
    .clk_clk               (clk_csr     ),
-   .rst_n_reset_n         (rst_n_csr   ),
+   .rst_n_reset_n         (rst_n_csr[LINK_0]),
    
    .apf_bpf_slv_awaddr    (apf_bpf_slv_if.awaddr   ),
    .apf_bpf_slv_awprot    (apf_bpf_slv_if.awprot   ),

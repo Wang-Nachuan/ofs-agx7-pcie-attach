@@ -1,6 +1,3 @@
-# Copyright (C) 2020-2023 Intel Corporation
-# SPDX-License-Identifier: MIT
-
 package require -exact qsys 18.0
   
     # create the system

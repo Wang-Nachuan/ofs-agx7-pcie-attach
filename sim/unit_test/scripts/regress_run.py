@@ -246,43 +246,75 @@ def create_test_list():
     logger.debug(f"CTL: Package - {args.package}")
     test_list_file = top_test_dir + "/list.txt"
     skip_list_file = top_test_dir + "/scripts/skip_list.txt"
-    if (args.package == "list"):
-        test_dir_pattern = r'^\.\/(\w+)\/set_params\.sh'
-        try:
-            with open(test_list_file) as file_object:
-                for line in file_object:
-                   working_test_list.append(line.rstrip())
-        except FileNotFoundError:
-            logger.error(f"ERROR: List of Unit Tests file not found: {test_list_file}")
-            sys.exit(1)
-        for test in working_test_list:
-            test_dir_pattern_found = re.search(test_dir_pattern,test)
-            if (test_dir_pattern_found):
-                test_dir = test_dir_pattern_found.group(1)
-                unit_test_script = top_test_dir + "/" + test_dir + "/" + "set_params.sh"
-                if (os.path.exists(unit_test_script)):
-                    logger.debug(f"CTL: Adding Test - {test_dir}")
-                    filtered_test_list.append(test_dir)
-                else:
-                    logger.error(f"ERROR: Unit Test run script not found: {unit_test_script} for test {test_dir}")
-                    sys.exit(1)
-            else:
-                logger.error(f"ERROR: Unit Test in 'list.txt' file not in correct format: {test}")
-                logger.error(f"       Expected regex pattern: {test_dir_pattern}")
+    if (args.package == "gen5x8x2"):
+        filtered_test_list.append('bfm_test')
+        filtered_test_list.append('csr_test')
+        filtered_test_list.append('dfh_walker')
+        filtered_test_list.append('flr')
+        filtered_test_list.append('fme_csr_access')
+        filtered_test_list.append('fme_csr_directed')
+        filtered_test_list.append('he_lb_test')
+        filtered_test_list.append('indirect_csr')
+        filtered_test_list.append('pcie_ats_basic_test')
+        filtered_test_list.append('pcie_csr_test')
+        filtered_test_list.append('pf_vf_access_test')
+        filtered_test_list.append('pmci_csr_test')
+        filtered_test_list.append('pmci_mailbox_test')
+        filtered_test_list.append('pmci_multi_master_test')
+        filtered_test_list.append('pmci_qsfp_telemetry_test')
+        filtered_test_list.append('pmci_rd_default_value_test')
+        filtered_test_list.append('pmci_ro_mailbox_test')
+        filtered_test_list.append('pmci_vdm_b2b_drop_err_scenario_test')
+        filtered_test_list.append('pmci_vdm_len_err_scenario_test')
+        filtered_test_list.append('pmci_vdm_mctp_mmio_b2b_test')
+        filtered_test_list.append('pmci_vdm_multipkt_error_scenario_test')
+        filtered_test_list.append('pmci_vdm_multipkt_tlp_err_test')
+        filtered_test_list.append('pmci_vdm_tlp_error_scenario_test')
+        filtered_test_list.append('pmci_vdm_tx_rx_all_random_lpbk_test')
+        filtered_test_list.append('pmci_vdm_tx_rx_all_toggle_test')
+        filtered_test_list.append('pmci_vdm_tx_rx_lpbk_test')
+        filtered_test_list.append('port_gasket_test')
+        filtered_test_list.append('qsfp_test')
+        filtered_test_list.append('remote_stp_test')
+        filtered_test_list.append('uart_csr')
     else:
-        working_test_list = find_files("set_params.sh",top_test_dir)
-        if (args.package == "all"):
+        if (args.package == "list"):
+            test_dir_pattern = r'^\.\/(\w+)\/set_params\.sh'
+            try:
+                with open(test_list_file) as file_object:
+                    for line in file_object:
+                       working_test_list.append(line.rstrip())
+            except FileNotFoundError:
+                logger.error(f"ERROR: List of Unit Tests file not found: {test_list_file}")
+                sys.exit(1)
             for test in working_test_list:
-                test_path_split = test.split("/")
-                filtered_test_list.append(test_path_split[-1])                
+                test_dir_pattern_found = re.search(test_dir_pattern,test)
+                if (test_dir_pattern_found):
+                    test_dir = test_dir_pattern_found.group(1)
+                    unit_test_script = top_test_dir + "/" + test_dir + "/" + "set_params.sh"
+                    if (os.path.exists(unit_test_script)):
+                        logger.debug(f"CTL: Adding Test - {test_dir}")
+                        filtered_test_list.append(test_dir)
+                    else:
+                        logger.error(f"ERROR: Unit Test run script not found: {unit_test_script} for test {test_dir}")
+                        sys.exit(1)
+                else:
+                    logger.error(f"ERROR: Unit Test in 'list.txt' file not in correct format: {test}")
+                    logger.error(f"       Expected regex pattern: {test_dir_pattern}")
         else:
-            test_dir_pattern = "\/(" + args.package + r'\w+)$'
-            logger.debug(f"Unit Test Search Pattern: {test_dir_pattern}")
-            for test in working_test_list:
-                logger.debug(f"Unit Test Searched..: {test}")
-                filtered_test_found = re.search(test_dir_pattern,test)
-                if (filtered_test_found):
-                    filtered_test_list.append(filtered_test_found.group(1))
+            working_test_list = find_files("set_params.sh",top_test_dir)
+            if (args.package == "all"):
+                for test in working_test_list:
+                    test_path_split = test.split("/")
+                    filtered_test_list.append(test_path_split[-1])                
+            else:
+                test_dir_pattern = "\/(" + args.package + r'\w+)$'
+                logger.debug(f"Unit Test Search Pattern: {test_dir_pattern}")
+                for test in working_test_list:
+                    logger.debug(f"Unit Test Searched..: {test}")
+                    filtered_test_found = re.search(test_dir_pattern,test)
+                    if (filtered_test_found):
+                        filtered_test_list.append(filtered_test_found.group(1))
     if 'scripts' in filtered_test_list:
         filtered_test_list.remove('scripts')
     if (os.path.exists(rootdir+"/sim/scripts/generated_ftile_macros.f")):
@@ -1095,7 +1127,7 @@ if __name__ == "__main__":
                python regress_run.py'''))
     parser.add_argument('-l', '--local', dest='run_regression_locally', action='store_true', help='Run regression locally, or run it on Farm.  (Default: %(default)s)')
     parser.add_argument('-n', '--n_procs', dest='max_parallel_running_process_count', type=check_positive_process_count, metavar='N', nargs='?', default=multiprocessing.cpu_count()-1, help='Maximum number of processes/tests to run in parallel when run locally.  This has no effect on Farm run.  (Default #CPUs-1: %(default)s)')
-    parser.add_argument('-k', '--pack', dest='package', type=str, nargs='?', default='all', choices=['all','fme','he','hssi','list','mem','pmci'], help='Test package to run during regression.  The "list" option will look for a text file named "list.txt" in the "unit_test" directory for a text list of tests to run (top directory names).  (Default: %(default)s)')
+    parser.add_argument('-k', '--pack', dest='package', type=str, nargs='?', default='all', choices=['all','fme','gen5x8x2','he','hssi','list','mem','pmci'], help='Test package to run during regression.  The "list" option will look for a text file named "list.txt" in the "unit_test" directory for a text list of tests to run (top directory names).  (Default: %(default)s)')
     parser.add_argument('-s', '--sim', dest='simulator', type=str, nargs='?', default='vcs', choices=['vcs','msim','vcsmx'], help='Simulator used for regression test.  (Default: %(default)s)')
     parser.add_argument('-g', '--gen_sim_files', dest='gen_sim_files', action='store_true', help='Generate IP simulation files.  This should only be done once per repo update.  (Default: %(default)s)')
     parser.add_argument('-o', '--ofss', dest='ofss', nargs='+', help='Pass ofss file to configure IPs')

@@ -8,6 +8,7 @@ import host_bfm_types_pkg::*;
 
 module unit_test #(
    parameter SOC_ATTACH = 0,
+   parameter LINK_NUMBER = 0,
    parameter type pf_type = default_pfs, 
    parameter pf_type pf_list = '{1'b1}, 
    parameter type vf_type = default_vfs, 
@@ -82,6 +83,14 @@ pfvf_struct pfvf;
 parameter MAX_TEST = 100;
 parameter TIMEOUT = 10.0ms;
 parameter RP_MAX_TAGS = 64;
+localparam NUMBER_OF_LINKS = `OFS_FIM_IP_CFG_PCIE_SS_NUM_LINKS;
+localparam string unit_test_name = "HSSI KPI Test";
+
+//---------------------------------------------------------
+// Mailbox 
+//---------------------------------------------------------
+mailbox #(host_bfm_types_pkg::mbx_message_t) mbx = new();
+host_bfm_types_pkg::mbx_message_t mbx_msg;
 
 `ifdef ETH_10G
     `define ETH_10_OR_25G
@@ -103,6 +112,7 @@ t_test_info [MAX_TEST-1:0] test_summary;
 logic reset_test;
 logic [7:0] checker_err_count;
 logic test_done;
+logic all_tests_done;
 logic test_result;
 
 //---------------------------------------------------------
@@ -162,9 +172,10 @@ endtask
 task print_test_header;
    input [1024*8-1:0] test_name;
 begin
-   $display("\n********************************************");
+   $display("\n");
+   $display("****************************************************************");
    $display(" Running TEST(%0d) : %0s", test_id, test_name);
-   $display("********************************************");   
+   $display("****************************************************************");
    test_summary[test_id].name = test_name;
 end
 endtask
@@ -608,7 +619,6 @@ task test_csr_ro_access_64;
 begin
    result = 1'b1;
 
-   //READ64(addr_mode, addr, bar, vf_active, pfn, vfn, scratch, error);
    host_bfm_top.host_bfm.read64_with_completion_status(addr, scratch, error, cpl_status);
 
    if (error) begin
@@ -635,8 +645,6 @@ task test_unassigned_csr_access_64;
 begin
    result = 1'b1;
 
-   //WRITE64(addr_mode, addr, bar, vf_active, pfn, vfn, data);
-   //READ64(addr_mode, addr, bar, vf_active, pfn, vfn, scratch, error);
    host_bfm_top.host_bfm.write64(addr, data);
    host_bfm_top.host_bfm.read64_with_completion_status(addr, scratch, error, cpl_status);
 
@@ -742,8 +750,6 @@ task test_csr_access_32_addr64;
 begin
    result = 1'b1;
 
-   //WRITE32(addr_mode, {32'h0000_eecc,addr}, bar, vf_active, pfn, vfn, data);
-   //READ32(addr_mode, {32'h0000_eecc,addr}, bar, vf_active, pfn, vfn, scratch, error);
    host_bfm_top.host_bfm.write64({32'h0000_eecc,addr[31:0]}, data);
    host_bfm_top.host_bfm.read64_with_completion_status({32'h0000_eecc,addr[31:0]}, scratch, error, cpl_status);
 
@@ -887,28 +893,22 @@ task read_mailbox;
    cpl_status_t        cpl_status;
    begin
       if (access32) begin
-         //WRITE32(ADDR32, cmd_ctrl_addr + MB_ADDRESS_OFFSET, bar,  HEH_VA, HEH_PF, HEH_VF, addr[31:0]);
-         //WRITE32(ADDR32, cmd_ctrl_addr, bar,  HEH_VA, HEH_PF, HEH_VF, MB_RD);
          host_bfm_top.host_bfm.write32(cmd_ctrl_addr + MB_ADDRESS_OFFSET, addr[31:0]);
          host_bfm_top.host_bfm.write32(cmd_ctrl_addr, MB_RD);
          read_ack_mailbox(cmd_ctrl_addr);
          //#1000000
-         //READ32(ADDR32, cmd_ctrl_addr + MB_RDDATA_OFFSET, bar,  HEH_VA, HEH_PF, HEH_VF, rd_data32, error);
          host_bfm_top.host_bfm.read32_with_completion_status(cmd_ctrl_addr + MB_RDDATA_OFFSET, rd_data32, error, cpl_status);
          if (error) begin
             $display("\nERROR: Mailbox read failed.\n");
             incr_err_count();
          end
          $display("INFO: Read MAILBOX ADDR:%x, READ_DATA32:%X", addr, rd_data32);
-         //WRITE32(ADDR32, cmd_ctrl_addr, bar,  HEH_VA, HEH_PF, HEH_VF, MB_NOOP);
          host_bfm_top.host_bfm.write32(cmd_ctrl_addr, MB_NOOP);
       end 
       else begin
-         //WRITE64(ADDR32, cmd_ctrl_addr, bar,  HEH_VA, HEH_PF, HEH_VF, {addr,MB_RD});
          host_bfm_top.host_bfm.write64(cmd_ctrl_addr, {addr,MB_RD});
          read_ack_mailbox(cmd_ctrl_addr);
          //#1000000
-         //READ64(ADDR32, cmd_ctrl_addr + MB_RDDATA_OFFSET, bar,  HEH_VA, HEH_PF, HEH_VF, scratch, error);
          host_bfm_top.host_bfm.read64_with_completion_status(cmd_ctrl_addr + MB_RDDATA_OFFSET, scratch, error, cpl_status);
          if (error) begin
             $display("\nERROR: Mailbox read failed.\n");
@@ -916,7 +916,6 @@ task read_mailbox;
          end
          rd_data32 = scratch[31:0];
          $display("INFO: Read MAILBOX ADDR:%x, READ_DATA32:%X", addr, rd_data32);
-         //WRITE64(ADDR32, cmd_ctrl_addr, bar,  HEH_VA, HEH_PF, HEH_VF, MB_NOOP);
          host_bfm_top.host_bfm.write64(cmd_ctrl_addr, MB_NOOP);
       end
    end
@@ -936,7 +935,6 @@ task read_ack_mailbox;
       ack_done     = 1'h0;
 
       while (~ack_done && rd_attempts<15) begin
-         //READ32(ADDR32, cmd_ctrl_addr, bar,  HEH_VA, HEH_PF, HEH_VF, scratch1, error);
          host_bfm_top.host_bfm.read32_with_completion_status(cmd_ctrl_addr, scratch1, error, cpl_status);
          ack_done = scratch1[2];
          #100000
@@ -980,8 +978,6 @@ task wait_for_hssi_to_ready;
       pfvf = '{0,0,0}; // Set PFVF to PF0
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
 
-      //READ32(ADDR32, HSSI_FEATURE_ADDR, bar, vf_active, pfn, vfn, hssi_cfg, error);
-      //READ32(ADDR32, HSSI_VER_ADDR, bar, vf_active, pfn, vfn, scratch, error);
       host_bfm_top.host_bfm.read32_with_completion_status(HSSI_FEATURE_ADDR, hssi_cfg, error, cpl_status);
       host_bfm_top.host_bfm.read32_with_completion_status(HSSI_VER_ADDR, scratch, error, cpl_status);
       is_etile = scratch[31:16] == 'h1;
@@ -999,7 +995,6 @@ task wait_for_hssi_to_ready;
                  (is_etile & !port_status.ehip_ready))
             begin
 
-               //READ32(ADDR32, HSSI_PORT0_STATUS_ADDR + 'h4*port, bar, vf_active, pfn, vfn, port_status, error);
                host_bfm_top.host_bfm.read32_with_completion_status(HSSI_PORT0_STATUS_ADDR + 'h4*port, port_status, error, cpl_status);
 
                if(is_etile) begin
@@ -1162,7 +1157,6 @@ task traffic_10G_25G;
       // Traffic Controller Configuration
       //---------------------------------------------------------------------------
       for (int id=NUM_ETH_CHANNELS-1; id >=0;id--) begin
-         //WRITE32(ADDR32, AFU_PORT_SEL_ADDR, 0,  HEH_VA, HEH_PF, HEH_VF, 32'h1*id);
          host_bfm_top.host_bfm.write32(AFU_PORT_SEL_ADDR, 32'h1*id);
          // Port-0
          if (id == 0) begin
@@ -1188,7 +1182,6 @@ task traffic_10G_25G;
       //---------------------------------------------------------------------------
 
       // Port-0
-      //WRITE32(ADDR32, AFU_PORT_SEL_ADDR, 0,  HEH_VA, HEH_PF, HEH_VF, 32'h0);
       host_bfm_top.host_bfm.write32(AFU_PORT_SEL_ADDR, 32'h0);
       read_mailbox(access32, TRAFFIC_CTRL_CMD_ADDR, TM_PKT_GOOD_ADDR, scratch1);
       if (scratch1 != TG_NUM_PKT_VAL) begin
@@ -1225,7 +1218,6 @@ task traffic_100G;
       //---------------------------------------------------------------------------
       $display("T:%8d INFO: write mailbox",$time);
       `ifdef INCLUDE_HSSI_PORT_4
-      //WRITE32(ADDR32, AFU_PORT_SEL_ADDR, 0,  HEH_VA, HEH_PF, HEH_VF, 32'h1);
       host_bfm_top.host_bfm.write32(AFU_PORT_SEL_ADDR, 32'h1);
       write_mailbox(access32, TRAFFIC_CTRL_CMD_ADDR, 32'h1010, 32'h1E);
       `endif
@@ -1265,10 +1257,8 @@ task traffic_200G;
       // Traffic Controller Configuration
       //---------------------------------------------------------------------------
       $display("T:%8d INFO: write mailbox",$time);
-      //WRITE32(ADDR32, AFU_PORT_SEL_ADDR, 0,  HEH_VA, HEH_PF, HEH_VF, 32'h1);
       host_bfm_top.host_bfm.write32(AFU_PORT_SEL_ADDR, 32'h1);
       write_mailbox(access32, TRAFFIC_CTRL_CMD_ADDR, 32'h1010, 32'h5E);
-      //WRITE32(ADDR32, AFU_PORT_SEL_ADDR, 0,  HEH_VA, HEH_PF, HEH_VF, 32'h0);
       host_bfm_top.host_bfm.write32(AFU_PORT_SEL_ADDR, 32'h0);
       write_mailbox(access32, TRAFFIC_CTRL_CMD_ADDR, 32'h1010, 32'h54);
       #500000
@@ -1333,6 +1323,7 @@ begin
    reset_test = 1'b0;
    test_id = '0;
    test_done = 1'b0;
+   all_tests_done = 1'b0;
    test_result = 1'b0;
 end
 
@@ -1351,9 +1342,10 @@ begin
  
    wait (test_done==1) begin
       // Test summary
-      $display("\n********************");
-      $display("  Test summary");
-      $display("********************");
+      $display("\n");
+      $display("***************************");
+      $display("  Test summary for link %0d", LINK_NUMBER);
+      $display("***************************");
       for (int i=0; i < test_id; i=i+1) 
       begin
          if (test_summary[i].result)
@@ -1364,38 +1356,128 @@ begin
 
       if(get_err_count() == 0) 
       begin
+          $display("");
+          $display("");
+          $display("-----------------------------------------------------");
           $display("Test passed!");
+          $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+          $display("-----------------------------------------------------");
+          $display("");
+          $display("");
+          $display("      '||''|.      |      .|'''.|   .|'''.|  ");
+          $display("       ||   ||    |||     ||..  '   ||..  '  ");
+          $display("       ||...|'   |  ||     ''|||.    ''|||.  ");
+          $display("       ||       .''''|.  .     '|| .     '|| ");
+          $display("      .||.     .|.  .||. |'....|'  |'....|'  ");
+          $display("");
+          $display("");
       end 
       else 
       begin
           if (get_err_count() != 0) 
           begin
+             $display("");
+             $display("");
+             $display("-----------------------------------------------------");
              $display("Test FAILED! %d errors reported.\n", get_err_count());
+             $display("Test:%s for--> Link:%0d", unit_test_name, LINK_NUMBER);
+             $display("-----------------------------------------------------");
+             $display("");
+             $display("");
+             $display("      '||''''|     |     '||' '||'      ");
+             $display("       ||  .      |||     ||   ||       ");
+             $display("       ||''|     |  ||    ||   ||       ");
+             $display("       ||       .''''|.   ||   ||       ");
+             $display("      .||.     .|.  .||. .||. .||.....| ");
+             $display("");
+             $display("");
           end
        end
    end
    join_any    
-   $finish();  
+   if (LINK_NUMBER == 0)
+   begin
+      wait (all_tests_done);
+      $finish();
+   end
 end
 
-always begin : main   
-   #10000;
-   wait (rst_n);
-   $display("MAIN Always - After Wait for rst_n.");
-   wait (csr_rst_n);
-   $display("MAIN Always - After Wait for csr_rst_n.");
-   //-------------------------
-   // deassert port reset
-   //-------------------------
-   deassert_afu_reset();
-   $display("MAIN Always - After Deassert of AFU Reset.");
-   //-------------------------
-   // Test scenarios 
-   //-------------------------
-   main_test(test_result);
-   $display("MAIN Always - After Main Task.");
-   test_done = 1'b1;
-end
+generate
+   if (LINK_NUMBER != 0)
+   begin // This block covers the scenario where there is more than one link and link N needs to coordinate execution with link0.
+      always begin : main   
+         #10000;
+         wait (rst_n);
+         wait (csr_rst_n);
+         $display(">>> Link #%0d: Sending READY to Link0.  Waiting for release.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(READY);
+         mbx_msg = START;
+         while (mbx_msg != GO)
+         begin
+            $display("Mailbox #%0d State: %s", LINK_NUMBER, mbx_msg.name());
+            mbx.get(mbx_msg);
+         end
+         $display(">>> No HSSI on Link %0d...", LINK_NUMBER);
+         $display(">>> Returning execution back to Link 0.  Link %0d actions completed.", LINK_NUMBER);
+         host_gen_block0.pcie_top_host0.unit_test.mbx.put(DONE);
+      end
+   end
+   else
+   begin
+      if (NUMBER_OF_LINKS > 1)
+      begin // This block covers the scenario where there is more than one link and link0 needs to communicate with the other links.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            #1000
+            $display(">>> Link #0: Getting status from Link #1 Mailbox, testing for READY");
+            mbx.try_get(mbx_msg);
+            $display(">>> Link #0: Link #1 shows status as %s.", mbx_msg.name());
+            $display(">>> Link #0: %s complete.  Sending GO to Link #1.", unit_test_name);
+            mbx_msg = READY;
+            host_gen_block1.pcie_top_host1.unit_test.mbx.put(GO);
+            while (mbx_msg != DONE)
+            begin
+               $display("Mailbox #0 State: %s", mbx_msg.name());
+               mbx.get(mbx_msg);
+            end
+            all_tests_done = 1'b1;
+         end
+      end
+      else
+      begin  // This block covers the scenario where there is only one link and no mailbox communication is required.
+         always begin : main   
+            #10000;
+            wait (rst_n);
+            wait (csr_rst_n);
+            //-------------------------
+            // deassert port reset
+            //-------------------------
+            deassert_afu_reset();
+            //-------------------------
+            // Test scenarios 
+            //-------------------------
+            $display(">>> Running %s on Link 0...", unit_test_name);
+            main_test(test_result);
+            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            test_done = 1'b1;
+            all_tests_done = 1'b1;
+         end
+      end
+   end
+endgenerate
 
 // HSSI Traffic test
 task traffic_test;
@@ -1508,7 +1590,7 @@ endtask
 task main_test;
    output logic test_result;
    begin
-      $display("Entering HSSI KPI Test.");
+      $display("Entering %s.", unit_test_name);
       host_bfm_top.host_bfm.set_mmio_mode(PU_METHOD_TRANSACTION);
       host_bfm_top.host_bfm.set_dm_mode(DM_AUTO_TRANSACTION);
       traffic_test (1); // Pass 1 for 32-bit access to mailbox, 0 for 64-bit
