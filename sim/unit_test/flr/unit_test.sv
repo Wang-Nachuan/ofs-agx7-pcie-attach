@@ -96,7 +96,7 @@ endtask
 
 task post_test_util;
    input logic [31:0] old_test_err_count;
-   logic result;
+   output logic result;
 begin
    if (get_err_count() > old_test_err_count) 
    begin
@@ -357,33 +357,40 @@ task main_test;
       repeat (20) @(posedge clk);
       test_flr = new(0,0,0);
       test_flr.get_pfvf_first(test_flr_type);
+      print_test_header("flr_test", '0, '0, '0);
+      old_test_err_count = get_err_count();
       do
       begin
-         host_flr_top.flr_manager.send_flr(test_flr_type);
-         flr = host_flr_top.flr_manager.flrs[$];
-         $sformat(test_name,"test_pf%0d_vf%0d_vfa%b_flr", flr.get_pf(), flr.get_vf(), flr.get_vf_active());
-         print_test_header(test_name, flr.get_vf_active(), flr.get_pf(), flr.get_vf());
-         old_test_err_count = get_err_count();
-         while (host_flr_top.flr_manager.num_all_outstanding_flrs() > 0 )
-         begin
-            @(posedge clk);
-         end
-         post_test_util(old_test_err_count);
+         automatic pfvf_struct flr_pfvf = test_flr_type;
+         fork
+            host_flr_top.flr_manager.send_flr(flr_pfvf);
+         join_none
       end while (test_flr.get_pfvf_next(test_flr_type));
+      wait fork;
+      while (host_flr_top.flr_manager.num_all_outstanding_flrs() > 0 )
+      begin
+         @(posedge clk);
+      end
       $display(">>> All Sent FLRs <<<");
       host_flr_top.flr_manager.print_all_sent_flrs();
       $display("");
-      $display(">>> All Outstanding FLRs <<<");
-      host_flr_top.flr_manager.print_all_outstanding_flrs();
-      $display("");
-      $display(">>> All Unmatched FLR Responses <<<");
-      host_flr_top.flr_manager.print_all_unmatched_responses();
-      $display("");
-      if (host_flr_top.flr_manager.num_all_outstanding_flrs() == 0)
-      begin
-         test_result = 1'b1;
+      if(host_flr_top.flr_manager.num_all_outstanding_flrs() > 0) begin
+         $display("ERROR: test has %0d outstanding FLR requests", host_flr_top.flr_manager.num_all_outstanding_flrs());
+         $display(">>> All Outstanding FLRs <<<");
+         host_flr_top.flr_manager.print_all_outstanding_flrs();
+         incr_err_count();
       end
+      $display("");
+      if(host_flr_top.flr_manager.num_all_unmatched_responses() > 0) begin
+         $display("ERROR: test has %0d unmatched FLR responses", host_flr_top.flr_manager.num_all_unmatched_responses());
+         $display(">>> All Unmatched FLR Responses <<<");
+         host_flr_top.flr_manager.print_all_unmatched_responses();
+         incr_err_count();
+      end
+      $display("");
 
+      post_test_util(old_test_err_count, test_result);
+      
       repeat (10) @(posedge clk);
    end
 endtask
