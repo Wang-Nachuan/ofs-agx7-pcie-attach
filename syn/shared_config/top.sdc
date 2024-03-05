@@ -107,49 +107,31 @@ set_multicycle_path -hold -start -from [get_clocks {sys_pll|iopll_0_clk_100m}] -
 #---------------------------------------------
 # CDC constraints for reset synchronizers
 #---------------------------------------------
-add_reset_sync_sdc {rst_ctrl|rst_clk100m_resync|resync_chains[0].synchronizer_nocut|*|clrn}	
-add_reset_sync_sdc {rst_ctrl|rst_clk50m_resync|resync_chains[0].synchronizer_nocut|*|clrn}	
-add_reset_sync_sdc {rst_ctrl|rst_clk_sys_resync|resync_chains[0].synchronizer_nocut|*|clrn}	
-add_reset_sync_sdc {rst_ctrl|pwr_good_n_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {rst_ctrl|pwr_good_csr_clk_n_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {rst_ctrl|rst_in_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {rst_ctrl|rst_warm_in_resync|resync_chains[0].synchronizer_nocut*|*|clrn}
-add_reset_sync_sdc {rst_ctrl|rst_clk_ptp_slv_resync|resync_chains[0].synchronizer_nocut*|*|clrn}
+add_reset_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|rst_clk100m_resync|resync_chains[0].synchronizer_nocut|*|clrn}	
+add_reset_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|rst_clk50m_resync|resync_chains[0].synchronizer_nocut|*|clrn}	
+add_reset_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|rst_clk_sys_resync|resync_chains[0].synchronizer_nocut|*|clrn}	
+add_reset_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|pwr_good_n_resync|resync_chains[0].synchronizer_nocut|*|clrn}
+add_reset_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|pwr_good_csr_clk_n_resync|resync_chains[0].synchronizer_nocut|*|clrn}
+add_reset_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|rst_in_resync|resync_chains[0].synchronizer_nocut|*|clrn}
+add_reset_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|rst_warm_in_resync|resync_chains[0].synchronizer_nocut*|*|clrn}
+add_reset_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|rst_clk_ptp_slv_resync|resync_chains[0].synchronizer_nocut*|*|clrn}
 
-add_reset_sync_sdc {pcie_wrapper|pcie_top|pcie_bridge|pcie_bridge_cdc|rx_cdc|rx_avst_dcfifo|rst_rclk_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {pcie_wrapper|pcie_top|pcie_bridge|pcie_bridge_cdc|rx_cdc|rx_avst_dcfifo|dcfifo|dcfifo_component|auto_generated|wraclr|*|clrn}
-add_reset_sync_sdc {pcie_wrapper|pcie_top|pcie_bridge|pcie_bridge_cdc|tx_cdc|tx_axis_dcfifo|rst_rclk_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {pcie_wrapper|pcie_top|pcie_bridge|pcie_bridge_cdc|tx_cdc|tx_axis_dcfifo|dcfifo|dcfifo_component|auto_generated|rdaclr|*|clrn}
-add_reset_sync_sdc {pcie_wrapper|pcie_top|pcie_flr_resync|flr_req_fifo|rst_rclk_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {pcie_wrapper|pcie_top|pcie_flr_resync|flr_req_fifo|dcfifo|dcfifo_component|auto_generated|rdaclr|*|clrn}
-add_reset_sync_sdc {pcie_wrapper|pcie_top|pcie_flr_resync|flr_rsp_fifo|rst_rclk_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {pcie_wrapper|pcie_top|pcie_flr_resync|flr_rsp_fifo|dcfifo|dcfifo_component|auto_generated|wraclr|*|clrn}
 
-add_reset_sync_sdc {afu_top|flr_rst_ctrl|*pf_flr_resync*|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {afu_top|flr_rst_ctrl|*vf_flr_resync*|resync_chains[0].synchronizer_nocut|*|clrn}
+add_reset_sync_sdc {afu_top|flr_rst_mgr|*pf_flr_resync*|resync_chains[0].synchronizer_nocut|*|clrn}
+add_reset_sync_sdc {afu_top|flr_rst_mgr|*vf_flr_resync*|resync_chains[0].synchronizer_nocut|*|clrn}
 add_reset_sync_sdc {afu_top|st2mm|tx_cdc_fifo|fifo|rst_rclk_resync|resync_chains[0].synchronizer_nocut|*|clrn}
 add_reset_sync_sdc {afu_top|st2mm|tx_cdc_fifo|fifo|dcfifo|dcfifo_component|auto_generated|rdaclr|*|clrn}
 add_reset_sync_sdc {afu_top|st2mm|rx_cdc_fifo|fifo|rst_rclk_resync|resync_chains[0].synchronizer_nocut|*|clrn}
 add_reset_sync_sdc {afu_top|st2mm|rx_cdc_fifo|fifo|dcfifo|dcfifo_component|auto_generated|rdaclr|*|clrn}
 
-add_reset_sync_sdc {afu_top|*|*he_hssi_top|GenRstSync[*].*_reset_synchronizer|resync_chains[*].*|*|clrn}
-add_reset_sync_sdc {afu_top|*|*|*|he_hssi_top|GenRstSync[*].*_reset_synchronizer|resync_chains[*].*|*|clrn}
-add_reset_sync_sdc {afu_top|fim_afu_instances|*GenCPR[*].cvl_data_sync|fifo|rst_rclk_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {afu_top|fim_afu_instances|*GenCPR[*].cvl_data_sync|fifo|dcfifo|dcfifo_component|auto_generated|rdaclr|*|clrn}
-add_reset_sync_sdc {afu_top|*|*he_hssi_top|GenCPR[*].cvl_data_sync|fifo|rst_rclk_resync|resync_chains[0].synchronizer_nocut|*|clrn}
-add_reset_sync_sdc {afu_top|*|*he_hssi_top|GenCPR[*].cvl_data_sync|fifo|dcfifo|dcfifo_component|auto_generated|rdaclr|*|clrn}
 add_reset_sync_sdc {mem_ss_top|rst_hs_resync|resync_chains[*].*|*|clrn}
 
 #---------------------------------------------
 # CDC constraints for synchronizers
 #---------------------------------------------
-add_sync_sdc {pcie_wrapper|pcie_top|csr_resync|resync_chains[*].synchronizer_nocut|din_s1}
-add_sync_sdc {rst_ctrl|pcie_cold_rst_ack_sync|resync_chains[*].synchronizer_nocut|din_s1}
+add_sync_sdc {PCIE_RST_CTRL[*].rst_ctrl|pcie_cold_rst_ack_sync|resync_chains[*].synchronizer_nocut|din_s1}
 add_sync_sdc {afu_top|flr_rst_ctrl|flr_ack_resync|resync_chains[*].synchronizer_nocut|din_s1}
 add_sync_sdc {afu_top|flr_rst_ctrl|clr_ack_resync|resync_chains[*].synchronizer_nocut|din_s1}
-
-add_sync_sdc {afu_top|he_hssi_top|*|resync_chains[*].synchronizer_nocut|din_s1}
-add_sync_sdc {afu_top|*|*|*|he_hssi_top|*|resync_chains[*].synchronizer_nocut|din_s1}
 
 add_sync_sdc {mem_ss_top|mem_ss_cal_success_resync|resync_chains[*].synchronizer_nocut|din_s1}
 add_sync_sdc {mem_ss_top|mem_ss_cal_fail_resync|resync_chains[*].synchronizer_nocut|din_s1}
