@@ -82,7 +82,7 @@ parameter MAX_TEST = 100;
 //parameter TIMEOUT = 1.5ms;
 parameter TIMEOUT = 10.0ms;
 localparam NUMBER_OF_LINKS = `OFS_FIM_IP_CFG_PCIE_SS_NUM_LINKS;
-localparam string unit_test_name = "HSSI CSR Test";
+localparam string unit_test_name = "Memory Subsystem Reset Test";
 
 //---------------------------------------------------------
 // Mailbox 

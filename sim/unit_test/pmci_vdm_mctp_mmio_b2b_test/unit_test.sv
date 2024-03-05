@@ -523,9 +523,9 @@ generate
             //-------------------------
             // Test scenarios 
             //-------------------------
-            $display(">>> Running %s on Link 0...", unit_test_name);
+            $display(">>> Running %s on Link %0d...", unit_test_name, LINK_NUMBER);
             main_test(test_result);
-            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            $display(">>> %s on Link %0d Completed.", unit_test_name, LINK_NUMBER);
             test_done = 1'b1;
             #1000
             $display(">>> Link #0: Getting status from Link #1 Mailbox, testing for READY");
@@ -555,9 +555,9 @@ generate
             //-------------------------
             // Test scenarios 
             //-------------------------
-            $display(">>> Running %s on Link 0...", unit_test_name);
+            $display(">>> Running %s on Link %0d...", unit_test_name, LINK_NUMBER);
             main_test(test_result);
-            $display(">>> %s on Link 0 Completed.", unit_test_name);
+            $display(">>> %s on Link %0d Completed.", unit_test_name, LINK_NUMBER);
             test_done = 1'b1;
             all_tests_done = 1'b1;
          end
