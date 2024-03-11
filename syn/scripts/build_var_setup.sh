@@ -235,8 +235,11 @@ export WORK_FME_ID_MIF_FILE=${WORK_SYN_TOP_PATH}/fme_id.mif
 export WORK_PMCI_NIOS_HEX_FILE=${WORK_SYN_TOP_PATH}/pmci_ss_nios_fw.hex
 export REPORT_TIMING_TCL_FILE=${SYN_COMMON_SCRIPTS_PATH}/report_timing.tcl
 export WORK_BUILD_FLASH_SH_FILE=${WORK_SYN_TOP_PATH}/build_flash/build_flash.sh
+# The default pre-compile script removes subsystems during the setup stage when
+# no_<subsystem> is on the command line as a tag, e.g. n6001:no_hssi. Boards
+# may override the default by specifying a board-specific script here.
 export WORK_PRE_COMPILE_SCRIPT_SH_FILE=${WORK_DIR}/ofs-common/scripts/common/syn/pre_compile_script.sh
-
+export ENA_PRE_COMPILE_SCRIPT="1"
 
 # for opae-sdk repo builds (note that this matches the defaults in setup_opae-sdk.sh)
 #  commenting most this section out as the defaults have the same settings
@@ -252,19 +255,6 @@ export WORK_PR_PACSIGN_GBS_FILE="${WORK_SYN_TOP_PATH}/output_files/${Q_PR_REVISI
 #### Platform Interface Manager configuration 
 export PIM_PLATFORM_NAME=ofs_agilex
 export PIM_INI_FILE=${WORK_DIR}/src/top/${PIM_PLATFORM_NAME}.ini
-
-
-#TODO: add capabilities to specify project only work directory so create_work_dir.sh
-#      will only sync over the pertnant files to <WORK_DIR>.
-#      currently create_work_dir.sh grabs the whole ofs-dev repo including other projects
-#      will need to modify create_work_dir.sh to consume the project only source, IPs, and syn (probably verification also)
-
-# Checking if HSSI is disabled
-if [ ! -z ${OFS_BUILD_TAG_NO_HSSI} ]; then
-    export WORK_PRE_COMPILE_SCRIPT_SH_FILE="${WORK_DIR}/ofs-common/scripts/fpga_family/agilex/syn/setup_no_hssi.sh"
-    export ENA_PRE_COMPILE_SCRIPT="1"
-fi
-
 
 ####################################################
 ########          Derived variable section
