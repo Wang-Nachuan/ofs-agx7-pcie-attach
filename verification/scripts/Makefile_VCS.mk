@@ -36,6 +36,7 @@ ADP_DIR = $(OFS_ROOTDIR)/sim/scripts/
 QPROJ_DIR = $(ADP_DIR)/qip_gen/quartus_proj_dir
 QIP_DIR = $(ADP_DIR)/qip_sim_script
 
+
 export VIPDIR = $(VERDIR)
 export RALDIR = $(VERDIR)/testbench/ral
 ifdef FTILE_SIM
@@ -186,6 +187,22 @@ ifndef MSG
 else
     SIMV_OPT += +UVM_VERBOSITY=$(MSG)
 endif
+
+
+##
+## The INCLUDE_* macros from the project are commented out for
+## simulation so that the simulation scripts can control them.
+## Check for select project macros and replicate them.
+M := $(shell grep -q INCLUDE_PMCI "$(SCRIPTS_DIR)"/generated_rtl_flist_macros.f; echo $$?)
+ifeq ($(M),0)
+    VLOG_OPT += +define+INCLUDE_PMCI
+endif
+
+M := $(shell grep -q INCLUDE_UART "$(SCRIPTS_DIR)"/generated_rtl_flist_macros.f; echo $$?)
+ifeq ($(M),0)
+    VLOG_OPT += +define+INCLUDE_UART
+endif
+
 
 ifdef NO_MSIX
     VLOG_OPT += +define+NO_MSIX 
@@ -352,7 +369,7 @@ ifdef AFU_WITH_PIM
 endif
 	cd $(VERDIR)/sim && vlogan -ntb_opts uvm-1.2 -sverilog
 	cd $(VERDIR)/sim && vlogan -full64 -ntb_opts uvm-1.2 -sverilog -timescale=1ns/1ns -l vlog_uvm.log
-	cd $(VERDIR)/sim && vlogan $(VLOG_OPT) +define+FIM_C +define+INCLUDE_PMCI +define+INCLUDE_UART +define+SIM_VIP -F $(SCRIPTS_DIR)/generated_rtl_flist.f $(AFU_FLIST_IMPORT) -work  n6001_rtl_lib -l vlog_rtl.log
+	cd $(VERDIR)/sim && vlogan $(VLOG_OPT) +define+FIM_C +define+SIM_VIP -F $(SCRIPTS_DIR)/generated_rtl_flist.f $(AFU_FLIST_IMPORT) -work  n6001_rtl_lib -l vlog_rtl.log
 
 vlog_adp_ss_lib: 
 	cd $(VERDIR)/sim && vlogan -ntb_opts uvm-1.2 -sverilog
@@ -362,7 +379,7 @@ vlog_adp_ss_lib:
 vlog_adp_verif: 
 	cd $(VERDIR)/sim && vlogan -ntb_opts uvm-1.2 -sverilog
 	cd $(VERDIR)/sim && vlogan -full64 -ntb_opts uvm-1.2 -sverilog -timescale=1ns/1ns
-	cd $(VERDIR)/sim && vlogan $(VLOG_OPT) +define+FIM_C +define+INCLUDE_PMCI +define+SIM_VIP -F $(VERIF_SCRIPTS_DIR)/ver_list.f -work n6001_tb_lib -l vlog_verif.log
+	cd $(VERDIR)/sim && vlogan $(VLOG_OPT) +define+FIM_C +define+SIM_VIP -F $(VERIF_SCRIPTS_DIR)/ver_list.f -work n6001_tb_lib -l vlog_verif.log
 
 vlog_svt:  
 	cd $(VERDIR)/sim && vlogan -ntb_opts uvm-1.2 -sverilog
@@ -392,7 +409,7 @@ ifdef AFU_WITH_PIM
 endif
 	cd $(VERDIR)/sim && vlogan -ntb_opts uvm-1.2 -sverilog
 	cd $(VERDIR)/sim && vlogan -full64 -ntb_opts uvm-1.2 -sverilog -timescale=1ns/1ns -l vlog_uvm.log
-	cd $(VERDIR)/sim && vlogan $(VLOG_OPT) +define+FIM_C +define+INCLUDE_PMCI +define+INCLUDE_UART +define+SIM_VIP -F $(SCRIPTS_DIR)/ip_flist.f  -F $(SCRIPTS_DIR)/generated_rtl_flist.f -F $(VERIF_SCRIPTS_DIR)/svt_list.f -F $(VERIF_SCRIPTS_DIR)/ver_list.f $(AFU_FLIST_IMPORT)
+	cd $(VERDIR)/sim && vlogan $(VLOG_OPT) +define+FIM_C +define+SIM_VIP -F $(SCRIPTS_DIR)/ip_flist.f  -F $(SCRIPTS_DIR)/generated_rtl_flist.f -F $(VERIF_SCRIPTS_DIR)/svt_list.f -F $(VERIF_SCRIPTS_DIR)/ver_list.f $(AFU_FLIST_IMPORT)
 endif 
 
 ifeq ($(PARTCMP),1)

@@ -562,8 +562,10 @@ module tb_top;
    `endif
    `endif
 
+  `ifdef INCLUDE_PMCI
     pmci_axi    pmci_axi(axi_if,m10_if);
     bmc_top     bmc_m10(m10_if);
+  `endif
 
     passive_vip passive_vip(axi_passive_if[0],axi_passive_if[1],axi_passive_if[2],axi_passive_if[3]); 
   `ifdef LPBK_WITHOUT_HSSI
