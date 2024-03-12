@@ -72,7 +72,7 @@ class pcie_shared_cfg extends uvm_object;
 
       root_cfg.pcie_cfg.enable_transaction_logging = 1'b1;
       root_cfg.pcie_cfg.transaction_log_filename = "trans.log";
-      root_cfg.pcie_cfg.enable_symbol_logging = 1'b1;
+      //root_cfg.pcie_cfg.enable_symbol_logging = 1'b1;
       root_cfg.pcie_cfg.symbol_log_filename = "symbol.log";
 
       endpoint_cfg.pcie_cfg.enable_transaction_logging = 1'b1;

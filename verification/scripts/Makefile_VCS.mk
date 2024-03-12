@@ -336,7 +336,7 @@ else ifeq ($(n6000_100G),1)
 else ifeq ($(RTILE_SIM),1)
 #Temporary FIX to avoid calibration hang,changed interface value to 2 in file ipss/mem/qip/presets/mem_presets.qprs (#MR https://github.com/intel-innersource/applications.fpga.ofs.reference-fims/pull/1027)
 	#@grep -l 'name="NUM_OF_PHYSICAL_INTERFACES" value="3"' $(OFS_ROOTDIR)/ipss/mem/qip/presets/mem_presets.qprs | xargs sed -i 's/name="NUM_OF_PHYSICAL_INTERFACES" value="3"/name="NUM_OF_PHYSICAL_INTERFACES" value="2"/g'
-	sh $(OFS_ROOTDIR)/ofs-common/scripts/common/sim/gen_sim_files.sh  --ofss $(OFS_ROOTDIR)/tools/ofss_config/iseries-dk.ofss,$(OFS_ROOTDIR)/tools/ofss_config/hssi/hssi_8x25_ftile.ofss iseries-dk
+	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh  --ofss "$(OFS_ROOTDIR)"/tools/ofss_config/iseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25_ftile.ofss iseries-dk
 else
 	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh n6001 #Default
 endif	
