@@ -11,7 +11,10 @@ output_name = pcie_ss
 # - "Gen5 1x16" is not supported in PCIe SS
 # - "Gen4 1x16" should work but not validated
 pcie_gen = 5
+# PCIe SS IP config for Gen5. Only 2 supported for Gen5 Rtile. Could be 1 for Gen 4 Rtile
 pcie_instances = 2
+# OFS code using the 2nd link in the reference design. Set value to 1 if Gen5x8 is used 
+pcie_instances_enabled = 2
 
 [pf0]
 num_vfs = 3
