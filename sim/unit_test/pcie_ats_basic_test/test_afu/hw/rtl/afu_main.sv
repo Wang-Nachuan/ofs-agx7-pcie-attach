@@ -73,7 +73,7 @@ module afu_main
    // tready to 1.
    pcie_ss_axis_if.sink          afu_axi_rx_b_if [PG_NUM_PORTS-1:0]
 
-   `ifdef INCLUDE_DDR4
+   `ifdef INCLUDE_LOCAL_MEM
       // Local memory
      ,ofs_fim_emif_axi_mm_if.user ext_mem_if [NUM_MEM_CH-1:0]
    `endif

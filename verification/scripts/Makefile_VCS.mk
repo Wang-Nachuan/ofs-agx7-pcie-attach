@@ -139,12 +139,12 @@ VCS_OPT = -full64 -ntb_opts uvm-1.2 -licqueue  +vcs+lic+wait -l vcs.log -ignore 
 endif
 ifdef FTILE_SIM
 #VCS_OPT +=-pvalue+tb_top.DUT.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_location_top_row.emif_cal.IOSSM_USE_MODEL=0 
-VCS_OPT +=-pvalue+tb_top.DUT.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_top.emif_cal_top.emif_cal.IOSSM_USE_MODEL=0 
+VCS_OPT +=-pvalue+tb_top.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_top.emif_cal_top.emif_cal.IOSSM_USE_MODEL=0 
 VCS_OPT +=-debug_access+all -debug_region+cell+encrypt -debug_region+cell+lib
 else
 ifdef RTILE_SIM
 #VCS_OPT +=-pvalue+tb_top.DUT.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_location_top_row.emif_cal.IOSSM_USE_MODEL=0 
-VCS_OPT +=-pvalue+tb_top.DUT.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_top.emif_cal_top.emif_cal.IOSSM_USE_MODEL=0 
+VCS_OPT +=-pvalue+tb_top.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.mem_ss.emif_cal_top.emif_cal_top.emif_cal.IOSSM_USE_MODEL=0 
 VCS_OPT +=-debug_access+all -debug_region+cell+encrypt -debug_region+cell+lib
 else
 VCS_OPT +=-debug_access+f
@@ -266,6 +266,7 @@ endif
 
 ifndef DISABLE_EMIF
   VLOG_OPT += +define+INCLUDE_DDR4
+  VLOG_OPT += +define+INCLUDE_LOCAL_MEM
   VLOG_OPT += +define+SIM_MODE_NO_MSS_RST
 endif
 

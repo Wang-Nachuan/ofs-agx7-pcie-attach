@@ -481,10 +481,10 @@ begin
    all_tests_done = 1'b0;
    test_result = 1'b0;
  `ifdef INCLUDE_DDR4
-   force {top_tb.DUT.mem_ss_top.mem_ss_inst.i1_app_ss_mm_awaddr[32]} = 1'b0;
-   force {top_tb.DUT.mem_ss_top.mem_ss_inst.i0_app_ss_mm_awaddr[32]} = 1'b0;
-   force {top_tb.DUT.mem_ss_top.mem_ss_inst.i1_app_ss_mm_araddr[32]} = 1'b0;
-   force {top_tb.DUT.mem_ss_top.mem_ss_inst.i0_app_ss_mm_araddr[32]} = 1'b0;
+   force {top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.i1_app_ss_mm_awaddr[32]} = 1'b0;
+   force {top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.i0_app_ss_mm_awaddr[32]} = 1'b0;
+   force {top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.i1_app_ss_mm_araddr[32]} = 1'b0;
+   force {top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.i0_app_ss_mm_araddr[32]} = 1'b0;
  `endif
 end
 
@@ -893,7 +893,7 @@ begin
    // LHS must be a constant in force/release statements => constant index select
    // this test only runs on channel 0
   `ifdef INCLUDE_DDR4
-   force top_tb.DUT.mem_ss_top.afu_mem_if[0].rdata = '0;
+   force top_tb.DUT.local_mem_wrapper.mem_ss_top.afu_mem_if[0].rdata = '0;
   `endif
 
    // Poll TG status for completion
@@ -932,7 +932,7 @@ begin
    end
    // Release rd rsp data
   `ifdef INCLUDE_DDR4
-   release top_tb.DUT.mem_ss_top.afu_mem_if[0].rdata;
+   release top_tb.DUT.local_mem_wrapper.mem_ss_top.afu_mem_if[0].rdata;
   `endif
    post_test_util(old_test_err_count);
    host_bfm_top.host_bfm.revert_to_last_pfvf_setting();
@@ -957,7 +957,7 @@ task main_test;
 
       // wait for cal
      `ifdef INCLUDE_DDR4
-      wait(top_tb.DUT.mem_ss_top.mem_ss_cal_success[0] == 1'b1);
+      wait(top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_cal_success[0] == 1'b1);
       test_emif_calibration ( test_result );   
       pfvf = '{0,2,1}; // Set PFVF to PF0-VF2
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);

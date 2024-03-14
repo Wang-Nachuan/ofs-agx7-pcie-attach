@@ -15,11 +15,7 @@ import pcie_ss_axis_pkg::*;
 
 module afu_top #(
    parameter PCIE_NUM_LINKS = 1,
-`ifdef INCLUDE_DDR4
    parameter AFU_MEM_CHANNEL = 1
-`else
-   parameter AFU_MEM_CHANNEL = 0
-`endif
 )(
    input wire                            SYS_REFCLK,
    input wire                            clk,
@@ -50,7 +46,7 @@ module afu_top #(
    ofs_uart_if.source	host_uart_if,
 `endif
 
-`ifdef INCLUDE_DDR4
+`ifdef INCLUDE_LOCAL_MEM
    ofs_fim_emif_axi_mm_if.user         ext_mem_if [AFU_MEM_CHANNEL-1:0],
 `endif
 
@@ -647,7 +643,7 @@ port_gasket #(
    .flr_req            (pg_flr_req),
    .flr_rsp            (pg_flr_rsp),
 
-`ifdef INCLUDE_DDR4
+`ifdef INCLUDE_LOCAL_MEM
    .afu_mem_if         (ext_mem_if),             // Memory interface
 `endif
 

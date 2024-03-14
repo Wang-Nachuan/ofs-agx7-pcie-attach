@@ -4,9 +4,18 @@
 set vlog_macros [get_all_global_assignments -name VERILOG_MACRO]
 set include_mss 0
 
+foreach_in_collection assignment [get_all_global_assignments -name DEVICE] {
+    set opn [lindex $assignment 2]
+}
+set part_info    [get_part_info -device $opn]
+set base_device  [get_base_device_of $part_info]
+
 foreach_in_collection m $vlog_macros {
     if { [string equal "INCLUDE_DDR4" [lindex $m 2]] } {
-        set include_mss 1
+        set_global_assignment -name VERILOG_MACRO "INCLUDE_LOCAL_MEM"
+        if {[string match *FM* $base_device]} {
+            set include_mss 1
+        }
     }
 }
 

@@ -748,7 +748,7 @@ task main_test;
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
 
      `ifdef INCLUDE_DDR4
-      wait(top_tb.DUT.mem_ss_top.mem_ss_cal_success[0] == 1'b1);
+      wait(top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_cal_success[0] == 1'b1);
      `endif
 
       test_mem_loopback (test_result, 1, 3'h0, 2'h0, 17'd1, 1'b0, "test_mem_loopback: cl_mode (1CL), length (1)");

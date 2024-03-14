@@ -249,7 +249,7 @@ t_axis_pcie_cplto         axis_cpl_timeout[PCIE_NUM_LINKS-1:0];
 t_pcie_tag_mode    tag_mode[PCIE_NUM_LINKS-1:0];
 
 
-`ifdef INCLUDE_DDR4
+`ifdef INCLUDE_LOCAL_MEM
 localparam AFU_MEM_CHANNELS = ofs_fim_mem_if_pkg::NUM_MEM_CHANNELS;
 
 logic [4095:0] hps2emif;
@@ -682,7 +682,7 @@ pmci_wrapper #(
 //-----------------------------------------------------------------------------------------------
   afu_top #(
           .PCIE_NUM_LINKS      (PCIE_NUM_LINKS)
-`ifdef INCLUDE_DDR4
+`ifdef INCLUDE_LOCAL_MEM
          ,.AFU_MEM_CHANNEL     (AFU_MEM_CHANNELS   )
 `endif
   )afu_top(
@@ -722,7 +722,7 @@ pmci_wrapper #(
 `ifdef INCLUDE_UART
          ,.host_uart_if        (host_uart_if)
 `endif
-`ifdef INCLUDE_DDR4
+`ifdef INCLUDE_LOCAL_MEM
          ,.ext_mem_if          (afu_ext_mem_if)
 `endif
 
@@ -1173,23 +1173,25 @@ generate
 endgenerate 
 
 //-----------------------------------------------------------------------------------------------
-// Memory Subsystem - the memory SS wraps the memory channels on the board and sets up the 
-// timing parameters etc. It provides a standard AXI interface to connect to workloads.
+// Local Memory Subsystem - This a standard wrapper for configured memory subsystems enabled by the project.
+// The memory SS wraps the memory channels on the board and sets up the timing parameters etc. 
+// It provides a standard AXI interface to connect to workloads.
 //-----------------------------------------------------------------------------------------------
-`ifdef INCLUDE_DDR4
-   mem_ss_top #(
+`ifdef INCLUDE_LOCAL_MEM
+   local_mem_wrapper #(
       .FEAT_ID          (12'h009),
       .FEAT_VER         (4'h1),
       .NEXT_DFH_OFFSET  (fabric_width_pkg::bpf_emif_slv_next_dfh_offset),
       .END_OF_LIST      (fabric_width_pkg::bpf_emif_slv_eol)
-   ) mem_ss_top (
+   ) local_mem_wrapper (
       .clk      (clk_sys),
       .reset    (~rst_n_sys_mem),
 
        // AFU ext mem interfaces
       .afu_mem_if   (afu_ext_mem_if),
+`ifdef INCLUDE_DDR4
       .ddr4_mem_if  (ddr4_mem),
-      // .ddr4_ecc     (ddr4_ecc_mem),
+`endif
 
 `ifdef INCLUDE_HPS
        // HPS mem interfaces
@@ -1197,7 +1199,9 @@ endgenerate
       .hps2emif_gp (hps2emif_gp),
       .emif2hps    (emif2hps),
       .emif2hps_gp (emif2hps_gp),
+`ifdef INCLUDE_DDR4
       .ddr4_hps_if (ddr4_hps),
+`endif
 `endif
 
        // CSR interfaces

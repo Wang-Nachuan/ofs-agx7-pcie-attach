@@ -71,7 +71,7 @@ module port_afu_instances
    // tready to 1.
    pcie_ss_axis_if.sink          afu_axi_rx_b_if [PG_NUM_PORTS-1:0]
 
-   `ifdef INCLUDE_DDR4
+   `ifdef INCLUDE_LOCAL_MEM
       // Local memory
      ,ofs_fim_emif_axi_mm_if.user ext_mem_if [NUM_MEM_CH-1:0]
    `endif
@@ -329,7 +329,7 @@ module port_afu_instances
     // ======================================================
 
     for (genvar c = 0; c < NUM_MEM_CH; c++) begin : mb
-      `ifdef INCLUDE_DDR4
+      `ifdef INCLUDE_LOCAL_MEM
         assign ext_mem_if[c].awvalid = 1'b0;
         assign ext_mem_if[c].wvalid = 1'b0;
         assign ext_mem_if[c].arvalid = 1'b0;
