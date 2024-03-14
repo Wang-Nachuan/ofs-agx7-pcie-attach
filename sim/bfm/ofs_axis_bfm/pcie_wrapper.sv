@@ -224,11 +224,11 @@ endgenerate
 
 `ifdef FTILE_SIM
 
-   pcie_ss_top #(
+   pcie_ss_dm_top #(
       .PCIE_LANES       (ofs_fim_cfg_pkg::PCIE_LANES),
       .PCIE_NUM_LINKS   (PCIE_NUM_LINKS),
       .SOC_ATTACH       (SOC_ATTACH)
-   ) pcie_ss_top (
+   ) pcie_ss_dm_top (
       .fim_clk                        ('0),
       .fim_rst_n                      ('1),
       .csr_clk                        ('0),
