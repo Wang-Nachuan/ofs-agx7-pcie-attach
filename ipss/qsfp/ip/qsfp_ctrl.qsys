@@ -66,6 +66,11 @@
 }
 </ipxact:value>
         </ipxact:parameter>
+        <ipxact:parameter parameterId="cpuInfo" type="string">
+          <ipxact:name>cpuInfo</ipxact:name>
+          <ipxact:displayName>cpuInfo</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
         <ipxact:parameter parameterId="designId" type="string">
           <ipxact:name>designId</ipxact:name>
           <ipxact:displayName>designId</ipxact:displayName>
@@ -253,6 +258,11 @@
         </altera:entity_info>
         <altera:altera_module_parameters>
           <ipxact:parameters>
+            <ipxact:parameter parameterId="bspCpu" type="bit">
+              <ipxact:name>bspCpu</ipxact:name>
+              <ipxact:displayName>BSP CPU</ipxact:displayName>
+              <ipxact:value></ipxact:value>
+            </ipxact:parameter>
             <ipxact:parameter parameterId="componentDefinition" type="string">
               <ipxact:name>componentDefinition</ipxact:name>
               <ipxact:displayName>Component definition</ipxact:displayName>
@@ -384,6 +394,11 @@
         &lt;/connPtSystemInfos&gt;
     &lt;/systemInfos&gt;
 &lt;/componentDefinition&gt;</ipxact:value>
+            </ipxact:parameter>
+            <ipxact:parameter parameterId="cpuInfo" type="string">
+              <ipxact:name>cpuInfo</ipxact:name>
+              <ipxact:displayName>Cpu Info</ipxact:displayName>
+              <ipxact:value></ipxact:value>
             </ipxact:parameter>
             <ipxact:parameter parameterId="defaultBoundary" type="string">
               <ipxact:name>defaultBoundary</ipxact:name>
@@ -544,6 +559,11 @@
         </altera:entity_info>
         <altera:altera_module_parameters>
           <ipxact:parameters>
+            <ipxact:parameter parameterId="bspCpu" type="bit">
+              <ipxact:name>bspCpu</ipxact:name>
+              <ipxact:displayName>BSP CPU</ipxact:displayName>
+              <ipxact:value></ipxact:value>
+            </ipxact:parameter>
             <ipxact:parameter parameterId="componentDefinition" type="string">
               <ipxact:name>componentDefinition</ipxact:name>
               <ipxact:displayName>Component definition</ipxact:displayName>
@@ -931,6 +951,10 @@
                         &lt;entry&gt;
                             &lt;key&gt;dfhFeatureId&lt;/key&gt;
                             &lt;value&gt;35&lt;/value&gt;
+                        &lt;/entry&gt;
+                        &lt;entry&gt;
+                            &lt;key&gt;dfhFeatureType&lt;/key&gt;
+                            &lt;value&gt;3&lt;/value&gt;
                         &lt;/entry&gt;
                     &lt;/parameterValueMap&gt;
                 &lt;/parameters&gt;
@@ -1521,6 +1545,11 @@
         &lt;/connPtSystemInfos&gt;
     &lt;/systemInfos&gt;
 &lt;/componentDefinition&gt;</ipxact:value>
+            </ipxact:parameter>
+            <ipxact:parameter parameterId="cpuInfo" type="string">
+              <ipxact:name>cpuInfo</ipxact:name>
+              <ipxact:displayName>Cpu Info</ipxact:displayName>
+              <ipxact:value></ipxact:value>
             </ipxact:parameter>
             <ipxact:parameter parameterId="defaultBoundary" type="string">
               <ipxact:name>defaultBoundary</ipxact:name>
@@ -2499,6 +2528,11 @@
         </altera:entity_info>
         <altera:altera_module_parameters>
           <ipxact:parameters>
+            <ipxact:parameter parameterId="bspCpu" type="bit">
+              <ipxact:name>bspCpu</ipxact:name>
+              <ipxact:displayName>BSP CPU</ipxact:displayName>
+              <ipxact:value></ipxact:value>
+            </ipxact:parameter>
             <ipxact:parameter parameterId="componentDefinition" type="string">
               <ipxact:name>componentDefinition</ipxact:name>
               <ipxact:displayName>Component definition</ipxact:displayName>
@@ -2794,6 +2828,10 @@
                             &lt;key&gt;dfhFeatureId&lt;/key&gt;
                             &lt;value&gt;35&lt;/value&gt;
                         &lt;/entry&gt;
+                        &lt;entry&gt;
+                            &lt;key&gt;dfhFeatureType&lt;/key&gt;
+                            &lt;value&gt;3&lt;/value&gt;
+                        &lt;/entry&gt;
                     &lt;/parameterValueMap&gt;
                 &lt;/parameters&gt;
             &lt;/interface&gt;
@@ -3086,6 +3124,10 @@
                             &lt;key&gt;dfhFeatureId&lt;/key&gt;
                             &lt;value&gt;35&lt;/value&gt;
                         &lt;/entry&gt;
+                        &lt;entry&gt;
+                            &lt;key&gt;dfhFeatureType&lt;/key&gt;
+                            &lt;value&gt;3&lt;/value&gt;
+                        &lt;/entry&gt;
                     &lt;/parameterValueMap&gt;
                 &lt;/parameters&gt;
             &lt;/interface&gt;
@@ -3239,6 +3281,11 @@
         &lt;/connPtSystemInfos&gt;
     &lt;/systemInfos&gt;
 &lt;/componentDefinition&gt;</ipxact:value>
+            </ipxact:parameter>
+            <ipxact:parameter parameterId="cpuInfo" type="string">
+              <ipxact:name>cpuInfo</ipxact:name>
+              <ipxact:displayName>Cpu Info</ipxact:displayName>
+              <ipxact:value></ipxact:value>
             </ipxact:parameter>
             <ipxact:parameter parameterId="defaultBoundary" type="string">
               <ipxact:name>defaultBoundary</ipxact:name>
@@ -3993,6 +4040,11 @@
         </altera:entity_info>
         <altera:altera_module_parameters>
           <ipxact:parameters>
+            <ipxact:parameter parameterId="bspCpu" type="bit">
+              <ipxact:name>bspCpu</ipxact:name>
+              <ipxact:displayName>BSP CPU</ipxact:displayName>
+              <ipxact:value></ipxact:value>
+            </ipxact:parameter>
             <ipxact:parameter parameterId="componentDefinition" type="string">
               <ipxact:name>componentDefinition</ipxact:name>
               <ipxact:displayName>Component definition</ipxact:displayName>
@@ -4139,6 +4191,11 @@
         &lt;/connPtSystemInfos&gt;
     &lt;/systemInfos&gt;
 &lt;/componentDefinition&gt;</ipxact:value>
+            </ipxact:parameter>
+            <ipxact:parameter parameterId="cpuInfo" type="string">
+              <ipxact:name>cpuInfo</ipxact:name>
+              <ipxact:displayName>Cpu Info</ipxact:displayName>
+              <ipxact:value></ipxact:value>
             </ipxact:parameter>
             <ipxact:parameter parameterId="defaultBoundary" type="string">
               <ipxact:name>defaultBoundary</ipxact:name>
@@ -4319,11 +4376,11 @@
       </altera:module>
     </altera:modules>
     <altera:connections>
-      <altera:connection altera:kind="clock" altera:version="23.4" altera:start="clock_in.out_clk" altera:end="reset_in.clk"></altera:connection>
-      <altera:connection altera:kind="clock" altera:version="23.4" altera:start="clock_in.out_clk" altera:end="onchip_memory2_0.clk1"></altera:connection>
-      <altera:connection altera:kind="clock" altera:version="23.4" altera:start="clock_in.out_clk" altera:end="i2c_0.clock"></altera:connection>
-      <altera:connection altera:kind="reset" altera:version="23.4" altera:start="reset_in.out_reset" altera:end="onchip_memory2_0.reset1"></altera:connection>
-      <altera:connection altera:kind="reset" altera:version="23.4" altera:start="reset_in.out_reset" altera:end="i2c_0.reset_sink"></altera:connection>
+      <altera:connection altera:kind="clock" altera:version="24.1" altera:start="clock_in.out_clk" altera:end="reset_in.clk"></altera:connection>
+      <altera:connection altera:kind="clock" altera:version="24.1" altera:start="clock_in.out_clk" altera:end="onchip_memory2_0.clk1"></altera:connection>
+      <altera:connection altera:kind="clock" altera:version="24.1" altera:start="clock_in.out_clk" altera:end="i2c_0.clock"></altera:connection>
+      <altera:connection altera:kind="reset" altera:version="24.1" altera:start="reset_in.out_reset" altera:end="onchip_memory2_0.reset1"></altera:connection>
+      <altera:connection altera:kind="reset" altera:version="24.1" altera:start="reset_in.out_reset" altera:end="i2c_0.reset_sink"></altera:connection>
     </altera:connections>
     <altera:interconnect_requirements></altera:interconnect_requirements>
     <altera:wire_level_connections></altera:wire_level_connections>

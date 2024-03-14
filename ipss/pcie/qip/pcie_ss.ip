@@ -11,10 +11,10 @@
   <ipxact:busInterfaces>
     <ipxact:busInterface>
       <ipxact:name>pin_perst</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -48,10 +48,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>coreclkout_hip_toapp</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="clock" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="clock" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -95,10 +95,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_pin_perst</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -132,10 +132,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_reset_status_n</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="reset" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="reset" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -174,10 +174,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>ninit_done</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -211,10 +211,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>dummy_user_avmm_rst</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="reset" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="reset" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -243,10 +243,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_axi_st_clk</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="clock" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="clock" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -280,10 +280,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_axi_lite_clk</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="clock" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="clock" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -317,10 +317,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_axi_st_areset_n</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="reset" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="reset" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -349,10 +349,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_axi_lite_areset_n</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="reset" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="reset" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -381,10 +381,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_subsystem_cold_rst_n</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="reset" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="reset" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -413,10 +413,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_subsystem_warm_rst_n</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="reset" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="reset" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="reset" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -445,10 +445,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_subsystem_cold_rst_ack_n</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -482,10 +482,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_subsystem_warm_rst_ack_n</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -519,10 +519,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_subsystem_rst_req</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -556,10 +556,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_subsystem_rst_rdy</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -593,10 +593,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_initiate_warmrst_req</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -630,10 +630,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_initiate_rst_req_rdy</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -667,10 +667,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_rx</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -739,10 +739,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_st_rx_tuser_vendor</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -776,10 +776,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_rxreq</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -840,10 +840,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_st_rxreq_tuser_vendor</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -877,10 +877,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_tx</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -949,10 +949,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_app_ss_st_tx_tuser_vendor</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -986,10 +986,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_txreq</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1042,10 +1042,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_flrrcvd</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1082,10 +1082,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_flrcmpl</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1122,10 +1122,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_ctrlshadow</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1162,10 +1162,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_txcrdt</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1202,10 +1202,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_st_cplto</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4stream" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1242,10 +1242,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_lite_csr</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="axi4lite" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="axi4lite" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4lite" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4lite" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1468,7 +1468,7 @@
           <ipxact:displayName>Feature GUID</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="dfhGroupId" type="int">
+        <ipxact:parameter parameterId="dfhGroupId" type="longint">
           <ipxact:name>dfhGroupId</ipxact:name>
           <ipxact:displayName>Group ID</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
@@ -1490,7 +1490,7 @@
         </ipxact:parameter>
         <ipxact:parameter parameterId="dfhParameterData" type="string">
           <ipxact:name>dfhParameterData</ipxact:name>
-          <ipxact:displayName>Data</ipxact:displayName>
+          <ipxact:displayName>Data (HEX/DEC)</ipxact:displayName>
           <ipxact:value></ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="dfhParameterDataLength" type="string">
@@ -1498,29 +1498,34 @@
           <ipxact:displayName>Data length</ipxact:displayName>
           <ipxact:value></ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="dfhFeatureMajorVersion" type="int">
+        <ipxact:parameter parameterId="dfhFeatureMajorVersion" type="longint">
           <ipxact:name>dfhFeatureMajorVersion</ipxact:name>
           <ipxact:displayName>Feature major version</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="dfhFeatureMinorVersion" type="int">
+        <ipxact:parameter parameterId="dfhFeatureMinorVersion" type="longint">
           <ipxact:name>dfhFeatureMinorVersion</ipxact:name>
           <ipxact:displayName>Feature minor version</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="dfhFeatureId" type="int">
+        <ipxact:parameter parameterId="dfhFeatureId" type="longint">
           <ipxact:name>dfhFeatureId</ipxact:name>
           <ipxact:displayName>Feature ID</ipxact:displayName>
           <ipxact:value>35</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="dfhFeatureType" type="longint">
+          <ipxact:name>dfhFeatureType</ipxact:name>
+          <ipxact:displayName>Feature Type</ipxact:displayName>
+          <ipxact:value>3</ipxact:value>
         </ipxact:parameter>
       </ipxact:parameters>
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_serr</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1554,10 +1559,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_linkup</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1591,10 +1596,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_dlup</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1628,10 +1633,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_surprise_down_err</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1665,10 +1670,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_ltssmstate</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1702,10 +1707,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_rx_par_err</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1739,10 +1744,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_tx_par_err</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1776,10 +1781,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>p0_ss_app_bus_number</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1813,10 +1818,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>tx_n_out</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -1970,10 +1975,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>tx_p_out</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -2127,10 +2132,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>rx_n_in</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -2284,10 +2289,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>rx_p_in</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -2441,10 +2446,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>refclk0</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="clock" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="clock" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -2478,10 +2483,10 @@
     </ipxact:busInterface>
     <ipxact:busInterface>
       <ipxact:name>refclk1</ipxact:name>
-      <ipxact:busType vendor="intel" library="intel" name="clock" version="23.4"></ipxact:busType>
+      <ipxact:busType vendor="intel" library="intel" name="clock" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
         <ipxact:abstractionType>
-          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="23.4"></ipxact:abstractionRef>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="clock" version="24.1"></ipxact:abstractionRef>
           <ipxact:portMaps>
             <ipxact:portMap>
               <ipxact:logicalPort>
@@ -4830,6 +4835,11 @@
           <ipxact:displayName>Enable Debug Toolkit</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
+        <ipxact:parameter parameterId="pipemode_sim_ed_hwtcl" type="int">
+          <ipxact:name>pipemode_sim_ed_hwtcl</ipxact:name>
+          <ipxact:displayName>Enable PIPE Mode Simulation</ipxact:displayName>
+          <ipxact:value>1</ipxact:value>
+        </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dwidth_byte_hwtcl" type="int">
           <ipxact:name>core16_dwidth_byte_hwtcl</ipxact:name>
           <ipxact:displayName>PCIe0 AXI-ST Interface Data Bus Width (in Byte)</ipxact:displayName>
@@ -5295,324 +5305,324 @@
           <ipxact:displayName>Number of PCIe0 DFL</ipxact:displayName>
           <ipxact:value>1</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl0_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl0_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL0 bar</ipxact:displayName>
-          <ipxact:value>0</ipxact:value>
-        </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl0_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl0_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL0 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL0 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl1_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl1_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL1 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl0_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl0_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL0 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl1_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl1_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL1 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL1 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl2_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl2_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL2 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl1_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl1_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL1 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl2_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl2_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL2 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL2 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl3_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl3_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL3 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl2_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl2_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL2 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl3_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl3_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL3 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL3 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl4_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl4_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL4 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl3_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl3_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL3 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl4_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl4_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL4 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL4 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl5_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl5_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL5 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl4_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl4_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL4 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl5_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl5_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL5 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL5 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl6_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl6_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL6 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl5_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl5_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL5 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl6_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl6_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL6 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL6 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl7_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl7_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL7 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl6_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl6_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL6 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl7_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl7_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL7 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL7 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl8_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl8_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL8 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl7_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl7_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL7 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl8_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl8_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL8 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL8 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl9_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl9_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL9 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl8_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl8_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL8 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl9_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl9_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL9 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL9 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl10_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl10_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL10 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl9_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl9_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL9 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl10_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl10_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL10 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL10 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl11_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl11_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL11 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl10_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl10_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL10 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl11_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl11_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL11 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL11 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl12_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl12_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL12 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl11_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl11_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL11 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl12_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl12_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL12 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL12 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl13_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl13_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL13 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl12_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl12_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL12 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl13_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl13_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL13 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL13 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl14_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl14_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL14 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl13_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl13_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL13 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl14_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl14_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL14 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL14 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl15_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl15_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL15 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl14_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl14_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL14 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl15_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl15_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL15 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL15 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl16_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl16_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL16 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl15_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl15_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL15 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl16_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl16_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL16 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL16 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl17_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl17_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL17 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl16_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl16_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL16 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl17_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl17_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL17 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL17 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl18_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl18_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL18 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl17_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl17_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL17 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl18_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl18_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL18 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL18 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl19_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl19_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL19 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl18_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl18_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL18 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl19_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl19_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL19 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL19 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl20_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl20_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL20 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl19_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl19_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL19 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl20_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl20_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL20 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL20 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl21_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl21_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL21 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl20_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl20_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL20 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl21_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl21_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL21 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL21 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl22_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl22_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL22 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl21_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl21_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL21 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl22_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl22_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL22 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL22 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl23_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl23_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL23 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl22_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl22_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL22 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl23_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl23_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL23 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL23 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl24_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl24_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL24 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl23_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl23_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL23 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl24_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl24_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL24 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL24 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl25_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl25_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL25 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl24_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl24_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL24 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl25_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl25_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL25 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL25 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl26_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl26_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL26 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl25_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl25_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL25 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl26_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl26_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL26 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL26 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl27_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl27_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL27 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl26_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl26_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL26 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl27_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl27_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL27 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL27 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl28_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl28_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL28 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl27_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl27_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL27 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl28_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl28_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL28 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL28 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl29_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl29_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL29 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl28_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl28_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL28 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl29_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl29_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL29 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL29 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl30_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl30_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL30 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl29_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl29_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL29 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl30_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl30_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL30 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL30 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core16_dfl31_bar_hwtcl" type="int">
-          <ipxact:name>core16_dfl31_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL31 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core16_dfl30_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl30_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL30 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfl31_offset_hwtcl" type="int">
           <ipxact:name>core16_dfl31_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe0 DFL31 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe0 DFL31 offset</ipxact:displayName>
+          <ipxact:value>0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="core16_dfl31_bir_hwtcl" type="int">
+          <ipxact:name>core16_dfl31_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe0 DFL31 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl_en_hwtcl" type="int">
@@ -5625,324 +5635,324 @@
           <ipxact:displayName>Number of PCIe1 DFL</ipxact:displayName>
           <ipxact:value>1</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl0_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl0_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL0 bar</ipxact:displayName>
-          <ipxact:value>0</ipxact:value>
-        </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl0_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl0_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL0 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL0 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl1_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl1_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL1 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl0_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl0_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL0 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl1_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl1_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL1 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL1 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl2_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl2_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL2 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl1_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl1_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL1 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl2_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl2_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL2 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL2 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl3_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl3_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL3 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl2_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl2_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL2 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl3_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl3_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL3 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL3 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl4_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl4_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL4 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl3_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl3_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL3 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl4_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl4_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL4 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL4 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl5_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl5_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL5 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl4_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl4_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL4 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl5_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl5_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL5 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL5 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl6_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl6_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL6 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl5_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl5_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL5 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl6_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl6_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL6 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL6 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl7_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl7_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL7 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl6_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl6_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL6 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl7_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl7_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL7 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL7 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl8_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl8_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL8 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl7_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl7_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL7 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl8_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl8_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL8 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL8 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl9_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl9_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL9 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl8_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl8_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL8 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl9_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl9_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL9 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL9 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl10_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl10_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL10 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl9_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl9_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL9 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl10_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl10_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL10 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL10 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl11_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl11_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL11 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl10_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl10_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL10 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl11_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl11_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL11 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL11 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl12_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl12_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL12 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl11_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl11_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL11 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl12_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl12_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL12 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL12 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl13_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl13_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL13 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl12_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl12_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL12 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl13_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl13_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL13 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL13 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl14_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl14_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL14 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl13_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl13_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL13 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl14_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl14_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL14 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL14 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl15_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl15_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL15 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl14_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl14_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL14 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl15_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl15_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL15 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL15 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl16_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl16_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL16 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl15_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl15_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL15 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl16_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl16_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL16 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL16 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl17_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl17_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL17 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl16_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl16_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL16 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl17_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl17_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL17 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL17 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl18_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl18_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL18 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl17_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl17_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL17 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl18_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl18_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL18 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL18 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl19_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl19_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL19 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl18_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl18_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL18 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl19_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl19_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL19 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL19 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl20_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl20_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL20 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl19_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl19_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL19 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl20_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl20_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL20 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL20 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl21_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl21_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL21 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl20_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl20_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL20 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl21_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl21_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL21 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL21 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl22_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl22_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL22 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl21_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl21_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL21 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl22_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl22_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL22 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL22 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl23_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl23_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL23 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl22_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl22_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL22 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl23_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl23_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL23 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL23 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl24_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl24_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL24 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl23_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl23_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL23 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl24_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl24_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL24 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL24 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl25_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl25_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL25 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl24_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl24_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL24 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl25_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl25_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL25 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL25 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl26_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl26_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL26 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl25_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl25_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL25 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl26_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl26_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL26 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL26 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl27_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl27_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL27 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl26_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl26_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL26 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl27_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl27_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL27 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL27 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl28_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl28_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL28 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl27_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl27_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL27 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl28_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl28_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL28 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL28 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl29_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl29_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL29 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl28_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl28_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL28 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl29_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl29_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL29 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL29 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl30_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl30_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL30 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl29_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl29_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL29 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl30_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl30_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL30 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL30 offset</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
-        <ipxact:parameter parameterId="core8_dfl31_bar_hwtcl" type="int">
-          <ipxact:name>core8_dfl31_bar_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL31 bar</ipxact:displayName>
+        <ipxact:parameter parameterId="core8_dfl30_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl30_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL30 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core8_dfl31_offset_hwtcl" type="int">
           <ipxact:name>core8_dfl31_offset_hwtcl</ipxact:name>
-          <ipxact:displayName>Number of PCIe1 DFL31 offset</ipxact:displayName>
+          <ipxact:displayName>PCIe1 DFL31 offset</ipxact:displayName>
+          <ipxact:value>0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="core8_dfl31_bir_hwtcl" type="int">
+          <ipxact:name>core8_dfl31_bir_hwtcl</ipxact:name>
+          <ipxact:displayName>PCIe1 DFL31 bir</ipxact:displayName>
           <ipxact:value>0</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="core16_dfh_fid_hwtcl" type="int">
@@ -18544,6 +18554,11 @@
         <ipxact:parameter parameterId="dflBitArray" type="string">
           <ipxact:name>dflBitArray</ipxact:name>
           <ipxact:displayName>dflBitArray</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="cpuInfo" type="string">
+          <ipxact:name>cpuInfo</ipxact:name>
+          <ipxact:displayName>cpuInfo</ipxact:displayName>
           <ipxact:value></ipxact:value>
         </ipxact:parameter>
       </ipxact:parameters>

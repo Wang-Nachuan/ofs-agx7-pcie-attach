@@ -36,7 +36,7 @@ if {$include_pmci == 1} {
     set_global_assignment -name IP_FILE                  $::env(BUILD_ROOT_REL)/ipss/pmci/ip/pmci_ss/pmci_ss_axi_bridge_1.ip
     set_global_assignment -name IP_FILE                  $::env(BUILD_ROOT_REL)/ipss/pmci/ip/pmci_ss/pmci_ss_clock_in.ip
     set_global_assignment -name IP_FILE                  $::env(BUILD_ROOT_REL)/ipss/pmci/ip/pmci_ss/pmci_ss_mctp_pcievdm_ctrlr_0.ip
-    set_global_assignment -name IP_FILE                  $::env(BUILD_ROOT_REL)/ipss/pmci/ip/pmci_ss/pmci_ss_nios2_gen2_0.ip
+    set_global_assignment -name IP_FILE                  $::env(BUILD_ROOT_REL)/ipss/pmci/ip/pmci_ss/pmci_ss_intel_niosv_m_0.ip
     set_global_assignment -name IP_FILE                  $::env(BUILD_ROOT_REL)/ipss/pmci/ip/pmci_ss/pmci_ss_pmci_csr_0.ip
     set_global_assignment -name IP_FILE                  $::env(BUILD_ROOT_REL)/ipss/pmci/ip/pmci_ss/pmci_ss_pxeboot_optrom_0.ip
     set_global_assignment -name IP_FILE                  $::env(BUILD_ROOT_REL)/ipss/pmci/ip/pmci_ss/pmci_ss_avmms_2_spim_bridge_0.ip

@@ -38,8 +38,6 @@ set_fileset_property simver_fileset TOP_LEVEL avmms_2_spim_bridge
 add_fileset simvhd_fileset SIM_VHDL synth_callback_procedure
 set_fileset_property simvhd_fileset TOP_LEVEL avmms_2_spim_bridge
 
-
-
 # proc synth_callback_procedure { } {
 proc synth_callback_procedure { entity_name } {
    add_fileset_file avmms_2_spim_bridge.sv SYSTEM_VERILOG PATH "./custom_ip/spi_master/avmms_2_spim_bridge.sv"
@@ -419,7 +417,7 @@ proc ip_elaborate { } {
    set_port_property avmm_dir_burstcnt width_expr $dir_bcount
 
 # sc_fifo
-   add_hdl_instance             spi_sc_fifo altera_avalon_sc_fifo 19.3.1
+   add_hdl_instance             spi_sc_fifo altera_avalon_sc_fifo 19.3.2
    set_instance_parameter_value spi_sc_fifo {BITS_PER_SYMBOL} {32}
    set_instance_parameter_value spi_sc_fifo {CHANNEL_WIDTH} {0}
    set_instance_parameter_value spi_sc_fifo {EMPTY_LATENCY} {3}
