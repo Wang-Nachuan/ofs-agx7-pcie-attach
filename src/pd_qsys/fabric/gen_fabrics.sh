@@ -54,10 +54,6 @@ fi
 python3 $TOOLS_PATH/fabric_gen.py --fabric_def apf.txt --fabric_name apf --tcl apf.tcl | tee -a gen_fabrics.log
 
 
-# Generate APF Fabric Qsys scripts 
-python3 $TOOLS_PATH/fabric_gen.py --fabric_def p1_apf.txt --fabric_name p1_apf --tcl p1_apf.tcl | tee -a gen_fabrics.log
-
-
 # Generate BPF Fabric Qsys scripts 
 python3 $TOOLS_PATH/fabric_gen.py --fabric_def bpf.txt --fabric_name bpf --tcl bpf.tcl | tee -a gen_fabrics.log 
 
@@ -69,14 +65,6 @@ if $QUARTUS_HOME/sopc_builder/bin/qsys-script --new-quartus-project=$PROJECT --s
     echo "PASS: STAGE apf.tcl to apf.qsys generation" | tee -a gen_fabrics.log
 else
     echo "Error: STAGE apf.qsys generation failed! Check gen_fabrics.log" | tee -a gen_fabrics.log
-    exit 1
-fi
-
-# Create apf.qsys interconnect fabric
-if $QUARTUS_HOME/sopc_builder/bin/qsys-script --script=p1_apf.tcl >>gen_fabrics.log 2>>gen_fabrics.log; then
-    echo "PASS: STAGE p1_apf.tcl to p1_apf.qsys generation" | tee -a gen_fabrics.log
-else
-    echo "Error: STAGE p1_apf.qsys generation failed! Check gen_fabrics.log" | tee -a gen_fabrics.log
     exit 1
 fi
 
@@ -96,13 +84,6 @@ else
     echo "Error: STAGE apf.qsys RTL generation! Check gen_fabrics.log" | tee -a gen_fabrics.log
 fi
 
-
-# Generate apf.qsys
-if $QUARTUS_HOME/sopc_builder/bin/qsys-generate -syn=VERILOG -sim=VERILOG -qpf=$PROJECT p1_apf.qsys >>gen_fabrics.log 2>>gen_fabrics.log; then
-    echo "PASS: STAGE p1_apf.qsys RTL generation" | tee -a gen_fabrics.log
-else
-    echo "Error: STAGE p1_apf.qsys RTL generation! Check gen_fabrics.log" | tee -a gen_fabrics.log
-fi
 
 # Generate bpf.qsys
 if $QUARTUS_HOME/sopc_builder/bin/qsys-generate -syn=VERILOG -sim=VERILOG -qpf=$PROJECT bpf.qsys >>gen_fabrics.log 2>>gen_fabrics.log; then
