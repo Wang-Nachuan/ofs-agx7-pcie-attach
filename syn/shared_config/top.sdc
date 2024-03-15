@@ -32,9 +32,9 @@ create_clock -name {altera_reserved_tck}  -period 100.000 -waveform {0.000 50.00
 #**************************************************************
 # Create Generated Clock
 #**************************************************************
-create_generated_clock -add -name pcie_wrapper|pcie_ss_top|*|pcie_ss|avmm_clock0 \
-                       -source      [get_pins {pcie_wrapper|pcie_ss_top|*|pcie_ss|u_pciess_p0|gen_sub.u_hipif|u_pciess_clock_divider|clkdiv_inst|inclk}] \
-                       -divide_by 2 [get_pins {pcie_wrapper|pcie_ss_top|*|pcie_ss|u_pciess_p0|gen_sub.u_hipif|u_pciess_clock_divider|clkdiv_inst|clock_div2}]
+create_generated_clock -add -name pcie_wrapper|pcie_ss.top|*|pcie_ss|avmm_clock0 \
+                       -source      [get_pins {pcie_wrapper|pcie_ss.top|*|pcie_ss|u_pciess_p0|gen_sub.u_hipif|u_pciess_clock_divider|clkdiv_inst|inclk}] \
+                       -divide_by 2 [get_pins {pcie_wrapper|pcie_ss.top|*|pcie_ss|u_pciess_p0|gen_sub.u_hipif|u_pciess_clock_divider|clkdiv_inst|clock_div2}]
 
 
 #**************************************************************
@@ -42,13 +42,13 @@ create_generated_clock -add -name pcie_wrapper|pcie_ss_top|*|pcie_ss|avmm_clock0
 #**************************************************************
 set_clock_groups -asynchronous -group {altera_reserved_tck}
 set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_sys}
-set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_sys} -group { pcie_wrapper|pcie_ss_top|*|pcie_ss|*|inst|inst|maib_and_tile|xcvr_hip_native|rx_ch15}
-set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m } -group {pcie_wrapper|pcie_ss_top|*|pcie_ss|*|intel_pcie_*_ast_qhip|rx_clkout|ch5}
-set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m } -group {pcie_wrapper|pcie_ss_top|*|pcie_ss|*|intel_pcie_rtile_ast_qhip_pld_clkout}
-set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m } -group {pcie_wrapper|pcie_ss_top|*|pcie_ss|*|intel_pcie_rtile_ast_qhip_pld_clkout_slow}
-set_clock_groups -asynchronous -group {pcie_wrapper|pcie_ss_top|*|pcie_ss|avmm_clock0} -group {pcie_wrapper|pcie_ss_top|*|pcie_ss|*|inst|inst|maib_and_tile|xcvr_hip_native|rx_ch15}
-set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m} -group {pcie_wrapper|pcie_ss_top|*|pcie_ss|*|inst|inst|maib_and_tile|xcvr_hip_native|rx_ch15}
-set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m} -group {pcie_wrapper|pcie_ss_top|*|pcie_ss|avmm_clock0}
+set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_sys} -group { pcie_wrapper|pcie_ss.top|*|pcie_ss|*|inst|inst|maib_and_tile|xcvr_hip_native|rx_ch15}
+set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m } -group {pcie_wrapper|pcie_ss.top|*|pcie_ss|*|intel_pcie_*_ast_qhip|rx_clkout|ch5}
+set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m } -group {pcie_wrapper|pcie_ss.top|*|pcie_ss|*|intel_pcie_rtile_ast_qhip_pld_clkout}
+set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m } -group {pcie_wrapper|pcie_ss.top|*|pcie_ss|*|intel_pcie_rtile_ast_qhip_pld_clkout_slow}
+set_clock_groups -asynchronous -group {pcie_wrapper|pcie_ss.top|*|pcie_ss|avmm_clock0} -group {pcie_wrapper|pcie_ss.top|*|pcie_ss|*|inst|inst|maib_and_tile|xcvr_hip_native|rx_ch15}
+set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m} -group {pcie_wrapper|pcie_ss.top|*|pcie_ss|*|inst|inst|maib_and_tile|xcvr_hip_native|rx_ch15}
+set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m} -group {pcie_wrapper|pcie_ss.top|*|pcie_ss|avmm_clock0}
 # temporary constraint while mem_tg is fixed to not instantiate dbg fabric
 set_clock_groups -asynchronous -group {sys_pll|iopll_0_clk_100m} -group {mem_ss_top|mem_ss_fm_inst|mem_ss_fm_0|intf_0_core_usr_clk}
 

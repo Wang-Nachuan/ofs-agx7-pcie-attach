@@ -519,7 +519,7 @@ module tb_top;
               begin
                  @(posedge `PCIE_DUT.u_core16.u_ip.u_cfg.u_cfg_dbi_if.cfg_blk_done_o);
                  #1ps;
-                 if( DUT.pcie_wrapper.pcie_ss_top.host_pcie.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
+                 if( DUT.pcie_wrapper.pcie_ss.top.host_pcie.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
                     release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_rate[23:0];
                     release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_mpllb_sel[7:0];
                  end 
@@ -529,7 +529,7 @@ module tb_top;
                  end
               end
               begin
-                 if(DUT.pcie_wrapper.pcie_ss_top.host_pcie.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
+                 if(DUT.pcie_wrapper.pcie_ss.top.host_pcie.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
                     @(posedge `PCIE_DUT.u_core8.u_ip.u_cfg.u_cfg_dbi_if.cfg_blk_done_o);
                     #1ps;
                     release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_rate[47:24];

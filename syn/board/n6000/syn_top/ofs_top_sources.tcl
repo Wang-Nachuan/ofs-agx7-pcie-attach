@@ -93,7 +93,7 @@ set_global_assignment -name SOURCE_TCL_SCRIPT_FILE ../setup/hps_loc.tcl
 # Global Signal Assignments
 ############################################################################################
 set_instance_assignment -name GLOBAL_SIGNAL GLOBAL_CLOCK -to SYS_REFCLK -entity top
-set_instance_assignment -name GLOBAL_SIGNAL OFF -to pcie_wrapper|pcie_ss_top|pcie_ss|pcie_ss|u_pciess_p0|gen_sub.u_hipif|u_pciess_tx_if|pciess_tx_alignment.tx_alignment_inst|coreclk_warm_rst_n|dreg[1]
+set_instance_assignment -name GLOBAL_SIGNAL OFF -to pcie_wrapper|pcie_ss.top|pcie_ss|pcie_ss|u_pciess_p0|gen_sub.u_hipif|u_pciess_tx_if|pciess_tx_alignment.tx_alignment_inst|coreclk_warm_rst_n|dreg[1]
 
 
 ############################################################################################
