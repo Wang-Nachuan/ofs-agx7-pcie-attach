@@ -36,6 +36,32 @@ ADP_DIR = $(OFS_ROOTDIR)/sim/scripts/
 QPROJ_DIR = $(ADP_DIR)/qip_gen/quartus_proj_dir
 QIP_DIR = $(ADP_DIR)/qip_sim_script
 
+# Configure the build target, specifying the board and OFSS IP definitions.
+# These can be overridden on the make command line, e.g. BOARD=<board>.
+ifdef FTILE_SIM
+  BOARD = fseries-dk
+  ifeq ($(ETH_200G),1)
+   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_2x200_ftile.ofss
+  else ifeq ($(ETH_400G),1)
+   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_1x400_ftile.ofss
+  else
+   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25_ftile.ofss
+  endif
+else ifeq ($(n6000_10G),1)
+  BOARD = n6000
+  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x10.ofss
+else ifeq ($(n6000_25G),1)
+  BOARD = n6000
+  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25.ofss
+else ifeq ($(n6000_100G),1)
+  BOARD = n6000
+  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_4x100.ofss
+else ifeq ($(RTILE_SIM),1)
+  BOARD = iseries-dk
+  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/iseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25_ftile.ofss
+else
+  BOARD = n6001
+endif
 
 export VIPDIR = $(VERDIR)
 export RALDIR = $(VERDIR)/testbench/ral
@@ -329,39 +355,18 @@ endif
 
 cmplib_adp:
 	mkdir -p ../ip_libraries
-	# Generate On-the-fly IP Sim files for the target platform
-ifdef FTILE_SIM
-#Temporary FIX to avoid calibration hang,changed interface value to 2 in file ipss/mem/qip/presets/mem_presets.qprs (#MR https://github.com/intel-innersource/applications.fpga.ofs.reference-fims/pull/1027)
-	#@grep -l 'name="NUM_OF_PHYSICAL_INTERFACES" value="3"' $(OFS_ROOTDIR)/ipss/mem/qip/presets/mem_presets.qprs | xargs sed -i 's/name="NUM_OF_PHYSICAL_INTERFACES" value="3"/name="NUM_OF_PHYSICAL_INTERFACES" value="2"/g'
-       ifeq ($(ETH_200G),1)
-	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh  --ofss "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_2x200_ftile.ofss fseries-dk
-       else ifeq ($(ETH_400G),1)
-	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh  --ofss "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_1x400_ftile.ofss fseries-dk	
-       else
-	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh  --ofss "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25_ftile.ofss fseries-dk
-       endif
-	cp -f "$(QIP_DIR)"/synopsys/vcsmx/synopsys_sim.setup ../ip_libraries/
-	cd ../ip_libraries && "$(QIP_DIR)"/synopsys/vcsmx/vcsmx_setup.sh SKIP_SIM=1 SKIP_ELAB=1 USER_DEFINED_COMPILE_OPTIONS=-v2005 QSYS_SIMDIR="$(QIP_DIR)" QUARTUS_INSTALL_DIR=$(QUARTUS_HOME)  USER_DEFINED_COMPILE_OPTIONS="+define+IP7581SERDES_UX_SIMSPEED+define+TIMESCALE_EN+define+RTLSIM+define+INTC_FUNCTIONAL+define+SSM_SEQUENCE+define+SPEC_FORCE+define+IP7581SERDES_UXS2T1R1PGD_PIPE_SPEC_FORCE+define+IP7581SERDES_UXS2T1R1PGD_PIPE_SIMULATION+define+IP7581SERDES_UXS2T1R1PGD_PIPE_FAST_SIM+define+SRC_SPEC_SPEED_UP+define+__SRC_TEST__"
-	cd ../ip_libraries/&& sh "$(OFS_ROOTDIR)"/sim/scripts/ip_flist.sh 
+ifdef OFSS
+	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFSS) $(BOARD)
 else
-ifeq ($(n6000_10G),1)
-	sh "$(OFS_ROOTDIR)"/sim/scripts/common/gen_sim_files_top.sh n6000_10G 
-else ifeq ($(n6000_25G),1)
-	sh "$(OFS_ROOTDIR)"/sim/scripts/common/gen_sim_files_top.sh n6000_25G 
-else ifeq ($(n6000_100G),1)
-	sh $(OFS_ROOTDIR)/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFS_ROOTDIR)/tools/ofss_config/n6000.ofss n6000
-	#sh $(OFS_ROOTDIR)/ofs-common/scripts/common/sim/gen_sim_files.sh n6000 
-else ifeq ($(RTILE_SIM),1)
-#Temporary FIX to avoid calibration hang,changed interface value to 2 in file ipss/mem/qip/presets/mem_presets.qprs (#MR https://github.com/intel-innersource/applications.fpga.ofs.reference-fims/pull/1027)
-	#@grep -l 'name="NUM_OF_PHYSICAL_INTERFACES" value="3"' $(OFS_ROOTDIR)/ipss/mem/qip/presets/mem_presets.qprs | xargs sed -i 's/name="NUM_OF_PHYSICAL_INTERFACES" value="3"/name="NUM_OF_PHYSICAL_INTERFACES" value="2"/g'
-	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh  --ofss "$(OFS_ROOTDIR)"/tools/ofss_config/iseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25_ftile.ofss iseries-dk
-else
-	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh n6001 #Default
-endif	
-	cp -f "$(QIP_DIR)"/synopsys/vcsmx/synopsys_sim.setup ../ip_libraries/
-	cd ../ip_libraries && "$(QIP_DIR)"/synopsys/vcsmx/vcsmx_setup.sh SKIP_SIM=1 SKIP_ELAB=1 USER_DEFINED_COMPILE_OPTIONS=-v2005 QSYS_SIMDIR="$(QIP_DIR)" QUARTUS_INSTALL_DIR=$(QUARTUS_HOME)
-	cd ../ip_libraries/&& sh "$(OFS_ROOTDIR)"/sim/scripts/ip_flist.sh 
+	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh $(BOARD)
 endif
+	cp -f "$(QIP_DIR)"/synopsys/vcsmx/synopsys_sim.setup ../ip_libraries/
+ifdef FTILE_SIM
+	cd ../ip_libraries && "$(QIP_DIR)"/synopsys/vcsmx/vcsmx_setup.sh SKIP_SIM=1 SKIP_ELAB=1 USER_DEFINED_COMPILE_OPTIONS=-v2005 QSYS_SIMDIR="$(QIP_DIR)" QUARTUS_INSTALL_DIR=$(QUARTUS_HOME) USER_DEFINED_COMPILE_OPTIONS="+define+IP7581SERDES_UX_SIMSPEED+define+TIMESCALE_EN+define+RTLSIM+define+INTC_FUNCTIONAL+define+SSM_SEQUENCE+define+SPEC_FORCE+define+IP7581SERDES_UXS2T1R1PGD_PIPE_SPEC_FORCE+define+IP7581SERDES_UXS2T1R1PGD_PIPE_SIMULATION+define+IP7581SERDES_UXS2T1R1PGD_PIPE_FAST_SIM+define+SRC_SPEC_SPEED_UP+define+__SRC_TEST__"
+else
+	cd ../ip_libraries && "$(QIP_DIR)"/synopsys/vcsmx/vcsmx_setup.sh SKIP_SIM=1 SKIP_ELAB=1 USER_DEFINED_COMPILE_OPTIONS=-v2005 QSYS_SIMDIR="$(QIP_DIR)" QUARTUS_INSTALL_DIR=$(QUARTUS_HOME)
+endif
+	cd ../ip_libraries/&& sh "$(OFS_ROOTDIR)"/sim/scripts/ip_flist.sh
 
 vlog_adp_rtl:  
 ifdef AFU_WITH_PIM
