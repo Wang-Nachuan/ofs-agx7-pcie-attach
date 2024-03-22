@@ -83,10 +83,7 @@
     `include "mem_tg_csr_test.svh"
     `include "emif_csr_test.svh"
 
-
-  `ifdef INCLUDE_UART
     `include "uart_intr_test.svh"
-  `endif
 
     `include "fme_intr_test.svh"
     `include "fme_err_intr_test.svh"

@@ -47,12 +47,6 @@ ifdef FTILE_SIM
   else
    OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25_ftile.ofss
   endif
-else ifeq ($(n6000_10G),1)
-  BOARD = n6000
-  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x10.ofss
-else ifeq ($(n6000_25G),1)
-  BOARD = n6000
-  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25.ofss
 else ifeq ($(n6000_100G),1)
   BOARD = n6000
   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_4x100.ofss
@@ -82,11 +76,11 @@ endif
 #VLOG_OPT += +define+DISABLE_AFU_MAIN #Remove afu_main() ref from UVM TB for PIM AFU testing
 VLOG_OPT += +define+IGNORE_DF_SIM_EXIT  
 ifeq ($(n6000_10G),1)
-VLOG_OPT += +define+INCLUDE_CVL +define+ENABLE_8_TO_15_PORTS +define+ETH_10G +define+SIM_SERIAL +define+INCLUDE_PCIE_SS +define+INCLUDE_TOD +define+n6000_10G #Includes CVL by passthrough logic
+VLOG_OPT += +define+INCLUDE_CVL +define+ENABLE_8_TO_15_PORTS +define+ETH_10G +define+SIM_SERIAL +define+INCLUDE_PCIE_SS +define+n6000_10G #Includes CVL by passthrough logic
 VLOG_OPT += +define+SVT_ETHERNET
 VLOG_OPT += +define+SVT_ETHERNET_DEBUG_BUS_ENABLE
 else ifeq ($(n6000_25G),1)
-VLOG_OPT += +define+INCLUDE_CVL +define+ENABLE_8_TO_15_PORTS +define+ETH_25G +define+SIM_SERIAL +define+INCLUDE_PCIE_SS +define+INCLUDE_TOD +define+n6000_25G #Includes CVL by passthrough logic
+VLOG_OPT += +define+INCLUDE_CVL +define+ENABLE_8_TO_15_PORTS +define+ETH_25G +define+SIM_SERIAL +define+INCLUDE_PCIE_SS +define+n6000_25G #Includes CVL by passthrough logic
 VLOG_OPT += +define+SVT_ETHERNET
 VLOG_OPT += +define+SVT_ETHERNET_DEBUG_BUS_ENABLE
 else ifeq ($(n6000_100G),1)

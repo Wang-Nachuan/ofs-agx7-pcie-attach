@@ -28,10 +28,6 @@ HSSI_FTILE_DEFINES="+define+TIMESCALE_EN \
  +define+SRC_SPEC_SPEED_UP \
  +define+__SRC_TEST__"
 
-if [ -d $OFS_ROOTDIR/sim/scripts/qip_gen_n6000 ] ; then
-    DEFINES="$DEFINES +define+ETH_100G"
-fi
-
 if [ -f $OFS_ROOTDIR/sim/scripts/generated_ftile_macros.f ]; then
   if [ $MSIM -eq 1 ]; then
     DEFINES="${DEFINES} ${HSSI_FTILE_DEFINES} +define+INCLUDE_FTILE -F ${OFS_ROOTDIR}/sim/scripts/generated_ftile_macros.f "

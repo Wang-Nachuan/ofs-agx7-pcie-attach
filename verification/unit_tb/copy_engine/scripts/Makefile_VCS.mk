@@ -28,6 +28,14 @@ SCRIPTS_DIR = $(VERDIR)/scripts
 VCDFILE = $(SCRIPTS_DIR)/vpd_dump.key
 FSDBFILE = $(SCRIPTS_DIR)/fsdb_dump.tcl
 
+# Configure the build target, specifying the board and OFSS IP definitions.
+# These can be overridden on the make command line, e.g. BOARD=<board>.
+ifeq ($(n6000_100G),1)
+  BOARD = n6000
+  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_4x100.ofss
+else
+  BOARD = n6001
+endif
 
 ADP_DIR = $(OFS_ROOTDIR)/sim/scripts
 
@@ -40,6 +48,12 @@ VLOG_OPT += +define+INCLUDE_HSSI +define+INCLUDE_PCIE_SS
 VLOG_OPT += +define+SIM_MODE +define+SIM_SERIAL +define+PU_MMIO #Enable PCIE Serial link up for p-tile and Power user MMIO for PO FIM
 ifeq ($(n6000_100G),1)
 VLOG_OPT += +define+n6000_100G #Includes CVL by passthrough logic
+endif
+ifeq ($(n6000_10G),1)
+VLOG_OPT += +define+n6000_10G #Includes CVL by passthrough logic
+endif
+ifeq ($(n6000_25G),1)
+VLOG_OPT += +define+n6000_25G #Includes CVL by passthrough logic
 endif
 VLOG_OPT += +define+SIMULATION_MODE
 VLOG_OPT += +define+UVM_DISABLE_AUTO_ITEM_RECORDING
@@ -166,15 +180,10 @@ setup: clean_dve
 cmplib_adp:
 	mkdir -p ../ip_libraries
 	# Generate On-the-fly IP Sim files for the target platform
-ifeq ($(n6000_10G),1)
-	sh "$(OFS_ROOTDIR)"/sim/scripts/common/gen_sim_files_top.sh n6000_10G 
-else ifeq ($(n6000_25G),1)
-	sh "$(OFS_ROOTDIR)"/sim/scripts/common/gen_sim_files_top.sh n6000_25G 
-else ifeq ($(n6000_100G),1)
-	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFS_ROOTDIR)/tools/ofss_config/n6000.ofss n6000
-	#sh $(OFS_ROOTDIR)/ofs-common/scripts/common/sim/gen_sim_files.sh n6000 
+ifdef OFSS
+	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFSS) $(BOARD)
 else
-	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh n6001 #Default
+	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh $(BOARD)
 endif
 	# Generate On-the-fly IP Sim files for the target platform
 	rm -rf  $(SCRIPTS_DIR)/qip

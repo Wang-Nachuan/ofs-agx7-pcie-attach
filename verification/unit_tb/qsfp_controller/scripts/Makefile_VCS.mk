@@ -20,7 +20,15 @@ endif
 #    $(error undefined TESTNAME)
 #endif  
 
-  
+# Configure the build target, specifying the board and OFSS IP definitions.
+# These can be overridden on the make command line, e.g. BOARD=<board>.
+ifeq ($(n6000_100G),1)
+  BOARD = n6000
+  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_4x100.ofss
+else
+  BOARD = n6001
+endif
+ 
 TEST_DIR :=  $(shell ./create_dir.pl $(VERDIR)/unit_tb/qsfp_controller/sim/$(TESTNAME) )
 
 QSFP_SCRIPTS_DIR = $(VERDIR)/unit_tb/qsfp_controller/scripts
@@ -128,14 +136,10 @@ setup: clean_dve
 	#@$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(VERDIR)/vip/axi_vip -add axi_system_env_svt -svlog
 	@$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(VERDIR)/unit_tb/qsfp_controller/vip/axi_vip -add axi_system_env_svt -svlog
 	# Generate On-the-fly IP Sim files for the target platform
-ifeq ($(n6000_10G),1)
-	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files_top.sh n6000_10G 
-else ifeq ($(n6000_25G),1)
-	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files_top.sh n6000_25G 
-else ifeq ($(n6000_100G),1)
-	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFS_ROOTDIR)/tools/ofss_config/n6000.ofss n6000
+ifdef OFSS
+	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFSS) $(BOARD)
 else
-	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh n6001 #Default
+	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh $(BOARD)
 endif
 	@echo ''  
 
@@ -158,7 +162,7 @@ qsfp_run:
 ifndef TEST_DIR
 	$(error undefined TESTNAME)
 else
-	cd $(VERDIR)/unit_tb/qsfp_controller/sim && mkdir $(TEST_DIR) && cd $(TEST_DIR) &&  cp $(WORKDIR)/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl/sim/../../qsfp_ctrl_onchip_memory2_0/sim//../altera_avalon_onchip_memory2_1938/sim/*.hex . &&  ../simv $(CFG_SW) $(SIMV_OPT) $(SIMV_OPT_EXTRA) ; perl $(WORKDIR)/../env_not_shipped/tools/bin/postsim.pl
+	cd $(VERDIR)/unit_tb/qsfp_controller/sim && mkdir $(TEST_DIR) && cd $(TEST_DIR) &&  cp $(WORKDIR)/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl/sim/../../qsfp_ctrl_onchip_memory2_0/sim//../altera_avalon_onchip_memory2_1939/sim/*.hex . &&  ../simv $(CFG_SW) $(SIMV_OPT) $(SIMV_OPT_EXTRA) ; perl $(WORKDIR)/../env_not_shipped/tools/bin/postsim.pl
 
 endif
 #Added for QSFP env _end

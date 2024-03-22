@@ -11,6 +11,7 @@ class uart_intr_test extends base_test;
     endfunction : new
 
     task run_phase(uvm_phase phase);
+      `ifdef INCLUDE_UART
       `ifndef NO_MSIX  
         uart_intr_seq m_seq;
         super.run_phase(phase);
@@ -18,6 +19,7 @@ class uart_intr_test extends base_test;
 	m_seq = uart_intr_seq::type_id::create("m_seq");
 	m_seq.start(tb_env0.v_sequencer);
 	phase.drop_objection(this);
+       `endif
        `endif
     endtask : run_phase
 

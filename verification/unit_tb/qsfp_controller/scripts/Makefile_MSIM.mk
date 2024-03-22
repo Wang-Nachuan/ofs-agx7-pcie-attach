@@ -11,7 +11,16 @@ endif
 ifndef WORKDIR
   WORKDIR := $(OFS_ROOTDIR)
 endif
-  
+
+# Configure the build target, specifying the board and OFSS IP definitions.
+# These can be overridden on the make command line, e.g. BOARD=<board>.
+ifeq ($(n6000_100G),1)
+  BOARD = n6000
+  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_4x100.ofss
+else
+  BOARD = n6001
+endif
+ 
 TEST_DIR :=  $(shell ./create_dir.pl $(VERDIR)/unit_tb/qsfp_controller/sim/$(TESTNAME) )
 
 QSFP_SCRIPTS_DIR = $(VERDIR)/unit_tb/qsfp_controller/scripts
@@ -164,14 +173,10 @@ setup: clean_dve
 	#@$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(VERDIR)/vip/axi_vip -add axi_system_env_svt -svlog
 	@$(DESIGNWARE_HOME)/bin/dw_vip_setup -path $(VERDIR)/unit_tb/qsfp_controller/vip/axi_vip -add axi_system_env_svt -svlog
 	# Generate On-the-fly IP Sim files for the target platform
-ifeq ($(n6000_10G),1)
-	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files_top.sh n6000_10G 
-else ifeq ($(n6000_25G),1)
-	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files_top.sh n6000_25G 
-else ifeq ($(n6000_100G),1)
-	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFS_ROOTDIR)/tools/ofss_config/n6000.ofss n6000
+ifdef OFSS
+	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh --ofss $(OFSS) $(BOARD)
 else
-	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh n6001 #Default
+	cd $(OFS_ROOTDIR)/ofs-common/scripts/common && "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh $(BOARD)
 endif
 	@echo ''  
 
@@ -205,12 +210,12 @@ else
 ifeq ($(DUMP),1)
 qsfp_run:
 	gcc -m64 -fPIC -DQUESTA -g -W -shared -x c -I $(QUESTA_HOME)/include -I $(QUESTA_HOME)/verilog_src/uvm-1.2/src/dpi  $(QUESTA_HOME)/verilog_src/uvm-1.2/src/dpi/uvm_dpi.cc -o $(QSFP_SCRIPTS_DIR)/../sim/uvm_dpi.so	
-	cd $(QSFP_SCRIPTS_DIR)/../sim && mkdir $(TEST_DIR)  &&  cd $(TEST_DIR)  && cp $(WORKDIR)/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl/sim/../../qsfp_ctrl_onchip_memory2_0/sim//../altera_avalon_onchip_memory2_1938/sim/*.hex . && vsim -64 -qwavedb=+signal -nosva des -lib $(QSFP_SCRIPTS_DIR)/../sim/work -permit_unmatched_virtual_intf    -dpicpppath /p/psg/ctools/gcc/7.2.0/1/linux64/bin/gcc +UVM_TESTNAME=$(TESTNAME) $(CFG_SW) -sv_lib $(QSFP_SCRIPTS_DIR)/../sim/uvm_dpi -sv_lib $(QSFP_SCRIPTS_DIR)/../vip/axi_vip/lib/linux64/libvcap -c -suppress 2732,3053,12003,7033,3837,8386,13364,2388,13311,8364,7061,7033,7077,8303,16132 -L $(QUESTA_HOME)/uvm-1.2 -do "add log -r /* ; run -all; quit -f"
+	cd $(QSFP_SCRIPTS_DIR)/../sim && mkdir $(TEST_DIR)  &&  cd $(TEST_DIR)  && cp $(WORKDIR)/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl/sim/../../qsfp_ctrl_onchip_memory2_0/sim//../altera_avalon_onchip_memory2_1939/sim/*.hex . && vsim -64 -qwavedb=+signal -nosva des -lib $(QSFP_SCRIPTS_DIR)/../sim/work -permit_unmatched_virtual_intf    -dpicpppath /p/psg/ctools/gcc/7.2.0/1/linux64/bin/gcc +UVM_TESTNAME=$(TESTNAME) $(CFG_SW) -sv_lib $(QSFP_SCRIPTS_DIR)/../sim/uvm_dpi -sv_lib $(QSFP_SCRIPTS_DIR)/../vip/axi_vip/lib/linux64/libvcap -c -suppress 2732,3053,12003,7033,3837,8386,13364,2388,13311,8364,7061,7033,7077,8303,16132 -L $(QUESTA_HOME)/uvm-1.2 -do "add log -r /* ; run -all; quit -f"
 
 else
 qsfp_run:
 	gcc -m64 -fPIC -DQUESTA -g -W -shared -x c -I $(QUESTA_HOME)/include -I $(QUESTA_HOME)/verilog_src/uvm-1.2/src/dpi  $(QUESTA_HOME)/verilog_src/uvm-1.2/src/dpi/uvm_dpi.cc -o $(QSFP_SCRIPTS_DIR)/../sim/uvm_dpi.so	
-	cd $(QSFP_SCRIPTS_DIR)/../sim && mkdir $(TEST_DIR)  &&  cd $(TEST_DIR) && cp $(WORKDIR)/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl/sim/../../qsfp_ctrl_onchip_memory2_0/sim//../altera_avalon_onchip_memory2_1938/sim/*.hex . && vsim -64 -nosva des -lib $(QSFP_SCRIPTS_DIR)/../sim/work -permit_unmatched_virtual_intf  -dpicpppath /p/psg/ctools/gcc/7.2.0/1/linux64/bin/gcc +UVM_TESTNAME=$(TESTNAME) $(CFG_SW) -sv_lib $(QSFP_SCRIPTS_DIR)/../sim/uvm_dpi -sv_lib $(QSFP_SCRIPTS_DIR)/../vip/axi_vip/lib/linux64/libvcap -c -suppress 2732,3053,12003,7033,3837,8386,13364,2388,13311,8364,7061,7033,7077,8303,16132 -L $(QUESTA_HOME)/uvm-1.2  -do " run -all; quit -f" 
+	cd $(QSFP_SCRIPTS_DIR)/../sim && mkdir $(TEST_DIR)  &&  cd $(TEST_DIR) && cp $(WORKDIR)/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl/sim/../../qsfp_ctrl_onchip_memory2_0/sim//../altera_avalon_onchip_memory2_1939/sim/*.hex . && vsim -64 -nosva des -lib $(QSFP_SCRIPTS_DIR)/../sim/work -permit_unmatched_virtual_intf  -dpicpppath /p/psg/ctools/gcc/7.2.0/1/linux64/bin/gcc +UVM_TESTNAME=$(TESTNAME) $(CFG_SW) -sv_lib $(QSFP_SCRIPTS_DIR)/../sim/uvm_dpi -sv_lib $(QSFP_SCRIPTS_DIR)/../vip/axi_vip/lib/linux64/libvcap -c -suppress 2732,3053,12003,7033,3837,8386,13364,2388,13311,8364,7061,7033,7077,8303,16132 -L $(QUESTA_HOME)/uvm-1.2  -do " run -all; quit -f" 
 endif
 endif
 

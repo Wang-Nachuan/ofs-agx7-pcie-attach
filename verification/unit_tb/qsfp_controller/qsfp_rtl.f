@@ -26,7 +26,7 @@ $WORKDIR/ofs-common/src/common/lib/fifo/quartus_bfifo.sv
 $WORKDIR/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl/altera_reset_controller_1922/sim/altera_reset_controller.v
 $WORKDIR/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl/altera_reset_controller_1922/sim/altera_reset_synchronizer.v
 #$WORKDIR/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl_onchip_memory2_0/altera_avalon_onchip_memory2_1921/sim/qsfp_ctrl_onchip_memory2_0_altera_avalon_onchip_memory2_1921_v3lbr7i.v
-$WORKDIR/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl_onchip_memory2_0/altera_avalon_onchip_memory2_1938/sim/qsfp_ctrl_onchip_memory2_0_altera_avalon_onchip_memory2_1938_6pv3dca.v
+$WORKDIR/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl_onchip_memory2_0/altera_avalon_onchip_memory2_1939/sim/qsfp_ctrl_onchip_memory2_0_altera_avalon_onchip_memory2_1939_itpb4eq.v
 $WORKDIR/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl_onchip_memory2_0/sim/qsfp_ctrl_onchip_memory2_0.v
 $WORKDIR/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl_i2c_0/sim/qsfp_ctrl_i2c_0.v
 $WORKDIR/sim/scripts/qip_gen/ipss/qsfp/ip/qsfp_ctrl_i2c_0/altera_avalon_i2c_1925/sim/altera_avalon_i2c_csr.v

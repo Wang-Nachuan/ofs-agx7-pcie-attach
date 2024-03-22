@@ -26,6 +26,15 @@ For External Customers:
       export DESIGNWARE_HOME=<VIP installation path>
       export EMAIL_LIST=$OFS_ROOTDIR/<email_list.f file path>
 
+To generate the sim files:
+1) cd $VERDIR/scripts
+2) export OFS_ROOTDIR=<pwd>
+3) In the Makefile_VCS.mk, Configure the build target, specifying the board and OFSS IP definitions.
+   eg : For N6000_100G and hssi configuration as 4x100,
+        BOARD = n6000
+        OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_4x100.ofss    
+**NOTE: These can be overridden on the make command line, e.g. BOARD=<board>
+
 How to Run UVM Testcases with QSFP UNIT TESTBENCH?:
 1)  cd $VERDIR/unit_tb/qsfp_controller/scripts
 2)	For compiling,building RTL & TB, execute: “gmake -f Makefile_VCS.mk qsfp_build_all <DUMP=1>”

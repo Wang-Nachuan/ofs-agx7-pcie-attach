@@ -12,7 +12,6 @@ DEFINES="+define+SIM_MODE \
  +define+SIM_PCIE_CPL_TIMEOUT_CYCLES=\"26'd12500000\" \
  +define+BASE_AFU=\"dummy_afu\" \
  +define+RP_MAX_TAGS=64 \
- +define+INCLUDE_DDR4 \
  +define+INCLUDE_LOCAL_MEM \
  +define+SIM_MODE_NO_MSS_RST \
  +define+SIM_USE_PCIE_DUMMY_CSR \
@@ -22,6 +21,10 @@ DEFINES="+define+SIM_MODE \
  +define+USE_NULL_HE_HSSI \
  +define+USE_NULL_HE_MEM \
  +define+USE_NULL_HE_MEM_TG"
+
+if [ ! -d $OFS_ROOTDIR/sim/scripts/qip_gen_n6000 ] ; then
+    DEFINES="$DEFINES +define+INCLUDE_DDR4"
+fi
 
 if [ -f $OFS_ROOTDIR/sim/scripts/generated_ftile_macros.f ]; then
     DEFINES="${DEFINES} -F ${OFS_ROOTDIR}/sim/scripts/generated_ftile_macros.f"

@@ -30,9 +30,9 @@
     `define PMCI_WRAPPER tb_top.DUT.pmci_wrapper 
 
     `ifdef ENABLE_AC_COVERAGE
-      `define PCIE_RX tb_top.DUT.pcie_ss_axis_rx_if
-      `define PCIE_RXREQ tb_top.DUT.pcie_ss_axis_rxreq_if
-      `define PCIE_TX tb_top.DUT.pcie_ss_axis_tx_if
+      `define PCIE_RX tb_top.DUT.pcie_ss_axis_rx_if[0]
+      `define PCIE_RXREQ tb_top.DUT.pcie_ss_axis_rxreq_if[0]
+      `define PCIE_TX tb_top.DUT.pcie_ss_axis_tx_if[0]
       `define INTERRUPT_VECTOR tb_top.DUT.fme_top
       `define HE_HSSI_TRAFFIC_CTRL `HE_HSSI_TOP.genblk2.eth_traffic_pcie_tlp_to_csr_inst.inst_eth_traffic_csr 
      `endif
