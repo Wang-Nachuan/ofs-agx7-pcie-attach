@@ -31,7 +31,7 @@ This is the OFS Agilex 7 PCIe Attach FPGA development top-level directory. This 
     ```
 
 * iseries-dk
-   - Compiling the iseries-dk design requires .ofss for changing the .ip configuration
+   - Compiling the iseries-dk design requires .ofss for changing the .ip configuration. Default setting uses 2 PCIe Gen5x8 links on R-tile. Each Gen5x8 link has 3PF & 3VF enabled. AFU can saturate 2 Gen5x8 links simultaneously.
     ```bash
         ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iseries-dk.ofss,tools/ofss_config/hssi/hssi_8x25_ftile.ofss iseries-dk work_iseries-dk
     ```
@@ -44,6 +44,11 @@ This is the OFS Agilex 7 PCIe Attach FPGA development top-level directory. This 
    - Compiling the iseries-dk Ethernet 400G design configuration requires .ofss for changing the .ip configuration
     ```bash
         ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iseries-dk.ofss,tools/ofss_config/hssi/hssi_1x400_ftile.ofss iseries-dk work_iseries-dk_400
+    ```
+
+    - Compiling the iseries-dk PCIe with 1 Gen5x8 being used in the OFS reference design. 
+    ```bash
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iseries-dk_1link.ofss,tools/ofss_config/hssi/hssi_8x25_ftile.ofss iseries-dk work_iseries-dk-1link
     ```
 
    - Compiling the iseries-dk slim fim for 1PF 1VF, no hssi
