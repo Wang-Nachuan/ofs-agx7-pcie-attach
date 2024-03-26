@@ -7,6 +7,8 @@
 // Transformations on the AFU PCIe interface
 //-----------------------------------------------------------------------------
 
+`include "ofs_ip_cfg_db.vh"
+
 module afu_host_channel 
 (
    input logic              clk,
@@ -122,8 +124,15 @@ wire mx2ho_tx_ab1_to_txreq =
    // the header may be undefined, so the tests here ignore undefined values. If
    // the bus actually is valid while the header is undefined other assertions will
    // trigger.
-   (pcie_ss_hdr_pkg::func_hdr_is_dm_mode(mx2ho_tx_ab[1].tuser_vendor) === 1'b1) &&
-   (mx2ho_tx_ab1_hdr.fmt_type === pcie_ss_hdr_pkg::DM_RD);
+   ((`OFS_FIM_IP_CFG_PCIE_SS_FUNC_MODE == "DM") ?
+      // PCIe configured in data mover mode. Traffic on txreq must be DM-encoded
+      // read requests.
+      ((pcie_ss_hdr_pkg::func_hdr_is_dm_mode(mx2ho_tx_ab[1].tuser_vendor) === 1'b1) &&
+       (mx2ho_tx_ab1_hdr.fmt_type === pcie_ss_hdr_pkg::DM_RD)) :
+      // PCIe configured in power user mode. Traffic on txreq must be read requests.
+      // The FIM will merge tx and txreq on entry to the PCIe SS.
+      ((mx2ho_tx_ab1_hdr.fmt_type === pcie_ss_hdr_pkg::M_RD) ||
+       (mx2ho_tx_ab1_hdr.fmt_type === pcie_ss_hdr_pkg::DM_RD)));
 
 always_ff @(posedge clk)
 begin

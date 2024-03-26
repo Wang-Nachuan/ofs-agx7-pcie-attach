@@ -79,6 +79,18 @@ module top_tb ();
     logic test15_done;
     logic test16_en = 1'b0;
     logic test16_done;
+    logic test17_en = 1'b0;
+    logic test17_done;
+    logic test18_en = 1'b0;
+    logic test18_done;
+    logic test19_en = 1'b0;
+    logic test19_done;
+    logic test20_en = 1'b0;
+    logic test20_done;
+    logic test21_en = 1'b0;
+    logic test21_done;
+    logic test22_en = 1'b0;
+    logic test22_done;
 
 `define RUN_TEST(test) \
     $display("Running %0s:", `"test`");  \
@@ -126,6 +138,13 @@ module top_tb ();
         `RUN_TEST(test15);
         `RUN_TEST(test16);
 
+        `RUN_TEST(test17);
+        `RUN_TEST(test18);
+        `RUN_TEST(test19);
+        `RUN_TEST(test20);
+        `RUN_TEST(test21);
+        `RUN_TEST(test22);
+
         // The test aborts on failure, so reaching here means it passed
         $display("Test passed!");
         $finish;
@@ -154,5 +173,12 @@ module top_tb ();
     test_rx_dual_stream#(.DATA_WIDTH(512), .NUM_OF_SEG(1), .SB_HEADERS(0)) t14_rx_dual_stream(.clk, .rst_n(rst_n && test14_en), .csr_clk, .csr_rst_n, .done(test14_done));
     test_rx_dual_stream#(.DATA_WIDTH(512), .SB_HEADERS(0))  t15_rx_dual_stream(.clk, .rst_n(rst_n && test15_en), .csr_clk, .csr_rst_n, .done(test15_done));
     test_rx_dual_stream#(.DATA_WIDTH(1024), .SB_HEADERS(0)) t16_rx_dual_stream(.clk, .rst_n(rst_n && test16_en), .csr_clk, .csr_rst_n, .done(test16_done));
+
+    test_tx_merge#(.DATA_WIDTH(512), .SB_HEADERS(1)) t17_tx_merge(.clk, .rst_n(rst_n && test17_en), .csr_clk, .csr_rst_n, .done(test17_done));
+    test_tx_merge#(.DATA_WIDTH(512), .SB_HEADERS(0)) t18_tx_merge(.clk, .rst_n(rst_n && test18_en), .csr_clk, .csr_rst_n, .done(test18_done));
+    test_tx_merge#(.DATA_WIDTH(1024), .SB_HEADERS(1)) t19_tx_merge(.clk, .rst_n(rst_n && test19_en), .csr_clk, .csr_rst_n, .done(test19_done));
+    test_tx_merge#(.DATA_WIDTH(1024), .SB_HEADERS(0)) t20_tx_merge(.clk, .rst_n(rst_n && test20_en), .csr_clk, .csr_rst_n, .done(test20_done));
+    test_tx_merge#(.DATA_WIDTH(256), .SB_HEADERS(1)) t21_tx_merge(.clk, .rst_n(rst_n && test21_en), .csr_clk, .csr_rst_n, .done(test21_done));
+    test_tx_merge#(.DATA_WIDTH(256), .SB_HEADERS(0)) t22_tx_merge(.clk, .rst_n(rst_n && test22_en), .csr_clk, .csr_rst_n, .done(test22_done));
 
 endmodule
