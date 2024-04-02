@@ -91,6 +91,10 @@ module top_tb ();
     logic test21_done;
     logic test22_en = 1'b0;
     logic test22_done;
+    logic test23_en = 1'b0;
+    logic test23_done;
+    logic test24_en = 1'b0;
+    logic test24_done;
 
 `define RUN_TEST(test) \
     $display("Running %0s:", `"test`");  \
@@ -145,6 +149,9 @@ module top_tb ();
         `RUN_TEST(test21);
         `RUN_TEST(test22);
 
+        `RUN_TEST(test23);
+        `RUN_TEST(test24);
+
         // The test aborts on failure, so reaching here means it passed
         $display("Test passed!");
         $finish;
@@ -180,5 +187,9 @@ module top_tb ();
     test_tx_merge#(.DATA_WIDTH(1024), .SB_HEADERS(0)) t20_tx_merge(.clk, .rst_n(rst_n && test20_en), .csr_clk, .csr_rst_n, .done(test20_done));
     test_tx_merge#(.DATA_WIDTH(256), .SB_HEADERS(1)) t21_tx_merge(.clk, .rst_n(rst_n && test21_en), .csr_clk, .csr_rst_n, .done(test21_done));
     test_tx_merge#(.DATA_WIDTH(256), .SB_HEADERS(0)) t22_tx_merge(.clk, .rst_n(rst_n && test22_en), .csr_clk, .csr_rst_n, .done(test22_done));
+
+    // Width and header position aren't relevant. The bus isn't being monitored.
+    test_cpl_metering#(.DATA_WIDTH(512), .SB_HEADERS(0)) t23_cpl_metering(.clk, .rst_n(rst_n && test23_en), .csr_clk, .csr_rst_n, .done(test23_done));
+    test_cpl_metering#(.DATA_WIDTH(1024), .SB_HEADERS(1)) t24_cpl_metering(.clk, .rst_n(rst_n && test24_en), .csr_clk, .csr_rst_n, .done(test24_done));
 
 endmodule
