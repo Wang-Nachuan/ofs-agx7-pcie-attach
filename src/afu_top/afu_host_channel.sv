@@ -145,16 +145,32 @@ end
 
 
 //
-// DM-encoded reads to TXREQ
+// Reads to TXREQ
 //
-assign mx2ho_txreq_port.tvalid = mx2ho_tx_ab[1].tvalid && mx2ho_tx_ab1_to_txreq;
+
+pcie_ss_axis_if #(
+   .DATA_W ($bits(mx2ho_txreq_port.tdata)),
+   .USER_W ($bits(mx2ho_txreq_port.tuser_vendor))
+) txreq_out(.clk(clk), .rst_n(rst_n));
+
+assign txreq_out.tvalid = mx2ho_tx_ab[1].tvalid && mx2ho_tx_ab1_to_txreq;
 always_comb begin
-   mx2ho_txreq_port.tlast = mx2ho_tx_ab[1].tlast;
-   mx2ho_txreq_port.tuser_vendor = mx2ho_tx_ab[1].tuser_vendor;
+   txreq_out.tlast = mx2ho_tx_ab[1].tlast;
+   txreq_out.tuser_vendor = mx2ho_tx_ab[1].tuser_vendor;
    // The TXREQ port is just the width of a header
-   mx2ho_txreq_port.tdata = (pcie_ss_hdr_pkg::HDR_WIDTH)'(mx2ho_tx_ab[1].tdata);
-   mx2ho_txreq_port.tkeep = (pcie_ss_hdr_pkg::HDR_WIDTH / 8)'(mx2ho_tx_ab[1].tkeep);
+   txreq_out.tdata = (pcie_ss_hdr_pkg::HDR_WIDTH)'(mx2ho_tx_ab[1].tdata);
+   txreq_out.tkeep = (pcie_ss_hdr_pkg::HDR_WIDTH / 8)'(mx2ho_tx_ab[1].tkeep);
 end
+
+ofs_fim_axis_pipeline #(
+   .TDATA_WIDTH ($bits(mx2ho_txreq_port.tdata)),
+   .TUSER_WIDTH ($bits(mx2ho_txreq_port.tuser_vendor))
+) txreq_out_pipe (
+   .clk,
+   .rst_n,
+   .axis_s (txreq_out),
+   .axis_m (mx2ho_txreq_port)
+);
 
 
 //
@@ -169,6 +185,6 @@ always_comb begin
 end
 
 assign mx2ho_tx_ab[1].tready =
-   mx2ho_tx_ab1_to_txreq ? mx2ho_txreq_port.tready : arb_tx_in[1].tready;
+   mx2ho_tx_ab1_to_txreq ? txreq_out.tready : arb_tx_in[1].tready;
 
 endmodule
