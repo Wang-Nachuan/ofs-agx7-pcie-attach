@@ -47,5 +47,16 @@ set_global_assignment -name SOURCE_TCL_SCRIPT_FILE $::env(BUILD_ROOT_REL)/ofs-co
 #--------------------
 # Synthetic timing constraints on user clock to achieve user-defined frequencies.
 # *** This must follow the user clock IP. ***
-set_global_assignment -name SDC_FILE $::env(BUILD_ROOT_REL)/syn/shared_config/setup_user_clock_for_pr.sdc
+set vlog_macros [get_all_global_assignments -name VERILOG_MACRO]
+set include_user_clk 0
+
+foreach_in_collection m $vlog_macros {
+    if { [string equal "INCLUDE_USER_CLK" [lindex $m 2]] } {
+        set include_user_clk 1
+    }
+}
+
+if {$include_user_clk == 1} {
+    set_global_assignment -name SDC_FILE $::env(BUILD_ROOT_REL)/syn/shared_config/setup_user_clock_for_pr.sdc
+}
 

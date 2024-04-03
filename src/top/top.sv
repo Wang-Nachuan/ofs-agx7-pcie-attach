@@ -259,12 +259,21 @@ logic          emif2hps_gp;
 
 //AFU EMIF AXI-MM IF
 ofs_fim_emif_axi_mm_if #(
-   .WDATA_WIDTH (ofs_fim_mem_if_pkg::AXI_MEM_WDATA_WIDTH),
-   .RDATA_WIDTH (ofs_fim_mem_if_pkg::AXI_MEM_RDATA_WIDTH),
-   .AWID_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_ID_WIDTH),
-   .ARID_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_ID_WIDTH),
-   .AWADDR_WIDTH(ofs_fim_mem_if_pkg::AXI_MEM_ADDR_WIDTH),
-   .ARADDR_WIDTH(ofs_fim_mem_if_pkg::AXI_MEM_ADDR_WIDTH)
+   .AWID_WIDTH   (ofs_fim_mem_if_pkg::AXI_MEM_AWID_WIDTH),
+   .AWADDR_WIDTH (ofs_fim_mem_if_pkg::AXI_MEM_AWADDR_WIDTH),
+   .AWUSER_WIDTH (ofs_fim_mem_if_pkg::AXI_MEM_AWUSER_WIDTH),
+   .AWLEN_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_BURST_LEN_WIDTH),
+   .WDATA_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_WDATA_WIDTH),
+   .WUSER_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_WUSER_WIDTH),
+   .BID_WIDTH    (ofs_fim_mem_if_pkg::AXI_MEM_BID_WIDTH),
+   .BUSER_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_BUSER_WIDTH),
+   .ARID_WIDTH   (ofs_fim_mem_if_pkg::AXI_MEM_ARID_WIDTH),
+   .ARADDR_WIDTH (ofs_fim_mem_if_pkg::AXI_MEM_ARADDR_WIDTH),
+   .ARUSER_WIDTH (ofs_fim_mem_if_pkg::AXI_MEM_ARUSER_WIDTH),
+   .ARLEN_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_BURST_LEN_WIDTH),
+   .RDATA_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_RDATA_WIDTH),
+   .RID_WIDTH    (ofs_fim_mem_if_pkg::AXI_MEM_RID_WIDTH),
+   .RUSER_WIDTH  (ofs_fim_mem_if_pkg::AXI_MEM_RUSER_WIDTH)
 ) afu_ext_mem_if [AFU_MEM_CHANNELS-1:0] ();
 
 `endif

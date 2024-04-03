@@ -480,12 +480,6 @@ begin
    test_done = 1'b0;
    all_tests_done = 1'b0;
    test_result = 1'b0;
- `ifdef INCLUDE_DDR4
-   force {top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.i1_app_ss_mm_awaddr[32]} = 1'b0;
-   force {top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.i0_app_ss_mm_awaddr[32]} = 1'b0;
-   force {top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.i1_app_ss_mm_araddr[32]} = 1'b0;
-   force {top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_inst.i0_app_ss_mm_araddr[32]} = 1'b0;
- `endif
 end
 
 

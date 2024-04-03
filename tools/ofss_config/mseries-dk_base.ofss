@@ -1,0 +1,10 @@
+[ip]
+type = ofs
+
+[settings]
+platform = n6001
+family = agilex
+fim = base
+part = AGMF039R47A1E2VR0
+device_id = 6001
+

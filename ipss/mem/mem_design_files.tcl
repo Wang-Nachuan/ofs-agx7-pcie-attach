@@ -3,6 +3,7 @@
 
 set vlog_macros [get_all_global_assignments -name VERILOG_MACRO]
 set include_mss 0
+set include_hbm 0
 
 foreach_in_collection assignment [get_all_global_assignments -name DEVICE] {
     set opn [lindex $assignment 2]
@@ -17,6 +18,11 @@ foreach_in_collection m $vlog_macros {
             set include_mss 1
         }
     }
+    if { [string equal "INCLUDE_HBM" [lindex $m 2]] } {
+        # Piggy back on the DDR APP channels for now
+        set_global_assignment -name VERILOG_MACRO "INCLUDE_LOCAL_MEM"
+        set include_hbm
+    }
 }
 
 if {$include_mss == 1} {
@@ -29,5 +35,20 @@ if {$include_mss == 1} {
     # Add the Memory Subsystem to the dictionary of IP files that will be parsed by OFS
     # into the project's ofs_ip_cfg_db directory. Parameters from the configured
     # IP will be turned into Verilog macros.
-    dict set ::ofs_ip_cfg_db::ip_db $::env(BUILD_ROOT_REL)/ipss/mem/qip/mem_ss/mem_ss.ip [list mem_ss mem_ss_get_cfg.tcl]
+    dict set ::ofs_ip_cfg_db::ip_db $::env(BUILD_ROOT_REL)/ipss/mem/qip/mem_ss/mem_ss.ip [list local_mem mem_ss_get_cfg.tcl]
+}
+
+if {$include_hbm == 1} {
+    # HBM Qsys
+    set_global_assignment -name QSYS_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/hbm_ss.qsys
+
+    # Qsys IP components
+    set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_hbm.ip
+    set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_noc.ip
+
+    # Add the HBM Subsystem to the dictionary of system files that will be parsed by OFS
+    # into the project's ofs_ip_cfg_db directory. Parameters from the configured
+    # IP will be turned into Verilog macros.
+    dict set ::ofs_ip_cfg_db::ip_db $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/hbm_ss.qsys [list local_mem mem_sys_get_cfg.tcl]
+    
 }
