@@ -26,6 +26,11 @@ module afu_host_channel
    input pcie_ss_axis_pkg::t_pcie_tag_mode tag_mode
 );
 
+bit rst_n_q = 1'b0;
+always @(posedge clk) begin
+    rst_n_q <= rst_n;
+end
+
 //
 // There is no transformation on the RXREQ port. Route the incoming
 // port directly to the output port.
@@ -53,14 +58,14 @@ end
 pcie_ss_axis_if #(
    .DATA_W (ofs_fim_cfg_pkg::PCIE_TDATA_WIDTH),
    .USER_W (ofs_fim_cfg_pkg::PCIE_TUSER_WIDTH)
-) mx2ho_tx_ab[2](.clk(clk), .rst_n(rst_n));
+) mx2ho_tx_ab[2](.clk(clk), .rst_n(rst_n_q));
 
 tag_remap_multi_tx #(
    .REMAP            (  1  ),              // Enable/Disable Tag Remap function
    .N_TX_PORTS       (  2  )               // Map both A and B ports
 ) tag_remap (
    .clk               ( clk             ),
-   .rst_n             ( rst_n           ),
+   .rst_n             ( rst_n_q         ),
    .ho2mx_rx_port     ( ho2mx_rx_port   ), // axis interface from host (PCIE)
    .mx2ho_tx_port     ( mx2ho_tx_ab     ), // axis interface to host (PCIE)
    .ho2mx_rx_remap    ( ho2mx_rx_remap  ), // axis interface to pf_vf_mux
@@ -85,13 +90,13 @@ tag_remap_multi_tx #(
 pcie_ss_axis_if #(
    .DATA_W (ofs_fim_cfg_pkg::PCIE_TDATA_WIDTH),
    .USER_W (ofs_fim_cfg_pkg::PCIE_TUSER_WIDTH)
-) arb_tx_in[2](.clk(clk), .rst_n(rst_n));
+) arb_tx_in[2](.clk(clk), .rst_n(rst_n_q));
 
 pcie_ss_axis_mux #(
    .NUM_CH ( 2 )
 ) mx2ho_tx_ab_mux (
    .clk    ( clk           ),
-   .rst_n  ( rst_n         ),
+   .rst_n  ( rst_n_q       ),
 
    .sink   ( arb_tx_in     ),
    .source ( mx2ho_tx_port )
@@ -139,7 +144,7 @@ begin
    if (mx2ho_tx_ab[1].tvalid && mx2ho_tx_ab[1].tready)
       mx2ho_tx_ab1_is_sop <= mx2ho_tx_ab[1].tlast;
 
-   if (!rst_n)
+   if (!rst_n_q)
       mx2ho_tx_ab1_is_sop <= 1'b1;
 end
 
@@ -151,7 +156,7 @@ end
 pcie_ss_axis_if #(
    .DATA_W ($bits(mx2ho_txreq_port.tdata)),
    .USER_W ($bits(mx2ho_txreq_port.tuser_vendor))
-) txreq_out(.clk(clk), .rst_n(rst_n));
+) txreq_out(.clk(clk), .rst_n(rst_n_q));
 
 assign txreq_out.tvalid = mx2ho_tx_ab[1].tvalid && mx2ho_tx_ab1_to_txreq;
 always_comb begin
@@ -167,7 +172,7 @@ ofs_fim_axis_pipeline #(
    .TUSER_WIDTH ($bits(mx2ho_txreq_port.tuser_vendor))
 ) txreq_out_pipe (
    .clk,
-   .rst_n,
+   .rst_n  (rst_n_q),
    .axis_s (txreq_out),
    .axis_m (mx2ho_txreq_port)
 );
