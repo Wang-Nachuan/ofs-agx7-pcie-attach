@@ -76,17 +76,24 @@ localparam MMIO_ADDR_WIDTH    = `OFS_FIM_IP_CFG_PCIE_SS_PF0_BAR0_ADDR_WIDTH;
   localparam NONPF0_MMIO_ADDR_WIDTH = 12;  // Pick a default
 `endif
 
-
-//MSIX
 `ifdef NUM_AFUS
 localparam   NUM_AFUS    = 2;
 `else
 localparam   NUM_AFUS    = 1;
 `endif
 localparam LNUM_AFUS = NUM_AFUS>1?$clog2(NUM_AFUS):1'h1;
-localparam NUM_AFU_INTERRUPTS = 7;
-localparam L_NUM_AFU_INTERRUPTS = $clog2(NUM_AFU_INTERRUPTS);
 
+
+// MSIX
+
+// Number of interrupts is encoded per-PF/VF from the PCIe IP as a vector
+localparam int MSIX_PF_TABLE_SIZE[8] = '{ `OFS_FIM_IP_CFG_PCIE_SS_MSIX_PF_TABLE_SIZE_VEC };
+localparam int MSIX_VF_TABLE_SIZE[8] = '{ `OFS_FIM_IP_CFG_PCIE_SS_MSIX_VF_TABLE_SIZE_VEC };
+
+// OFS expects each function to have the same MSI-X configuration.
+// Try VF0. Failing that, use PF0.
+localparam NUM_AFU_INTERRUPTS = MSIX_VF_TABLE_SIZE[0] ? MSIX_VF_TABLE_SIZE[0] : MSIX_PF_TABLE_SIZE[0];
+localparam L_NUM_AFU_INTERRUPTS = $clog2(NUM_AFU_INTERRUPTS);
 
 endpackage
 
