@@ -71,19 +71,25 @@ initial
 begin
 `ifdef VCD_ON  
    `ifndef VCD_OFF
-        $vcdpluson;
+        $vcdpluson();
         $vcdplusmemon();
    `endif 
 `endif
 end        
 
+`ifdef INCLUDE_LOCAL_MEM
 `ifdef INCLUDE_DDR4
    ofs_fim_emif_ddr4_if ddr4_mem [ofs_fim_mem_if_pkg::NUM_MEM_CHANNELS-1:0] ();
 `ifdef INCLUDE_HPS
    ofs_fim_hps_ddr4_if  ddr4_hps (); 
  `endif
 `endif
-
+`ifdef INCLUDE_HBM
+   bit uib_refclk [ofs_fim_mem_if_pkg::NUM_HBM_DEVICES-1:0];
+   bit noc_ctrl_refclk [ofs_fim_mem_if_pkg::NUM_HBM_DEVICES-1:0];
+`endif
+`endif
+      
 `ifdef INCLUDE_HSSI
 // HSSI serial data for loopback
 ofs_fim_hssi_serial_if hssi_if [NUM_ETH_LANES-1:0] ();
@@ -126,12 +132,20 @@ top DUT (
     `endif
  `endif
 
+`ifdef INCLUDE_LOCAL_MEM
 `ifdef INCLUDE_DDR4
    .ddr4_mem     (ddr4_mem),
 `ifdef INCLUDE_HPS
    .ddr4_hps     (ddr4_hps),
 `endif
 `endif 
+`ifdef INCLUDE_HBM
+   .uib_refclk      (uib_refclk),
+   .noc_ctrl_refclk (noc_ctrl_refclk),
+   .hbm_temp        ('{'0}),
+   .hbm_cattrip     ('{'0}),
+`endif
+`endif
  
 `ifdef INCLUDE_PMCI                                                                              
   // AC FPGA - AC card BMC interface 
@@ -203,6 +217,7 @@ top DUT (
 `endif
 
 // EMIF memory model   
+`ifdef INCLUDE_LOCAL_MEM
 `ifdef INCLUDE_DDR4
 `ifdef INCLUDE_HPS
    initial ddr4_hps.ref_clk = '0;
@@ -233,7 +248,19 @@ top DUT (
       end
    endgenerate
 `endif
-
+`ifdef INCLUDE_HBM
+   initial uib_refclk      = '{'0};
+   initial noc_ctrl_refclk = '{'0};
+   // 100 MHz refclk
+   always #10000 begin : hbm_clocking
+      for(int io=0; io < ofs_fim_mem_if_pkg::NUM_HBM_DEVICES; io = io+1) begin
+         uib_refclk[io]      = ~uib_refclk[io];
+         noc_ctrl_refclk[io] = ~noc_ctrl_refclk[io];
+      end
+   end
+`endif
+`endif
+   
 `ifdef INCLUDE_PMCI
   pmci_if  pmci_if_1();
 `endif

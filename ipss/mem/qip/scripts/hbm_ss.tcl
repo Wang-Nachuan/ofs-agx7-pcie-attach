@@ -17,6 +17,12 @@ proc config_noc {channels} {
     set_instance_parameter_value noc AXI4_DATA_MODE  {AXI4_DATA_MODE_512}
     set_instance_parameter_value noc AXI4_HANDSHAKE  {AXI4_HANDSHAKE_STANDARD}
     set_instance_parameter_value noc NOC_QOS_MODE    {NOC_QOS_MODE_SOCKET}
+
+    # Add the associated clock controller
+    add_instance noc_ctrl intel_noc_clock_ctrl
+    set_instance_parameter_value noc_ctrl REFCLK_FREQ {NOC_PLL_REFCLK_FREQ_100_MHZ}
+    # TODO: export pll lock
+    set_interface_property noc_ctrl EXPORT_OF noc_ctrl.refclk
 }
 
 proc config_hbm {channels} {
@@ -42,6 +48,10 @@ proc config_hbm {channels} {
     set_interface_property mem_fab_clk EXPORT_OF hbm.fabric_clk
     set_interface_property mem_uib_clk EXPORT_OF hbm.uibpll_refclk
     set_interface_property mem_rst_n   EXPORT_OF hbm.hbm_reset_n
+    set_interface_property mem_fab_clk EXPORT_OF hbm.fabric_clk
+    set_interface_property mem_uib_clk EXPORT_OF hbm.uibpll_refclk
+    set_interface_property mem_temp    EXPORT_OF hbm.temp_i
+    set_interface_property mem_cattrip EXPORT_OF hbm.cattrip_i
 }
 
 proc compose_hbm_ss {hbm_channels en_xbar} {

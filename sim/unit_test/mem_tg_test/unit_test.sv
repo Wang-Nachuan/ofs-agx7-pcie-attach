@@ -671,7 +671,7 @@ endtask
 
 
 // Test AFU MMIO read write
-`ifdef INCLUDE_DDR4
+`ifdef INCLUDE_LOCAL_MEM
 task mem_tg_test;
    output logic result;
 
@@ -886,8 +886,8 @@ begin
    // Force rd rsp data to 0 to trigger test failure
    // LHS must be a constant in force/release statements => constant index select
    // this test only runs on channel 0
-  `ifdef INCLUDE_DDR4
-   force top_tb.DUT.local_mem_wrapper.mem_ss_top.afu_mem_if[0].rdata = '0;
+  `ifdef INCLUDE_LOCAL_MEM
+   force top_tb.DUT.local_mem_wrapper.afu_mem_if[0].rdata = '0;
   `endif
 
    // Poll TG status for completion
@@ -925,8 +925,8 @@ begin
       result = 1'b0;
    end
    // Release rd rsp data
-  `ifdef INCLUDE_DDR4
-   release top_tb.DUT.local_mem_wrapper.mem_ss_top.afu_mem_if[0].rdata;
+  `ifdef INCLUDE_LOCAL_MEM
+   release top_tb.DUT.local_mem_wrapper.afu_mem_if[0].rdata;
   `endif
    post_test_util(old_test_err_count);
    host_bfm_top.host_bfm.revert_to_last_pfvf_setting();
@@ -950,8 +950,8 @@ task main_test;
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
 
       // wait for cal
-     `ifdef INCLUDE_DDR4
-      wait(top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_cal_success[0] == 1'b1);
+     `ifdef INCLUDE_LOCAL_MEM
+      // wait(top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_cal_success[0] == 1'b1);
       test_emif_calibration ( test_result );   
       pfvf = '{0,2,1}; // Set PFVF to PF0-VF2
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);

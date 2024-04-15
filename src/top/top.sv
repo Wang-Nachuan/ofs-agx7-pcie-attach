@@ -32,6 +32,8 @@ module top
 (
                     input                                       SYS_REFCLK                        ,// System Reference Clock (100MHz)
                                       
+// Local Memory technology interfaces
+`ifdef INCLUDE_LOCAL_MEM
 `ifdef INCLUDE_DDR4
                     ofs_fim_emif_ddr4_if.emif                      ddr4_mem     [NUM_DDR4_CHANNELS-1:0]      ,// EMIF DDR4 x32 RDIMM (x8)
 `ifdef INCLUDE_HPS
@@ -39,6 +41,13 @@ module top
 `endif
 `endif
 
+`ifdef INCLUDE_HBM
+   input       hbm_cattrip     [NUM_HBM_DEVICES-1:0],
+   input [2:0] hbm_temp        [NUM_HBM_DEVICES-1:0],
+   input       uib_refclk      [NUM_HBM_DEVICES-1:0],
+   input       noc_ctrl_refclk [NUM_HBM_DEVICES-1:0],
+`endif
+`endif
 
 `ifdef INCLUDE_HSSI                                                                              
                     //QSFP control signals
@@ -1200,6 +1209,18 @@ endgenerate
       .afu_mem_if   (afu_ext_mem_if),
 `ifdef INCLUDE_DDR4
       .ddr4_mem_if  (ddr4_mem),
+`endif
+
+`ifdef INCLUDE_HBM
+      // universal interface bus clk (PIN EC36)
+      .uib_refclk      (uib_refclk),
+      // Fabric clk (350MHz for full bandwidth)
+      .fab_clk         ('{clk_sys}),
+      // NoC clk
+      .noc_ctrl_refclk (noc_ctrl_refclk),
+      // HBM status signals
+      .hbm_cattrip     (hbm_cattrip),
+      .hbm_temp        (hbm_temp),
 `endif
 
 `ifdef INCLUDE_HPS

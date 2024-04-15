@@ -16,6 +16,8 @@ LIB_FILELIST="-v $QUARTUS_ROOTDIR/eda/sim_lib/altera_primitives.v \
 $QUARTUS_ROOTDIR/eda/sim_lib/altera_lnsim.sv \
 $QUARTUS_ROOTDIR/eda/sim_lib/tennm_atoms.sv \
 $QUARTUS_ROOTDIR/eda/sim_lib/synopsys/tennm_atoms_ncrypt.sv \
+$QUARTUS_ROOTDIR/../devices/sim_lib/tennm_agilex7_io96.sv \
+$QUARTUS_ROOTDIR/../devices/sim_lib/tennm_agilex7_io96_ncrypt.sv \
 $OFS_ROOTDIR/sim/bfm/ofs_axis_bfm/host_bfm_types_pkg.sv \
 $OFS_ROOTDIR/sim/bfm/ofs_axis_bfm/pfvf_def_pkg_host.sv \
 $OFS_ROOTDIR/sim/bfm/ofs_axis_bfm/pfvf_def_pkg_soc.sv \

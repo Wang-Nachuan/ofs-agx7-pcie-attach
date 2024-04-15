@@ -67,7 +67,7 @@ set_global_assignment -name DEVICE_INITIALIZATION_CLOCK OSC_CLK_1_125MHZ
 set_global_assignment -name USE_PWRMGT_SCL SDM_IO0
 set_global_assignment -name USE_PWRMGT_SDA SDM_IO16
 set_global_assignment -name USE_CONF_DONE SDM_IO5
-set_glocal_assignment -name USE_NCATTRIP SDM_IO7
+# set_glocal_assignment -name USE_NCATTRIP SDM_IO7
 set_global_assignment -name USE_HPS_COLD_RESET SDM_IO12
 set_global_assignment -name GENERATE_RBF_FILE ON
 
@@ -77,7 +77,7 @@ set_global_assignment -name GENERATE_COMPRESSED_SOF ON
 # Verilog Macros
 ############################################################################################
 set_global_assignment -name VERILOG_MACRO "INCLUDE_FTILE"           # Enables F-Tile related ports
-# set_global_assignment -name VERILOG_MACRO "INCLUDE_HBM"             # Includes the HBM qsys and the NoC AXI-MM datapath
+set_global_assignment -name VERILOG_MACRO "INCLUDE_HBM"             # Includes the HBM qsys and the NoC AXI-MM datapath
 # set_global_assignment -name VERILOG_MACRO "INCLUDE_PR"               # INCLUDE_PR removes PR IP instatiation in port_gasket. To disable PR, remove INCLUDE_PR & pr_assignments.tcl from .qsf
 # set_global_assignment -name VERILOG_MACRO "INCLUDE_USER_CLK"         # Includes the user clock system in port_gasket.
 # set_global_assignment -name VERILOG_MACRO "INCLUDE_HSSI"             # Includes HSSI SS and HE-HSSI logic into the design
