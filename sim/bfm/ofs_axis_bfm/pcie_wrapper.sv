@@ -101,6 +101,7 @@ pcie_ss_axis_if #(
 
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(20), .ARADDR_WIDTH(20), .WDATA_WIDTH(32), .RDATA_WIDTH(32)) ss_csr_lite_if[PCIE_NUM_LINKS-1:0]();
 ofs_fim_axi_lite_if #(.AWADDR_WIDTH(20), .ARADDR_WIDTH(20), .WDATA_WIDTH(32), .RDATA_WIDTH(32)) ss_csr_lite_if_dummy[PCIE_NUM_LINKS-1:0]();
+ofs_fim_axi_lite_if #(.AWADDR_WIDTH(20), .ARADDR_WIDTH(20), .WDATA_WIDTH(32), .RDATA_WIDTH(32)) ss_csr_lite_if_bfm_dummy();
 
 import ofs_fim_if_pkg::*;
 t_sideband_from_pcie   pcie_p2c_sideband[PCIE_NUM_LINKS-1:0];
@@ -407,7 +408,7 @@ generate
             .axi_st_tx_if          (axi_st_tx_committed[1]     ),
             .axi_st_txreq_if       (axi_st_txreq_if[1]         ),
             .axi_st_rxreq_if       (rxreq_in[1]                ),
-            .csr_lite_if           (ss_csr_lite_if_dummy[1]    ),  // CSR Interface is inactive.  RXREQ Interface is main CSR access method.
+            .csr_lite_if           (ss_csr_lite_if_bfm_dummy   ),  // CSR Interface is inactive.  RXREQ Interface is main CSR access method.
             .flr_req_if            (axi_st_flr_req[1]          ),
             .flr_rsp_if            (axi_st_flr_rsp[1]          ),
             .cpl_timeout_if        (axis_cpl_timeout[1]        ),
