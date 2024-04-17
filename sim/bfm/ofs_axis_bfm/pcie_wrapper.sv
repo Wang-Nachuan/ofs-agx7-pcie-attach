@@ -224,41 +224,72 @@ endgenerate
    // This is required to compile F-Tile designs which includes tile support logic containing cross hierarchical references to the PCIe HIP
 
 `ifdef FTILE_SIM
+// Is the host PCIe interface data mover?
+`ifdef OFS_FIM_IP_CFG_PCIE_SS_FUNC_MODE_IS_DM
+    localparam PCIE_MODE_IS_DM = 1;
+`else
+    localparam PCIE_MODE_IS_DM = 0;
+`endif
 
-   pcie_ss_dm_top #(
-      .PCIE_LANES       (ofs_fim_cfg_pkg::PCIE_LANES),
-      .PCIE_NUM_LINKS   (PCIE_NUM_LINKS),
-      .SOC_ATTACH       (SOC_ATTACH)
-   ) pcie_ss_dm_top (
-      .fim_clk                        ('0),
-      .fim_rst_n                      ('1),
-      .csr_clk                        ('0),
-      .csr_rst_n                      ('1),
-      .ninit_done                     ('0),
-      .subsystem_cold_rst_n           ('1),
-      .subsystem_warm_rst_n           ('1),
-      .subsystem_cold_rst_ack_n       (),
-      .subsystem_warm_rst_ack_n       (),
-      .pin_pcie_refclk0_p             ('0),
-      .pin_pcie_refclk1_p             ('0),
-      .pin_pcie_in_perst_n            ('0),
-      .pin_pcie_rx_p                  (),
-      .pin_pcie_rx_n                  (),
-      .axi_st_txreq_if                (axi_st_txreq_if_dummy       ),
-      .axi_st_rxreq_if                (axi_st_rxreq_if_dummy       ),
-      .ss_app_st_ctrlshadow_tvalid    (),
-      .ss_app_st_ctrlshadow_tdata     (),
-      .axi_st_rx_if                   (axi_st_rx_if_dummy          ),
-      .axi_st_tx_if                   (axi_st_tx_if_dummy          ),
-      .ss_csr_lite_if                 (ss_csr_lite_if_dummy        ),
-      .flr_req_if                     (),
-      .flr_rsp_if                     (axi_st_flr_rsp              ),
-      .reset_status                   (),
-      .pin_pcie_tx_p                  (),
-      .pin_pcie_tx_n                  (),
-      .cpl_timeout_if                 (),
-      .pcie_p2c_sideband              ()
- );
+// Is the SoC PCIe interface data mover (if present)?
+`ifdef OFS_FIM_IP_CFG_SOC_PCIE_SS_FUNC_MODE_IS_DM
+    localparam SOC_PCIE_MODE_IS_DM = 1;
+`else
+    localparam SOC_PCIE_MODE_IS_DM = 0;
+`endif
+
+// Is the target PCIe interface DM?
+localparam MODE_IS_DM = SOC_ATTACH ? SOC_PCIE_MODE_IS_DM : PCIE_MODE_IS_DM;
+
+`define PCIE_SS_TOP_PORTS \
+    .fim_clk                        ('0), \
+    .fim_rst_n                      ('1), \
+    .csr_clk                        ('0), \
+    .csr_rst_n                      ('1), \
+    .ninit_done                     ('0), \
+    .subsystem_cold_rst_n           ('1), \
+    .subsystem_warm_rst_n           ('1), \
+    .subsystem_cold_rst_ack_n       (), \
+    .subsystem_warm_rst_ack_n       (), \
+    .pin_pcie_refclk0_p             ('0), \
+    .pin_pcie_refclk1_p             ('0), \
+    .pin_pcie_in_perst_n            ('0), \
+    .pin_pcie_rx_p                  (), \
+    .pin_pcie_rx_n                  (), \
+    .axi_st_txreq_if                (axi_st_txreq_if_dummy       ), \
+    .axi_st_rxreq_if                (axi_st_rxreq_if_dummy       ), \
+    .ss_app_st_ctrlshadow_tvalid    (), \ 
+    .ss_app_st_ctrlshadow_tdata     (), \
+    .axi_st_rx_if                   (axi_st_rx_if_dummy          ), \
+    .axi_st_tx_if                   (axi_st_tx_if_dummy          ), \
+    .ss_csr_lite_if                 (ss_csr_lite_if_dummy        ), \
+    .flr_req_if                     (), \
+    .flr_rsp_if                     (axi_st_flr_rsp              ), \
+    .reset_status                   (), \
+    .pin_pcie_tx_p                  (), \
+    .pin_pcie_tx_n                  (), \
+    .cpl_timeout_if                 (), \
+    .pcie_p2c_sideband              () \
+
+    if (MODE_IS_DM) begin : pcie_ss
+        pcie_ss_dm_top #(
+           .PCIE_LANES       (ofs_fim_cfg_pkg::PCIE_LANES),
+           .PCIE_NUM_LINKS   (PCIE_NUM_LINKS),
+           .SOC_ATTACH       (SOC_ATTACH)
+        ) top (
+           `PCIE_SS_TOP_PORTS
+        );
+    end
+    else begin : pcie_ss
+    pcie_ss_axis_top #(
+        .PCIE_LANES       (ofs_fim_cfg_pkg::PCIE_LANES),
+        .PCIE_NUM_LINKS   (PCIE_NUM_LINKS),
+        .SOC_ATTACH       (SOC_ATTACH)
+        ) top (
+        `PCIE_SS_TOP_PORTS
+       );
+end
+
    assign axi_st_rxreq_if_dummy[0].tready = 1'b1;
    assign axi_st_rx_if_dummy[0].tready    = 1'b1;
    assign axi_st_tx_if_dummy[0].tvalid    = 1'b0;
