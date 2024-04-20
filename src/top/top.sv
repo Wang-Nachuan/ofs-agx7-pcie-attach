@@ -138,6 +138,7 @@ wire clk_sys, clk_sys_div2, clk_sys_div4, clk_ptp_slv;
 wire clk_100m;
 wire clk_50m;
 wire clk_csr;
+wire clk_noc_fab;
 
 logic h2f_reset, h2f_reset_q;
 
@@ -506,7 +507,8 @@ sys_pll sys_pll (
    .outclk_2           (clk_sys_div2              ), // 175 MHz for x8 and 235 MHz for x16
    .outclk_3           (clk_ptp_slv               ), // 155.56MHz
    .outclk_4           (clk_50m                   ), // 50 MHz
-   .outclk_5           (clk_sys_div4              )  // 87.5 MHz for x8 and 117.5 MHz for x16
+   .outclk_5           (clk_sys_div4              ), // 87.5 MHz for x8 and 117.5 MHz for x16
+   .outclk_6           (clk_noc_fab               )  // 350 MHz for driving fabric side of NoC
 );
 
 //-----------------------------------------------------------------------------------------------
@@ -1215,7 +1217,7 @@ endgenerate
       // universal interface bus clk (PIN EC36)
       .uib_refclk      (uib_refclk),
       // Fabric clk (350MHz for full bandwidth)
-      .fab_clk         ('{clk_sys}),
+      .fab_clk         ('{clk_noc_fab}),
       // NoC clk
       .noc_ctrl_refclk (noc_ctrl_refclk),
       // HBM status signals

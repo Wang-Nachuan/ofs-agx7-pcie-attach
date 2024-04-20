@@ -32,6 +32,7 @@ bit outclk_2 = 1'b0;
 bit outclk_3 = 1'b0;
 bit outclk_4 = 1'b0;
 bit outclk_5 = 1'b0;
+bit outclk_6 = 1'b0;
 
 initial begin
  `ifdef INCLUDE_PMCI
@@ -49,6 +50,7 @@ initial begin
         force top_tb.DUT.sys_pll.outclk_3 = outclk_3;
         force top_tb.DUT.sys_pll.outclk_4 = outclk_4;
         force top_tb.DUT.sys_pll.outclk_5 = outclk_5;
+        force top_tb.DUT.sys_pll.outclk_6 = outclk_6;
 
 end 
      always #1063ps  outclk_0 = ~outclk_0; //470MHz
@@ -57,6 +59,7 @@ end
      always #3191ps  outclk_3 = ~outclk_3; //156.66MHz
      always #9929ps  outclk_4 = ~outclk_4; //50.358MHz
      always #4255ps  outclk_5 = ~outclk_5; //117.5MHz
+     always #2837ps  outclk_6 = ~outclk_6; //352.5MHz
 
 initial begin
    SYS_REFCLK   = 0;

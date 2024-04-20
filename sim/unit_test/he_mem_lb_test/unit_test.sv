@@ -485,7 +485,6 @@ endtask
 
 
 task test_emif_calibration;
-   localparam BAR = 0;
    output logic result;
    logic [63:0] scratch;
    logic [63:0] emif_capability;
@@ -494,32 +493,34 @@ task test_emif_calibration;
    logic [31:0] old_test_err_count;
    int 		cal_count;
    int 		addr;
-   t_dfh        dfh;
-   int 		dfh_addr;
+   t_dfh    dfh;
+   //int 		dfh_addr;
+   uint64_t dfh_addr;
+   uint64_t dfh_next;
    logic 	dfh_found;
 begin
    print_test_header("test_emif_calibration");
-
+   pfvf = '{0,0,0}; // Set PFVF to PF0
+   host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
    // EMIF DFH discovery and check
    dfh_addr = DFH_START_OFFSET;
    dfh = '0;
    dfh_found = '0;
    while (~dfh.eol && ~dfh_found) begin
-      //READ64(ADDR32, dfh_addr, BAR, 1'b0, 0, 0, scratch, error);
       host_bfm_top.host_bfm.read64(dfh_addr, scratch);
       dfh       = t_dfh'(scratch);
       dfh_found = (dfh.feat_id == EMIF_DFH_FEAT_ID);
-      $display("\nDFH value: addr=0x%0x: next=0x%0x feat=0x%0x, dfh_found=%0x \n", dfh_addr, dfh_addr+dfh.nxt_dfh_offset, dfh.feat_id, dfh_found);      
+      dfh_next  = dfh_addr+dfh.nxt_dfh_offset;
+      $display("\nDFH value: addr=%H_%H_%H_%H: next=%H_%H_%H_%H feat=%H, dfh_found=%H \n", dfh_addr[63:48], dfh_addr[47:32], dfh_addr[31:16], dfh_addr[15:0], dfh_next[63:48], dfh_next[47:32], dfh_next[31:16], dfh_next[15:0], dfh.feat_id, dfh_found);      
       if(~dfh_found)
          dfh_addr  = dfh_addr + dfh.nxt_dfh_offset;
    end
-
    if(dfh_found) begin
       $display("EMIF_DFH");
-      $display("   Address   (0x%0x)", dfh_addr);
-      $display("   DFH value (0x%0x)\n", scratch);
+      $display("   Address...:%H_%H_%H_%H)", dfh_addr[63:48], dfh_addr[47:32], dfh_addr[31:16], dfh_addr[15:0]);
+      $display("   DFH value.:%H_%H_%H_%H\n", scratch[63:48], scratch[47:32], scratch[31:16], scratch[15:0]);
       if (scratch !== EMIF_DFH_VAL) begin
-         $display("\nERROR: DFH value mismatched, expected: 0x%0x actual:0x%0x\n", EMIF_DFH_VAL, scratch);
+         $display("\nERROR: DFH value mismatched, expected:%H_%H_%H_%H   actual:%H_%H_%H_%H\n", EMIF_DFH_VAL[63:48], EMIF_DFH_VAL[47:32], EMIF_DFH_VAL[31:16], EMIF_DFH_VAL[15:0], scratch[63:48], scratch[47:32], scratch[31:16], scratch[15:0]);      
          incr_err_count();
          result = 1'b0;
       end
@@ -532,11 +533,10 @@ begin
    if(dfh_found) begin
       // Read EMIF capability register for channel mask
       addr = dfh_addr + EMIF_CAPABILITY_OFFSET;
-      //READ64(ADDR32, addr, 3'h0, 1'b0, 0, 0, emif_capability, error);
       host_bfm_top.host_bfm.read64(addr, emif_capability);
       $display("EMIF_CAPABILITY");
-      $display("   Address   (0x%0x)", addr);
-      $display("   STATUS value (0x%0x)\n", emif_capability);
+      $display("   Address........:%H_%H_%H_%H", addr[63:48], addr[47:32], addr[31:16], addr[15:0]);
+      $display("   EMIF Capability:%H_%H_%H_%H\n", emif_capability[63:48], emif_capability[47:32], emif_capability[31:16], emif_capability[15:0]);
 
       // Poll EMIF status while calibration completion != capability mask
       emif_status = 'h0;
@@ -544,25 +544,21 @@ begin
       addr = dfh_addr + EMIF_STATUS_OFFSET;
       $display("Polling for EMIF calibration status completion: ");
       while ((emif_capability !== (emif_capability & emif_status)) && cal_count < 'h3) begin
-         //READ64(ADDR32, addr, 3'h0, 1'b0, 0, 0, emif_status, error);
          host_bfm_top.host_bfm.read64(addr, emif_status);
-         $display("0x%0x\n", emif_status);
+         $display("   %H_%H_%H_%H\n", emif_status[63:48], emif_status[47:32], emif_status[31:16], emif_status[15:0]);
          cal_count = (emif_capability !== (emif_capability & emif_status)) ? 'h0 : cal_count + 1;
          #1000000;
       end
-
       $display("EMIF_STATUS");
-      $display("   Address   (0x%0x)", addr);
-      $display("   STATUS value (0x%0x)\n", emif_status);
-
+      $display("   Address.....:%H_%H_%H_%H", addr[63:48], addr[47:32], addr[31:16], addr[15:0]);
+      $display("   STATUS value:%H_%H_%H_%H\n", emif_status[63:48], emif_status[47:32], emif_status[31:16], emif_status[15:0]);
       old_test_err_count = get_err_count();
       result = 1'b1;
    end // if (dfh_found)
-
+   host_bfm_top.host_bfm.revert_to_last_pfvf_setting();
    post_test_util(old_test_err_count);
 end
 endtask
-
 //---------------------------------------------------------
 //  END: Test Tasks and Utilities
 //---------------------------------------------------------
@@ -750,6 +746,8 @@ task main_test;
      `ifdef INCLUDE_DDR4
       wait(top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_cal_success[0] == 1'b1);
      `endif
+
+      test_emif_calibration (test_result);
 
       test_mem_loopback (test_result, 1, 3'h0, 2'h0, 17'd1, 1'b0, "test_mem_loopback: cl_mode (1CL), length (1)");
 
