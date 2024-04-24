@@ -14,8 +14,8 @@ refer to the applicable agreement for further details, at
 https://fpgasoftware.intel.com/eula.-->
 <ipxact:component xmlns:altera="http://www.altera.com/XMLSchema/IPXact2014/extensions" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014">
   <ipxact:vendor>Intel Corporation</ipxact:vendor>
-  <ipxact:library>hbm_ss_hbm</ipxact:library>
-  <ipxact:name>hbm</ipxact:name>
+  <ipxact:library>hbm_ss_hbm_0</ipxact:library>
+  <ipxact:name>hbm_0</ipxact:name>
   <ipxact:version>4.0.0</ipxact:version>
   <ipxact:busInterfaces>
     <ipxact:busInterface>
@@ -290,6 +290,302 @@ https://fpgasoftware.intel.com/eula.-->
               </ipxact:logicalPort>
               <ipxact:physicalPort>
                 <ipxact:name>ch3_u1_wmc_intr</ipxact:name>
+              </ipxact:physicalPort>
+            </ipxact:portMap>
+          </ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="associatedClock" type="string">
+          <ipxact:name>associatedClock</ipxact:name>
+          <ipxact:displayName>associatedClock</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="associatedReset" type="string">
+          <ipxact:name>associatedReset</ipxact:name>
+          <ipxact:displayName>associatedReset</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="prSafe" type="bit">
+          <ipxact:name>prSafe</ipxact:name>
+          <ipxact:displayName>Partial Reconfiguration Safe</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>ch4_u0_wmc_intr</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps>
+            <ipxact:portMap>
+              <ipxact:logicalPort>
+                <ipxact:name>conduit</ipxact:name>
+              </ipxact:logicalPort>
+              <ipxact:physicalPort>
+                <ipxact:name>ch4_u0_wmc_intr</ipxact:name>
+              </ipxact:physicalPort>
+            </ipxact:portMap>
+          </ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="associatedClock" type="string">
+          <ipxact:name>associatedClock</ipxact:name>
+          <ipxact:displayName>associatedClock</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="associatedReset" type="string">
+          <ipxact:name>associatedReset</ipxact:name>
+          <ipxact:displayName>associatedReset</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="prSafe" type="bit">
+          <ipxact:name>prSafe</ipxact:name>
+          <ipxact:displayName>Partial Reconfiguration Safe</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>ch4_u1_wmc_intr</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps>
+            <ipxact:portMap>
+              <ipxact:logicalPort>
+                <ipxact:name>conduit</ipxact:name>
+              </ipxact:logicalPort>
+              <ipxact:physicalPort>
+                <ipxact:name>ch4_u1_wmc_intr</ipxact:name>
+              </ipxact:physicalPort>
+            </ipxact:portMap>
+          </ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="associatedClock" type="string">
+          <ipxact:name>associatedClock</ipxact:name>
+          <ipxact:displayName>associatedClock</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="associatedReset" type="string">
+          <ipxact:name>associatedReset</ipxact:name>
+          <ipxact:displayName>associatedReset</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="prSafe" type="bit">
+          <ipxact:name>prSafe</ipxact:name>
+          <ipxact:displayName>Partial Reconfiguration Safe</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>ch5_u0_wmc_intr</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps>
+            <ipxact:portMap>
+              <ipxact:logicalPort>
+                <ipxact:name>conduit</ipxact:name>
+              </ipxact:logicalPort>
+              <ipxact:physicalPort>
+                <ipxact:name>ch5_u0_wmc_intr</ipxact:name>
+              </ipxact:physicalPort>
+            </ipxact:portMap>
+          </ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="associatedClock" type="string">
+          <ipxact:name>associatedClock</ipxact:name>
+          <ipxact:displayName>associatedClock</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="associatedReset" type="string">
+          <ipxact:name>associatedReset</ipxact:name>
+          <ipxact:displayName>associatedReset</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="prSafe" type="bit">
+          <ipxact:name>prSafe</ipxact:name>
+          <ipxact:displayName>Partial Reconfiguration Safe</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>ch5_u1_wmc_intr</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps>
+            <ipxact:portMap>
+              <ipxact:logicalPort>
+                <ipxact:name>conduit</ipxact:name>
+              </ipxact:logicalPort>
+              <ipxact:physicalPort>
+                <ipxact:name>ch5_u1_wmc_intr</ipxact:name>
+              </ipxact:physicalPort>
+            </ipxact:portMap>
+          </ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="associatedClock" type="string">
+          <ipxact:name>associatedClock</ipxact:name>
+          <ipxact:displayName>associatedClock</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="associatedReset" type="string">
+          <ipxact:name>associatedReset</ipxact:name>
+          <ipxact:displayName>associatedReset</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="prSafe" type="bit">
+          <ipxact:name>prSafe</ipxact:name>
+          <ipxact:displayName>Partial Reconfiguration Safe</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>ch6_u0_wmc_intr</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps>
+            <ipxact:portMap>
+              <ipxact:logicalPort>
+                <ipxact:name>conduit</ipxact:name>
+              </ipxact:logicalPort>
+              <ipxact:physicalPort>
+                <ipxact:name>ch6_u0_wmc_intr</ipxact:name>
+              </ipxact:physicalPort>
+            </ipxact:portMap>
+          </ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="associatedClock" type="string">
+          <ipxact:name>associatedClock</ipxact:name>
+          <ipxact:displayName>associatedClock</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="associatedReset" type="string">
+          <ipxact:name>associatedReset</ipxact:name>
+          <ipxact:displayName>associatedReset</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="prSafe" type="bit">
+          <ipxact:name>prSafe</ipxact:name>
+          <ipxact:displayName>Partial Reconfiguration Safe</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>ch6_u1_wmc_intr</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps>
+            <ipxact:portMap>
+              <ipxact:logicalPort>
+                <ipxact:name>conduit</ipxact:name>
+              </ipxact:logicalPort>
+              <ipxact:physicalPort>
+                <ipxact:name>ch6_u1_wmc_intr</ipxact:name>
+              </ipxact:physicalPort>
+            </ipxact:portMap>
+          </ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="associatedClock" type="string">
+          <ipxact:name>associatedClock</ipxact:name>
+          <ipxact:displayName>associatedClock</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="associatedReset" type="string">
+          <ipxact:name>associatedReset</ipxact:name>
+          <ipxact:displayName>associatedReset</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="prSafe" type="bit">
+          <ipxact:name>prSafe</ipxact:name>
+          <ipxact:displayName>Partial Reconfiguration Safe</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>ch7_u0_wmc_intr</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps>
+            <ipxact:portMap>
+              <ipxact:logicalPort>
+                <ipxact:name>conduit</ipxact:name>
+              </ipxact:logicalPort>
+              <ipxact:physicalPort>
+                <ipxact:name>ch7_u0_wmc_intr</ipxact:name>
+              </ipxact:physicalPort>
+            </ipxact:portMap>
+          </ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="associatedClock" type="string">
+          <ipxact:name>associatedClock</ipxact:name>
+          <ipxact:displayName>associatedClock</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="associatedReset" type="string">
+          <ipxact:name>associatedReset</ipxact:name>
+          <ipxact:displayName>associatedReset</ipxact:displayName>
+          <ipxact:value></ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="prSafe" type="bit">
+          <ipxact:name>prSafe</ipxact:name>
+          <ipxact:displayName>Partial Reconfiguration Safe</ipxact:displayName>
+          <ipxact:value>false</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>ch7_u1_wmc_intr</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="conduit" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps>
+            <ipxact:portMap>
+              <ipxact:logicalPort>
+                <ipxact:name>conduit</ipxact:name>
+              </ipxact:logicalPort>
+              <ipxact:physicalPort>
+                <ipxact:name>ch7_u1_wmc_intr</ipxact:name>
               </ipxact:physicalPort>
             </ipxact:portMap>
           </ipxact:portMaps>
@@ -904,6 +1200,230 @@ https://fpgasoftware.intel.com/eula.-->
       </ipxact:parameters>
     </ipxact:busInterface>
     <ipxact:busInterface>
+      <ipxact:name>t_ch4_u0_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch4_u0|target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x40000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch4_u0.target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch4_u1_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch4_u1|target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x40000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch4_u1.target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch5_u0_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch5_u0|target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x40000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch5_u0.target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch5_u1_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch5_u1|target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x40000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch5_u1.target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch6_u0_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch6_u0|target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x40000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch6_u0.target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch6_u1_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch6_u1|target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x40000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch6_u1.target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch7_u0_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch7_u0|target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x40000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch7_u0.target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch7_u1_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch7_u1|target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x40000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch7_u1.target_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
       <ipxact:name>t_ch0_ch1_sb_axi4noc</ipxact:name>
       <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
       <ipxact:abstractionTypes>
@@ -956,6 +1476,62 @@ https://fpgasoftware.intel.com/eula.-->
           <ipxact:name>regFunctionHPath</ipxact:name>
           <ipxact:displayName>regFunctionHPath</ipxact:displayName>
           <ipxact:value>tniu_ch2_ch3_sb.target_0.target_lite_inst_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch4_ch5_sb_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch4_ch5_sb|target_0.target_lite_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x8000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch4_ch5_sb.target_0.target_lite_inst_0.target_inst_0</ipxact:value>
+        </ipxact:parameter>
+      </ipxact:parameters>
+    </ipxact:busInterface>
+    <ipxact:busInterface>
+      <ipxact:name>t_ch6_ch7_sb_axi4noc</ipxact:name>
+      <ipxact:busType vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:busType>
+      <ipxact:abstractionTypes>
+        <ipxact:abstractionType>
+          <ipxact:abstractionRef vendor="intel" library="intel" name="axi4noc" version="24.1"></ipxact:abstractionRef>
+          <ipxact:portMaps></ipxact:portMaps>
+        </ipxact:abstractionType>
+      </ipxact:abstractionTypes>
+      <ipxact:slave></ipxact:slave>
+      <ipxact:parameters>
+        <ipxact:parameter parameterId="internalHPath" type="string">
+          <ipxact:name>internalHPath</ipxact:name>
+          <ipxact:displayName>Internal HPath</ipxact:displayName>
+          <ipxact:value>tniu_ch6_ch7_sb|target_0.target_lite_inst_0</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="memorySpan" type="string">
+          <ipxact:name>memorySpan</ipxact:name>
+          <ipxact:displayName>memorySpan</ipxact:displayName>
+          <ipxact:value>0x8000000</ipxact:value>
+        </ipxact:parameter>
+        <ipxact:parameter parameterId="regFunctionHPath" type="string">
+          <ipxact:name>regFunctionHPath</ipxact:name>
+          <ipxact:displayName>regFunctionHPath</ipxact:displayName>
+          <ipxact:value>tniu_ch6_ch7_sb.target_0.target_lite_inst_0.target_inst_0</ipxact:value>
         </ipxact:parameter>
       </ipxact:parameters>
     </ipxact:busInterface>
@@ -1064,6 +1640,102 @@ https://fpgasoftware.intel.com/eula.-->
       </ipxact:port>
       <ipxact:port>
         <ipxact:name>ch3_u1_wmc_intr</ipxact:name>
+        <ipxact:wire>
+          <ipxact:direction>out</ipxact:direction>
+          <ipxact:wireTypeDefs>
+            <ipxact:wireTypeDef>
+              <ipxact:typeName>STD_LOGIC</ipxact:typeName>
+              <ipxact:viewRef>QUARTUS_SYNTH</ipxact:viewRef>
+            </ipxact:wireTypeDef>
+          </ipxact:wireTypeDefs>
+        </ipxact:wire>
+      </ipxact:port>
+      <ipxact:port>
+        <ipxact:name>ch4_u0_wmc_intr</ipxact:name>
+        <ipxact:wire>
+          <ipxact:direction>out</ipxact:direction>
+          <ipxact:wireTypeDefs>
+            <ipxact:wireTypeDef>
+              <ipxact:typeName>STD_LOGIC</ipxact:typeName>
+              <ipxact:viewRef>QUARTUS_SYNTH</ipxact:viewRef>
+            </ipxact:wireTypeDef>
+          </ipxact:wireTypeDefs>
+        </ipxact:wire>
+      </ipxact:port>
+      <ipxact:port>
+        <ipxact:name>ch4_u1_wmc_intr</ipxact:name>
+        <ipxact:wire>
+          <ipxact:direction>out</ipxact:direction>
+          <ipxact:wireTypeDefs>
+            <ipxact:wireTypeDef>
+              <ipxact:typeName>STD_LOGIC</ipxact:typeName>
+              <ipxact:viewRef>QUARTUS_SYNTH</ipxact:viewRef>
+            </ipxact:wireTypeDef>
+          </ipxact:wireTypeDefs>
+        </ipxact:wire>
+      </ipxact:port>
+      <ipxact:port>
+        <ipxact:name>ch5_u0_wmc_intr</ipxact:name>
+        <ipxact:wire>
+          <ipxact:direction>out</ipxact:direction>
+          <ipxact:wireTypeDefs>
+            <ipxact:wireTypeDef>
+              <ipxact:typeName>STD_LOGIC</ipxact:typeName>
+              <ipxact:viewRef>QUARTUS_SYNTH</ipxact:viewRef>
+            </ipxact:wireTypeDef>
+          </ipxact:wireTypeDefs>
+        </ipxact:wire>
+      </ipxact:port>
+      <ipxact:port>
+        <ipxact:name>ch5_u1_wmc_intr</ipxact:name>
+        <ipxact:wire>
+          <ipxact:direction>out</ipxact:direction>
+          <ipxact:wireTypeDefs>
+            <ipxact:wireTypeDef>
+              <ipxact:typeName>STD_LOGIC</ipxact:typeName>
+              <ipxact:viewRef>QUARTUS_SYNTH</ipxact:viewRef>
+            </ipxact:wireTypeDef>
+          </ipxact:wireTypeDefs>
+        </ipxact:wire>
+      </ipxact:port>
+      <ipxact:port>
+        <ipxact:name>ch6_u0_wmc_intr</ipxact:name>
+        <ipxact:wire>
+          <ipxact:direction>out</ipxact:direction>
+          <ipxact:wireTypeDefs>
+            <ipxact:wireTypeDef>
+              <ipxact:typeName>STD_LOGIC</ipxact:typeName>
+              <ipxact:viewRef>QUARTUS_SYNTH</ipxact:viewRef>
+            </ipxact:wireTypeDef>
+          </ipxact:wireTypeDefs>
+        </ipxact:wire>
+      </ipxact:port>
+      <ipxact:port>
+        <ipxact:name>ch6_u1_wmc_intr</ipxact:name>
+        <ipxact:wire>
+          <ipxact:direction>out</ipxact:direction>
+          <ipxact:wireTypeDefs>
+            <ipxact:wireTypeDef>
+              <ipxact:typeName>STD_LOGIC</ipxact:typeName>
+              <ipxact:viewRef>QUARTUS_SYNTH</ipxact:viewRef>
+            </ipxact:wireTypeDef>
+          </ipxact:wireTypeDefs>
+        </ipxact:wire>
+      </ipxact:port>
+      <ipxact:port>
+        <ipxact:name>ch7_u0_wmc_intr</ipxact:name>
+        <ipxact:wire>
+          <ipxact:direction>out</ipxact:direction>
+          <ipxact:wireTypeDefs>
+            <ipxact:wireTypeDef>
+              <ipxact:typeName>STD_LOGIC</ipxact:typeName>
+              <ipxact:viewRef>QUARTUS_SYNTH</ipxact:viewRef>
+            </ipxact:wireTypeDef>
+          </ipxact:wireTypeDefs>
+        </ipxact:wire>
+      </ipxact:port>
+      <ipxact:port>
+        <ipxact:name>ch7_u1_wmc_intr</ipxact:name>
         <ipxact:wire>
           <ipxact:direction>out</ipxact:direction>
           <ipxact:wireTypeDefs>
@@ -1211,7 +1883,7 @@ https://fpgasoftware.intel.com/eula.-->
   <ipxact:vendorExtensions>
     <altera:entity_info>
       <ipxact:vendor>Intel Corporation</ipxact:vendor>
-      <ipxact:library>hbm_ss_hbm</ipxact:library>
+      <ipxact:library>hbm_ss_hbm_0</ipxact:library>
       <ipxact:name>hbm_fp</ipxact:name>
       <ipxact:version>4.0.0</ipxact:version>
     </altera:entity_info>
@@ -1340,22 +2012,22 @@ https://fpgasoftware.intel.com/eula.-->
         <ipxact:parameter parameterId="CTRL_CH4_EN" type="bit">
           <ipxact:name>CTRL_CH4_EN</ipxact:name>
           <ipxact:displayName>Channel 4</ipxact:displayName>
-          <ipxact:value>false</ipxact:value>
+          <ipxact:value>true</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="CTRL_CH5_EN" type="bit">
           <ipxact:name>CTRL_CH5_EN</ipxact:name>
           <ipxact:displayName>Channel 5</ipxact:displayName>
-          <ipxact:value>false</ipxact:value>
+          <ipxact:value>true</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="CTRL_CH6_EN" type="bit">
           <ipxact:name>CTRL_CH6_EN</ipxact:name>
           <ipxact:displayName>Channel 6</ipxact:displayName>
-          <ipxact:value>false</ipxact:value>
+          <ipxact:value>true</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="CTRL_CH7_EN" type="bit">
           <ipxact:name>CTRL_CH7_EN</ipxact:name>
           <ipxact:displayName>Channel 7</ipxact:displayName>
-          <ipxact:value>false</ipxact:value>
+          <ipxact:value>true</ipxact:value>
         </ipxact:parameter>
         <ipxact:parameter parameterId="CTRL_CH0_CLONE_OF_ID_AUTO_BOOL" type="bit">
           <ipxact:name>CTRL_CH0_CLONE_OF_ID_AUTO_BOOL</ipxact:name>
@@ -2664,6 +3336,270 @@ https://fpgasoftware.intel.com/eula.-->
             &lt;/parameters&gt;
         &lt;/interface&gt;
         &lt;interface&gt;
+            &lt;name&gt;ch4_u0_wmc_intr&lt;/name&gt;
+            &lt;type&gt;conduit&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports&gt;
+                &lt;port&gt;
+                    &lt;name&gt;ch4_u0_wmc_intr&lt;/name&gt;
+                    &lt;role&gt;conduit&lt;/role&gt;
+                    &lt;direction&gt;Output&lt;/direction&gt;
+                    &lt;width&gt;1&lt;/width&gt;
+                    &lt;lowerBound&gt;0&lt;/lowerBound&gt;
+                    &lt;vhdlType&gt;STD_LOGIC&lt;/vhdlType&gt;
+                    &lt;terminationValue&gt;0&lt;/terminationValue&gt;
+                &lt;/port&gt;
+            &lt;/ports&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedClock&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedReset&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;prSafe&lt;/key&gt;
+                        &lt;value&gt;false&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;ch4_u1_wmc_intr&lt;/name&gt;
+            &lt;type&gt;conduit&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports&gt;
+                &lt;port&gt;
+                    &lt;name&gt;ch4_u1_wmc_intr&lt;/name&gt;
+                    &lt;role&gt;conduit&lt;/role&gt;
+                    &lt;direction&gt;Output&lt;/direction&gt;
+                    &lt;width&gt;1&lt;/width&gt;
+                    &lt;lowerBound&gt;0&lt;/lowerBound&gt;
+                    &lt;vhdlType&gt;STD_LOGIC&lt;/vhdlType&gt;
+                    &lt;terminationValue&gt;0&lt;/terminationValue&gt;
+                &lt;/port&gt;
+            &lt;/ports&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedClock&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedReset&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;prSafe&lt;/key&gt;
+                        &lt;value&gt;false&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;ch5_u0_wmc_intr&lt;/name&gt;
+            &lt;type&gt;conduit&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports&gt;
+                &lt;port&gt;
+                    &lt;name&gt;ch5_u0_wmc_intr&lt;/name&gt;
+                    &lt;role&gt;conduit&lt;/role&gt;
+                    &lt;direction&gt;Output&lt;/direction&gt;
+                    &lt;width&gt;1&lt;/width&gt;
+                    &lt;lowerBound&gt;0&lt;/lowerBound&gt;
+                    &lt;vhdlType&gt;STD_LOGIC&lt;/vhdlType&gt;
+                    &lt;terminationValue&gt;0&lt;/terminationValue&gt;
+                &lt;/port&gt;
+            &lt;/ports&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedClock&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedReset&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;prSafe&lt;/key&gt;
+                        &lt;value&gt;false&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;ch5_u1_wmc_intr&lt;/name&gt;
+            &lt;type&gt;conduit&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports&gt;
+                &lt;port&gt;
+                    &lt;name&gt;ch5_u1_wmc_intr&lt;/name&gt;
+                    &lt;role&gt;conduit&lt;/role&gt;
+                    &lt;direction&gt;Output&lt;/direction&gt;
+                    &lt;width&gt;1&lt;/width&gt;
+                    &lt;lowerBound&gt;0&lt;/lowerBound&gt;
+                    &lt;vhdlType&gt;STD_LOGIC&lt;/vhdlType&gt;
+                    &lt;terminationValue&gt;0&lt;/terminationValue&gt;
+                &lt;/port&gt;
+            &lt;/ports&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedClock&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedReset&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;prSafe&lt;/key&gt;
+                        &lt;value&gt;false&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;ch6_u0_wmc_intr&lt;/name&gt;
+            &lt;type&gt;conduit&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports&gt;
+                &lt;port&gt;
+                    &lt;name&gt;ch6_u0_wmc_intr&lt;/name&gt;
+                    &lt;role&gt;conduit&lt;/role&gt;
+                    &lt;direction&gt;Output&lt;/direction&gt;
+                    &lt;width&gt;1&lt;/width&gt;
+                    &lt;lowerBound&gt;0&lt;/lowerBound&gt;
+                    &lt;vhdlType&gt;STD_LOGIC&lt;/vhdlType&gt;
+                    &lt;terminationValue&gt;0&lt;/terminationValue&gt;
+                &lt;/port&gt;
+            &lt;/ports&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedClock&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedReset&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;prSafe&lt;/key&gt;
+                        &lt;value&gt;false&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;ch6_u1_wmc_intr&lt;/name&gt;
+            &lt;type&gt;conduit&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports&gt;
+                &lt;port&gt;
+                    &lt;name&gt;ch6_u1_wmc_intr&lt;/name&gt;
+                    &lt;role&gt;conduit&lt;/role&gt;
+                    &lt;direction&gt;Output&lt;/direction&gt;
+                    &lt;width&gt;1&lt;/width&gt;
+                    &lt;lowerBound&gt;0&lt;/lowerBound&gt;
+                    &lt;vhdlType&gt;STD_LOGIC&lt;/vhdlType&gt;
+                    &lt;terminationValue&gt;0&lt;/terminationValue&gt;
+                &lt;/port&gt;
+            &lt;/ports&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedClock&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedReset&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;prSafe&lt;/key&gt;
+                        &lt;value&gt;false&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;ch7_u0_wmc_intr&lt;/name&gt;
+            &lt;type&gt;conduit&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports&gt;
+                &lt;port&gt;
+                    &lt;name&gt;ch7_u0_wmc_intr&lt;/name&gt;
+                    &lt;role&gt;conduit&lt;/role&gt;
+                    &lt;direction&gt;Output&lt;/direction&gt;
+                    &lt;width&gt;1&lt;/width&gt;
+                    &lt;lowerBound&gt;0&lt;/lowerBound&gt;
+                    &lt;vhdlType&gt;STD_LOGIC&lt;/vhdlType&gt;
+                    &lt;terminationValue&gt;0&lt;/terminationValue&gt;
+                &lt;/port&gt;
+            &lt;/ports&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedClock&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedReset&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;prSafe&lt;/key&gt;
+                        &lt;value&gt;false&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;ch7_u1_wmc_intr&lt;/name&gt;
+            &lt;type&gt;conduit&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports&gt;
+                &lt;port&gt;
+                    &lt;name&gt;ch7_u1_wmc_intr&lt;/name&gt;
+                    &lt;role&gt;conduit&lt;/role&gt;
+                    &lt;direction&gt;Output&lt;/direction&gt;
+                    &lt;width&gt;1&lt;/width&gt;
+                    &lt;lowerBound&gt;0&lt;/lowerBound&gt;
+                    &lt;vhdlType&gt;STD_LOGIC&lt;/vhdlType&gt;
+                    &lt;terminationValue&gt;0&lt;/terminationValue&gt;
+                &lt;/port&gt;
+            &lt;/ports&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedClock&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;associatedReset&lt;/key&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;prSafe&lt;/key&gt;
+                        &lt;value&gt;false&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
             &lt;name&gt;fabric_clk&lt;/name&gt;
             &lt;type&gt;clock&lt;/type&gt;
             &lt;isStart&gt;false&lt;/isStart&gt;
@@ -3194,6 +4130,206 @@ https://fpgasoftware.intel.com/eula.-->
             &lt;/parameters&gt;
         &lt;/interface&gt;
         &lt;interface&gt;
+            &lt;name&gt;t_ch4_u0_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch4_u0|target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x40000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch4_u0.target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch4_u1_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch4_u1|target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x40000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch4_u1.target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch5_u0_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch5_u0|target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x40000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch5_u0.target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch5_u1_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch5_u1|target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x40000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch5_u1.target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch6_u0_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch6_u0|target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x40000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch6_u0.target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch6_u1_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch6_u1|target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x40000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch6_u1.target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch7_u0_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch7_u0|target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x40000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch7_u0.target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch7_u1_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch7_u1|target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x40000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch7_u1.target_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
             &lt;name&gt;t_ch0_ch1_sb_axi4noc&lt;/name&gt;
             &lt;type&gt;axi4noc&lt;/type&gt;
             &lt;isStart&gt;false&lt;/isStart&gt;
@@ -3243,6 +4379,56 @@ https://fpgasoftware.intel.com/eula.-->
                 &lt;/parameterValueMap&gt;
             &lt;/parameters&gt;
         &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch4_ch5_sb_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch4_ch5_sb|target_0.target_lite_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x8000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch4_ch5_sb.target_0.target_lite_inst_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
+        &lt;interface&gt;
+            &lt;name&gt;t_ch6_ch7_sb_axi4noc&lt;/name&gt;
+            &lt;type&gt;axi4noc&lt;/type&gt;
+            &lt;isStart&gt;false&lt;/isStart&gt;
+            &lt;ports/&gt;
+            &lt;assignments&gt;
+                &lt;assignmentValueMap/&gt;
+            &lt;/assignments&gt;
+            &lt;parameters&gt;
+                &lt;parameterValueMap&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;internalHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch6_ch7_sb|target_0.target_lite_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;memorySpan&lt;/key&gt;
+                        &lt;value&gt;0x8000000&lt;/value&gt;
+                    &lt;/entry&gt;
+                    &lt;entry&gt;
+                        &lt;key&gt;regFunctionHPath&lt;/key&gt;
+                        &lt;value&gt;tniu_ch6_ch7_sb.target_0.target_lite_inst_0.target_inst_0&lt;/value&gt;
+                    &lt;/entry&gt;
+                &lt;/parameterValueMap&gt;
+            &lt;/parameters&gt;
+        &lt;/interface&gt;
     &lt;/interfaces&gt;
 &lt;/boundaryDefinition&gt;</ipxact:value>
         </ipxact:parameter>
@@ -3266,68 +4452,102 @@ https://fpgasoftware.intel.com/eula.-->
       </ipxact:parameters>
     </altera:altera_system_parameters>
     <altera:altera_interface_boundary>
-      <altera:interface_mapping altera:name="cattrip" altera:internal="hbm.cattrip" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="cattrip" altera:internal="hbm_0.cattrip" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="hbm_cattrip" altera:internal="hbm_cattrip"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="cattrip_i" altera:internal="hbm.cattrip_i" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="cattrip_i" altera:internal="hbm_0.cattrip_i" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="hbm_cattrip_i" altera:internal="hbm_cattrip_i"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="ch0_u0_wmc_intr" altera:internal="hbm.ch0_u0_wmc_intr" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="ch0_u0_wmc_intr" altera:internal="hbm_0.ch0_u0_wmc_intr" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="ch0_u0_wmc_intr" altera:internal="ch0_u0_wmc_intr"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="ch0_u1_wmc_intr" altera:internal="hbm.ch0_u1_wmc_intr" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="ch0_u1_wmc_intr" altera:internal="hbm_0.ch0_u1_wmc_intr" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="ch0_u1_wmc_intr" altera:internal="ch0_u1_wmc_intr"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="ch1_u0_wmc_intr" altera:internal="hbm.ch1_u0_wmc_intr" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="ch1_u0_wmc_intr" altera:internal="hbm_0.ch1_u0_wmc_intr" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="ch1_u0_wmc_intr" altera:internal="ch1_u0_wmc_intr"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="ch1_u1_wmc_intr" altera:internal="hbm.ch1_u1_wmc_intr" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="ch1_u1_wmc_intr" altera:internal="hbm_0.ch1_u1_wmc_intr" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="ch1_u1_wmc_intr" altera:internal="ch1_u1_wmc_intr"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="ch2_u0_wmc_intr" altera:internal="hbm.ch2_u0_wmc_intr" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="ch2_u0_wmc_intr" altera:internal="hbm_0.ch2_u0_wmc_intr" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="ch2_u0_wmc_intr" altera:internal="ch2_u0_wmc_intr"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="ch2_u1_wmc_intr" altera:internal="hbm.ch2_u1_wmc_intr" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="ch2_u1_wmc_intr" altera:internal="hbm_0.ch2_u1_wmc_intr" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="ch2_u1_wmc_intr" altera:internal="ch2_u1_wmc_intr"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="ch3_u0_wmc_intr" altera:internal="hbm.ch3_u0_wmc_intr" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="ch3_u0_wmc_intr" altera:internal="hbm_0.ch3_u0_wmc_intr" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="ch3_u0_wmc_intr" altera:internal="ch3_u0_wmc_intr"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="ch3_u1_wmc_intr" altera:internal="hbm.ch3_u1_wmc_intr" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="ch3_u1_wmc_intr" altera:internal="hbm_0.ch3_u1_wmc_intr" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="ch3_u1_wmc_intr" altera:internal="ch3_u1_wmc_intr"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="fabric_clk" altera:internal="hbm.fabric_clk" altera:type="clock" altera:dir="end">
+      <altera:interface_mapping altera:name="ch4_u0_wmc_intr" altera:internal="hbm_0.ch4_u0_wmc_intr" altera:type="conduit" altera:dir="end">
+        <altera:port_mapping altera:name="ch4_u0_wmc_intr" altera:internal="ch4_u0_wmc_intr"></altera:port_mapping>
+      </altera:interface_mapping>
+      <altera:interface_mapping altera:name="ch4_u1_wmc_intr" altera:internal="hbm_0.ch4_u1_wmc_intr" altera:type="conduit" altera:dir="end">
+        <altera:port_mapping altera:name="ch4_u1_wmc_intr" altera:internal="ch4_u1_wmc_intr"></altera:port_mapping>
+      </altera:interface_mapping>
+      <altera:interface_mapping altera:name="ch5_u0_wmc_intr" altera:internal="hbm_0.ch5_u0_wmc_intr" altera:type="conduit" altera:dir="end">
+        <altera:port_mapping altera:name="ch5_u0_wmc_intr" altera:internal="ch5_u0_wmc_intr"></altera:port_mapping>
+      </altera:interface_mapping>
+      <altera:interface_mapping altera:name="ch5_u1_wmc_intr" altera:internal="hbm_0.ch5_u1_wmc_intr" altera:type="conduit" altera:dir="end">
+        <altera:port_mapping altera:name="ch5_u1_wmc_intr" altera:internal="ch5_u1_wmc_intr"></altera:port_mapping>
+      </altera:interface_mapping>
+      <altera:interface_mapping altera:name="ch6_u0_wmc_intr" altera:internal="hbm_0.ch6_u0_wmc_intr" altera:type="conduit" altera:dir="end">
+        <altera:port_mapping altera:name="ch6_u0_wmc_intr" altera:internal="ch6_u0_wmc_intr"></altera:port_mapping>
+      </altera:interface_mapping>
+      <altera:interface_mapping altera:name="ch6_u1_wmc_intr" altera:internal="hbm_0.ch6_u1_wmc_intr" altera:type="conduit" altera:dir="end">
+        <altera:port_mapping altera:name="ch6_u1_wmc_intr" altera:internal="ch6_u1_wmc_intr"></altera:port_mapping>
+      </altera:interface_mapping>
+      <altera:interface_mapping altera:name="ch7_u0_wmc_intr" altera:internal="hbm_0.ch7_u0_wmc_intr" altera:type="conduit" altera:dir="end">
+        <altera:port_mapping altera:name="ch7_u0_wmc_intr" altera:internal="ch7_u0_wmc_intr"></altera:port_mapping>
+      </altera:interface_mapping>
+      <altera:interface_mapping altera:name="ch7_u1_wmc_intr" altera:internal="hbm_0.ch7_u1_wmc_intr" altera:type="conduit" altera:dir="end">
+        <altera:port_mapping altera:name="ch7_u1_wmc_intr" altera:internal="ch7_u1_wmc_intr"></altera:port_mapping>
+      </altera:interface_mapping>
+      <altera:interface_mapping altera:name="fabric_clk" altera:internal="hbm_0.fabric_clk" altera:type="clock" altera:dir="end">
         <altera:port_mapping altera:name="fabric_clk" altera:internal="fabric_clk"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="hbm_reset_in_prog" altera:internal="hbm.hbm_reset_in_prog" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="hbm_reset_in_prog" altera:internal="hbm_0.hbm_reset_in_prog" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="hbm_reset_in_prog" altera:internal="hbm_reset_in_prog"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="hbm_reset_n" altera:internal="hbm.hbm_reset_n" altera:type="reset" altera:dir="end">
+      <altera:interface_mapping altera:name="hbm_reset_n" altera:internal="hbm_0.hbm_reset_n" altera:type="reset" altera:dir="end">
         <altera:port_mapping altera:name="hbm_reset_n" altera:internal="hbm_reset_n"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="local_cal_fail" altera:internal="hbm.local_cal_fail" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="local_cal_fail" altera:internal="hbm_0.local_cal_fail" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="local_cal_fail" altera:internal="local_cal_fail"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="local_cal_success" altera:internal="hbm.local_cal_success" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="local_cal_success" altera:internal="hbm_0.local_cal_success" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="local_cal_success" altera:internal="local_cal_success"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch0_ch1_sb_axi4noc" altera:internal="hbm.t_ch0_ch1_sb_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch0_u0_axi4noc" altera:internal="hbm.t_ch0_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch0_u1_axi4noc" altera:internal="hbm.t_ch0_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch1_u0_axi4noc" altera:internal="hbm.t_ch1_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch1_u1_axi4noc" altera:internal="hbm.t_ch1_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch2_ch3_sb_axi4noc" altera:internal="hbm.t_ch2_ch3_sb_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch2_u0_axi4noc" altera:internal="hbm.t_ch2_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch2_u1_axi4noc" altera:internal="hbm.t_ch2_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch3_u0_axi4noc" altera:internal="hbm.t_ch3_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="t_ch3_u1_axi4noc" altera:internal="hbm.t_ch3_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
-      <altera:interface_mapping altera:name="temp" altera:internal="hbm.temp" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="t_ch0_ch1_sb_axi4noc" altera:internal="hbm_0.t_ch0_ch1_sb_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch0_u0_axi4noc" altera:internal="hbm_0.t_ch0_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch0_u1_axi4noc" altera:internal="hbm_0.t_ch0_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch1_u0_axi4noc" altera:internal="hbm_0.t_ch1_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch1_u1_axi4noc" altera:internal="hbm_0.t_ch1_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch2_ch3_sb_axi4noc" altera:internal="hbm_0.t_ch2_ch3_sb_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch2_u0_axi4noc" altera:internal="hbm_0.t_ch2_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch2_u1_axi4noc" altera:internal="hbm_0.t_ch2_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch3_u0_axi4noc" altera:internal="hbm_0.t_ch3_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch3_u1_axi4noc" altera:internal="hbm_0.t_ch3_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch4_ch5_sb_axi4noc" altera:internal="hbm_0.t_ch4_ch5_sb_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch4_u0_axi4noc" altera:internal="hbm_0.t_ch4_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch4_u1_axi4noc" altera:internal="hbm_0.t_ch4_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch5_u0_axi4noc" altera:internal="hbm_0.t_ch5_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch5_u1_axi4noc" altera:internal="hbm_0.t_ch5_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch6_ch7_sb_axi4noc" altera:internal="hbm_0.t_ch6_ch7_sb_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch6_u0_axi4noc" altera:internal="hbm_0.t_ch6_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch6_u1_axi4noc" altera:internal="hbm_0.t_ch6_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch7_u0_axi4noc" altera:internal="hbm_0.t_ch7_u0_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="t_ch7_u1_axi4noc" altera:internal="hbm_0.t_ch7_u1_axi4noc" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="temp" altera:internal="hbm_0.temp" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="hbm_temp" altera:internal="hbm_temp"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="temp_i" altera:internal="hbm.temp_i" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="temp_i" altera:internal="hbm_0.temp_i" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="hbm_temp_i" altera:internal="hbm_temp_i"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="uibpll_refclk" altera:internal="hbm.uibpll_refclk" altera:type="clock" altera:dir="end">
+      <altera:interface_mapping altera:name="uibpll_refclk" altera:internal="hbm_0.uibpll_refclk" altera:type="clock" altera:dir="end">
         <altera:port_mapping altera:name="uibpll_refclk" altera:internal="uibpll_refclk"></altera:port_mapping>
       </altera:interface_mapping>
     </altera:altera_interface_boundary>

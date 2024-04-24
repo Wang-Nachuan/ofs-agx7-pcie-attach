@@ -14,8 +14,8 @@ refer to the applicable agreement for further details, at
 https://fpgasoftware.intel.com/eula.-->
 <ipxact:component xmlns:altera="http://www.altera.com/XMLSchema/IPXact2014/extensions" xmlns:ipxact="http://www.accellera.org/XMLSchema/IPXACT/1685-2014">
   <ipxact:vendor>Intel Corporation</ipxact:vendor>
-  <ipxact:library>hbm_ss_noc_ctrl</ipxact:library>
-  <ipxact:name>noc_ctrl</ipxact:name>
+  <ipxact:library>hbm_ss_noc_0_ctrl</ipxact:library>
+  <ipxact:name>noc_0_ctrl</ipxact:name>
   <ipxact:version>2.0.0</ipxact:version>
   <ipxact:busInterfaces>
     <ipxact:busInterface>
@@ -168,7 +168,7 @@ https://fpgasoftware.intel.com/eula.-->
   <ipxact:vendorExtensions>
     <altera:entity_info>
       <ipxact:vendor>Intel Corporation</ipxact:vendor>
-      <ipxact:library>hbm_ss_noc_ctrl</ipxact:library>
+      <ipxact:library>hbm_ss_noc_0_ctrl</ipxact:library>
       <ipxact:name>intel_noc_clock_ctrl</ipxact:name>
       <ipxact:version>2.0.0</ipxact:version>
     </altera:entity_info>
@@ -356,13 +356,13 @@ https://fpgasoftware.intel.com/eula.-->
       </ipxact:parameters>
     </altera:altera_system_parameters>
     <altera:altera_interface_boundary>
-      <altera:interface_mapping altera:name="pll_lock_o" altera:internal="noc_ctrl.pll_lock_o" altera:type="conduit" altera:dir="end">
+      <altera:interface_mapping altera:name="pll_lock_o" altera:internal="noc_0_ctrl.pll_lock_o" altera:type="conduit" altera:dir="end">
         <altera:port_mapping altera:name="pll_lock_o" altera:internal="pll_lock_o"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="refclk" altera:internal="noc_ctrl.refclk" altera:type="clock" altera:dir="end">
+      <altera:interface_mapping altera:name="refclk" altera:internal="noc_0_ctrl.refclk" altera:type="clock" altera:dir="end">
         <altera:port_mapping altera:name="refclk" altera:internal="refclk"></altera:port_mapping>
       </altera:interface_mapping>
-      <altera:interface_mapping altera:name="target_inst_0" altera:internal="noc_ctrl.target_inst_0" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
+      <altera:interface_mapping altera:name="target_inst_0" altera:internal="noc_0_ctrl.target_inst_0" altera:type="axi4noc" altera:dir="end"></altera:interface_mapping>
     </altera:altera_interface_boundary>
     <altera:altera_has_warnings>false</altera:altera_has_warnings>
     <altera:altera_has_errors>false</altera:altera_has_errors>

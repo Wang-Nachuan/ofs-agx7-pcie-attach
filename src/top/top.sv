@@ -1217,7 +1217,7 @@ endgenerate
       // universal interface bus clk (PIN EC36)
       .uib_refclk      (uib_refclk),
       // Fabric clk (350MHz for full bandwidth)
-      .fab_clk         ('{clk_noc_fab}),
+      .fab_clk         ('{default:clk_noc_fab}),
       // NoC clk
       .noc_ctrl_refclk (noc_ctrl_refclk),
       // HBM status signals

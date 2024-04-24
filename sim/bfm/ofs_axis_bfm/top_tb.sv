@@ -145,8 +145,8 @@ top DUT (
 `ifdef INCLUDE_HBM
    .uib_refclk      (uib_refclk),
    .noc_ctrl_refclk (noc_ctrl_refclk),
-   .hbm_temp        ('{'0}),
-   .hbm_cattrip     ('{'0}),
+   .hbm_temp        ('{default:'0}),
+   .hbm_cattrip     ('{default:'0}),
 `endif
 `endif
  
@@ -252,8 +252,8 @@ top DUT (
    endgenerate
 `endif
 `ifdef INCLUDE_HBM
-   initial uib_refclk      = '{'0};
-   initial noc_ctrl_refclk = '{'0};
+   initial uib_refclk      = '{default:'0};
+   initial noc_ctrl_refclk = '{default:'0};
    // 100 MHz refclk
    always #10000 begin : hbm_clocking
       for(int io=0; io < ofs_fim_mem_if_pkg::NUM_HBM_DEVICES; io = io+1) begin

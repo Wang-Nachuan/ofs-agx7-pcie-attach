@@ -21,28 +21,33 @@ set_location_assignment PIN_AU52 -to noc_ctrl_refclk[1]
 
 set_instance_assignment -name IO_STANDARD "1.2V TRUE DIFFERENTIAL SIGNALING" -to uib_refclk
 
-#-----------------------------------------------------------------------------
-# NoC Logical Assignments
-#-----------------------------------------------------------------------------
-# Group Assignments
-set_instance_assignment -name NOC_GROUP NOC_0 -to noc_ctrl|noc_ctrl|pll_inst -entity hbm_ss
-set_instance_assignment -name NOC_GROUP NOC_0 -to noc_ctrl|noc_ctrl|ssm_inst -entity hbm_ss
-# Targets
-set_instance_assignment -name NOC_GROUP NOC_0 -to hbm|*|tniu_ch*|target_0.target_inst_0 -entity hbm_ss
-# Initiators
-set_instance_assignment -name NOC_GROUP NOC_0 -to noc|*|iniu_*|initiator_inst_0 -entity hbm_ss
-
-# Misc
-set_instance_assignment -name PRESERVE_FANOUT_FREE_WYSIWYG ON -to noc_ctrl|noc_ctrl|pll_inst -entity hbm_ss
-set_instance_assignment -name PRESERVE_FANOUT_FREE_WYSIWYG ON -to noc_ctrl|noc_ctrl|ssm_inst -entity hbm_ss
-
 # Pre-selected Top and bottom edge coordinates for NoC channels
+# taken from BTS reference design
 set noc_xcoord {{X134 X204 X160 X242 X105 X188 X149 X215 X269 X350 X312 X376 X258 X323 X269 X365}
                 {X134 X204 X160 X242 X105 X188 X149 X215 X269 X350 X312 X376 X258 X323 X269 X365}}
 
+# Map 0 to bottom and 1 to top
 set noc_ycoord {Y6 Y417}
 
 for {set device 0} {$device < $NUM_HBM} {incr device} {
+    #-----------------------------------------------------------------------------
+    # NoC Logical Assignments
+    #-----------------------------------------------------------------------------
+    # Group Assignments
+
+    set_instance_assignment -name NOC_GROUP NOC_${device} -to noc_${device}_ctrl|*|pll_inst -entity hbm_ss
+    set_instance_assignment -name NOC_GROUP NOC_${device} -to noc_${device}_ctrl|*|ssm_inst -entity hbm_ss
+    # Initiators
+    set_instance_assignment -name NOC_GROUP NOC_${device} -to noc_${device}|*|iniu_*|initiator_inst_0 -entity hbm_ss
+    # Targets
+    set_instance_assignment -name NOC_GROUP NOC_${device} -to hbm_${device}|*|tniu_ch*|target_0.target_inst_0 -entity hbm_ss
+
+    # Misc
+    set_instance_assignment -name PRESERVE_FANOUT_FREE_WYSIWYG ON -to noc_${device}_ctrl|*|pll_inst -entity hbm_ss
+    set_instance_assignment -name PRESERVE_FANOUT_FREE_WYSIWYG ON -to noc_${device}_ctrl|*|ssm_inst -entity hbm_ss
+
+
+
     for {set channel 0} {$channel < $NUM_NOC_CHANNELS} {incr channel} {
         set xcoord [lindex $noc_xcoord $device $channel]
         set ycoord [lindex $noc_ycoord $device]
