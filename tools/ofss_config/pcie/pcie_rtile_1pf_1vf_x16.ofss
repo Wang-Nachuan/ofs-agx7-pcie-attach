@@ -10,7 +10,8 @@ output_name = pcie_ss
 # - Gen5 2x8 and Gen5 1x16 are supported
 # - Gen4 1x16 should work but not validated
 pcie_gen = 5
-pcie_instances = 2
+pcie_instances = 1
+pcie_lane_width = 16
 
 [pf0]
 num_vfs = 1

@@ -7,13 +7,11 @@ output_name = pcie_ss
 # assuming x16 lane, following will map to  "Gen<pcie_gen> <pcie_instances>x<16/pcie_instances>"
 # i.e. for R-tile PCIe SS example "Gen5 2x8". For combinations supported.
 # Note: 
-# - "Gen5 2x8" is supported at the moment 
-# - "Gen5 1x16" is not supported in PCIe SS
-# - "Gen4 1x16" should work but not validated
+# - Gen5 2x8 and Gen5 1x16 are supported
+# - Gen4 1x16 should work but not validated
 pcie_gen = 5
-# PCIe SS IP config for Gen5. Only 2 supported for Gen5 Rtile. Could be 1 for Gen 4 Rtile
 pcie_instances = 2
-# OFS code using the 2nd link in the reference design. Set value to 1 if Gen5x8 is used 
+# OFS code using the 2nd link in the reference design. Set value to 1 if 1 x Gen5x8 is used.
 pcie_instances_enabled = 2
 
 [pf0]
@@ -25,5 +23,3 @@ vf_bar0_address_width = 20
 
 [pf2]
 bar0_address_width = 18
-
-
