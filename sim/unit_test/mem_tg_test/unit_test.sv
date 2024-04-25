@@ -661,9 +661,9 @@ begin
    test_csr_access_32(result, addr_mode, AFU_SCRATCH_ADDR, 'hAFC0_0001);
    test_csr_access_64(result, addr_mode, AFU_SCRATCH_ADDR, 'hAFC0_0003_AFC0_0002);
 
-   // Test illegal memory read returns CPL
-   test_unused_csr_access_32(result, addr_mode, MEM_TG_STAT_ADDR + 'h8, 'hF00D_0001);
-   test_unused_csr_access_64(result, addr_mode, MEM_TG_STAT_ADDR + 'h8, 'hF00D_0003_F00D_0002);
+   // Test unused addr memory read returns CPL
+   test_unused_csr_access_32(result, addr_mode, tg2_csr_pkg::TG2_CH_BASE - 'h8, 'hF00D_0001);
+   test_unused_csr_access_64(result, addr_mode, tg2_csr_pkg::TG2_CH_BASE - 'h8, 'hF00D_0003_F00D_0002);
 
    post_test_util(old_test_err_count);
 end
