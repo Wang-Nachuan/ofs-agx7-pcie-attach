@@ -450,36 +450,41 @@ begin
    
    if (LINK_NUMBER == 0)
    begin
-      $display("\n");
-      $display("----------------------------------");
-      $display("Test CSR access to VIRTIO-LB (PF3)");
-      $display("----------------------------------\n");
       pfvf = '{3,0,0};
-      host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
-       test_csr_read_64(result, addr_mode, VIRTIO_DFH, 64'h1000010000000000);   
+      if (host_bfm_top.host_bfm.pfvf_exists(pfvf))
+      begin
+         $display("\n");
+         $display("----------------------------------");
+         $display("Test CSR access to VIRTIO-LB (PF3)");
+         $display("----------------------------------\n");
+         host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
+         test_csr_read_64(result, addr_mode, VIRTIO_DFH, 64'h1000010000000000);   
 
-       test_csr_read_64(result, addr_mode, VIRTIO_GUID_L, 64'hB9AB_EFBD_90B9_70C4);
-       test_csr_read_64(result, addr_mode, VIRTIO_GUID_H, 64'h1AAE_155C_ACC5_4210);   
+         test_csr_read_64(result, addr_mode, VIRTIO_GUID_L, 64'hB9AB_EFBD_90B9_70C4);
+         test_csr_read_64(result, addr_mode, VIRTIO_GUID_H, 64'h1AAE_155C_ACC5_4210);   
 
-       test_csr_read_32(result, addr_mode, VIRTIO_DFH, 64'h00000000 );   
-       test_csr_read_32(result, addr_mode, VIRTIO_DFH+4, 64'h10000100);   
+         test_csr_read_32(result, addr_mode, VIRTIO_DFH, 64'h00000000 );   
+         test_csr_read_32(result, addr_mode, VIRTIO_DFH+4, 64'h10000100);   
 
-       test_csr_read_32(result, addr_mode, VIRTIO_GUID_L, 64'h90B9_70C4);   
-       test_csr_read_32(result, addr_mode, VIRTIO_GUID_L+4, 64'hB9AB_EFBD);   
-       test_csr_read_32(result, addr_mode, VIRTIO_GUID_H, 64'hACC5_4210);   
-       test_csr_read_32(result, addr_mode, VIRTIO_GUID_H+4, 64'h1AAE_155C);   
+         test_csr_read_32(result, addr_mode, VIRTIO_GUID_L, 64'h90B9_70C4);   
+         test_csr_read_32(result, addr_mode, VIRTIO_GUID_L+4, 64'hB9AB_EFBD);   
+         test_csr_read_32(result, addr_mode, VIRTIO_GUID_H, 64'hACC5_4210);   
+         test_csr_read_32(result, addr_mode, VIRTIO_GUID_H+4, 64'h1AAE_155C);   
 
-       test_csr_access_64(result, addr_mode, VIRTIO_SCRATCHPAD, 'h1111_2222_3333_4444);
-       test_csr_access_32(result, addr_mode, VIRTIO_SCRATCHPAD, 'haa08_08aa);   
-      
-      $display("\n");
-      $display("----------------------------");
-      $display("Test CSR access to HPS (PF4)");
-      $display("----------------------------\n");
+         test_csr_access_64(result, addr_mode, VIRTIO_SCRATCHPAD, 'h1111_2222_3333_4444);
+         test_csr_access_32(result, addr_mode, VIRTIO_SCRATCHPAD, 'haa08_08aa);
+      end
       pfvf = '{4,0,0};
-      host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
-      test_csr_access_64(result, addr_mode, VIRTIO_SCRATCHPAD, 'h1111_2222_3333_4444);
-      test_csr_access_32(result, addr_mode, VIRTIO_SCRATCHPAD, 'haa09_09aa);   
+      if (host_bfm_top.host_bfm.pfvf_exists(pfvf))
+      begin
+         $display("\n");
+         $display("----------------------------");
+         $display("Test CSR access to HPS (PF4)");
+         $display("----------------------------\n");
+         host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
+         test_csr_access_64(result, addr_mode, VIRTIO_SCRATCHPAD, 'h1111_2222_3333_4444);
+         test_csr_access_32(result, addr_mode, VIRTIO_SCRATCHPAD, 'haa09_09aa);   
+      end
    end
       
    $display("\n");

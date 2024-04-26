@@ -86,6 +86,11 @@ virtual class HostBFM #(
    endfunction
 
 
+   virtual function bit pfvf_exists(pfvf_struct setting);
+      return this.pf_vf_route.pfvf_exists(setting);
+   endfunction
+
+
    virtual function pfvf_struct get_pfvf_setting();
       return this.pf_vf_route.get_env();
    endfunction

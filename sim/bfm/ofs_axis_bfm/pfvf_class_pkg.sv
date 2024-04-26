@@ -121,9 +121,14 @@ class PFVFClass #(
    endfunction
 
 
-   function bit pfvf_exists(int pf, int vf, bit vfa);
+   function bit pfvf_setting_exists(int pf, int vf, bit vfa);
       pfvf_struct pfvf_local;
       pfvf_local = create_pfvf_struct(pf,vf,vfa);
+      return pfvf_attr_lookup.exists(pfvf_local);
+   endfunction
+
+
+   function bit pfvf_exists(pfvf_struct pfvf_local);
       return pfvf_attr_lookup.exists(pfvf_local);
    endfunction
 

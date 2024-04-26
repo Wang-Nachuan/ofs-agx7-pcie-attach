@@ -345,6 +345,31 @@ def scan_qsf_for_include(item):
         sys.exit(1)
     return is_item_found
 
+def scan_verilog_macros_for_include(item):
+    verilog_macro_dir = rootdir + "/sim/scripts"
+    verilog_macro_file = verilog_macro_dir + "/" + "generated_rtl_flist_macros.f"
+    item_pattern = r'^\s*#*\s*\+define\+' + f"{item}"
+    is_item_found = False
+    if (os.path.exists(verilog_macro_file)):
+        logger.debug(f"VERILOG MACRO SCAN: File:{verilog_macro_file}")
+    else:
+        logger.error(f"ERROR: Generated Verilog Macro File NOT found...: {verilog_macro_file}")
+        logger.error(f"       Script {os.path.basename(__file__)} execution has been halted.") 
+        sys.exit(1)
+    try:
+        with open(verilog_macro_file) as file_object:
+            for line in file_object:
+                line = line.rstrip()
+                item_pattern_found = re.search(item_pattern,line)
+                if (item_pattern_found):
+                    is_item_found = True
+                    break
+    except FileNotFoundError:
+        logger.error(f"ERROR: Generated Verilog Macro File NOT found...: {verilog_macro_file}")
+        logger.error(f"       Script {os.path.basename(__file__)} execution has been halted.") 
+        sys.exit(1)
+    return is_item_found
+
 
 def get_email_list():
     email_list = os.getenv('EMAIL_LIST')
@@ -521,38 +546,17 @@ def create_test_list():
                 for test in working_test_list:
                     test_path_split = test.split("/")
                     pre_filtered_test_list.append(test_path_split[-1])                
-                if (fim_variant == "fseries-dk"):
-                    if not qsf_includes_pmci:
-                        test_remove_patterns.append(r'^pmci')
-                    if not qsf_includes_ddr4:
-                        test_remove_patterns.append(r'he_mem_lb')
-                        test_remove_patterns.append(r'^mem_')
-                    if not qsf_includes_hssi:
-                        test_remove_patterns.append(r'^he_null')
-                        test_remove_patterns.append(r'^hssi_')
-                    filtered_test_list = remove_matching_tests(pre_filtered_test_list,test_remove_patterns)
-                elif (fim_variant == "iseries-dk"):
-                    if not qsf_includes_pmci:
-                        test_remove_patterns.append(r'^pmci')
-                    if not qsf_includes_ddr4:
-                        test_remove_patterns.append(r'he_mem_lb')
-                        test_remove_patterns.append(r'^mem_')
-                    if not qsf_includes_hssi:
-                        test_remove_patterns.append(r'^he_null')
-                        test_remove_patterns.append(r'^hssi_')
-                    filtered_test_list = remove_matching_tests(pre_filtered_test_list,test_remove_patterns)
-                else:
-                    test_remove_patterns.append(r'pmci_multi_master')
-                    test_remove_patterns.append(r'pmci_qsfp_telemetry')
-                    if not qsf_includes_pmci:
-                        test_remove_patterns.append(r'^pmci')
-                    if not qsf_includes_ddr4:
-                        test_remove_patterns.append(r'he_mem_lb')
-                        test_remove_patterns.append(r'^mem_')
-                    if not qsf_includes_hssi:
-                        test_remove_patterns.append(r'^he_null')
-                        test_remove_patterns.append(r'^hssi_')
-                    filtered_test_list = remove_matching_tests(pre_filtered_test_list,test_remove_patterns)
+                test_remove_patterns.append(r'pmci_multi_master')
+                test_remove_patterns.append(r'pmci_qsfp_telemetry')
+                if not design_includes_pmci:
+                    test_remove_patterns.append(r'^pmci')
+                if not design_includes_local_mem:
+                    test_remove_patterns.append(r'he_mem_lb')
+                    test_remove_patterns.append(r'^mem_')
+                if not design_includes_hssi:
+                    test_remove_patterns.append(r'^he_null')
+                    test_remove_patterns.append(r'^hssi_')
+                filtered_test_list = remove_matching_tests(pre_filtered_test_list,test_remove_patterns)
             else:
                 test_dir_pattern = "\/(" + args.package + r'\w+)$'
                 logger.debug(f"Unit Test Search Pattern: {test_dir_pattern}")
@@ -767,15 +771,20 @@ def send_email_report():
     html_data += html_body_text_header
     html_data += f"    FIM Variant detected in sim generation........: {fim_variant}"
     html_data += html_body_text_ender
-    if (qsf_includes_ddr4):
+    for ddr_family_name in design_includes_ddr:
+        if (design_includes_ddr[ddr_family_name] == True):
+            html_data += html_body_text_header
+            html_data += f"    Design contains {ddr_family_name}..........................:   {ddr_family_name} Included"
+            html_data += html_body_text_ender
+    if (design_includes_local_mem):
         html_data += html_body_text_header
-        html_data += f"    Design contains DDR4..........................:   DDR4 Included"
+        html_data += f"    Design contains Local Memory..................:   Local Memory Included"
         html_data += html_body_text_ender
     else:
         html_data += html_body_text_header
-        html_data += f"    Design contains DDR4..........................:   None"
+        html_data += f"    Design contains Local Memory..................:   None"
         html_data += html_body_text_ender
-    if (qsf_includes_pmci):
+    if (design_includes_pmci):
         html_data += html_body_text_header
         html_data += f"    Design contains PMCI..........................:   PMCI Included"
         html_data += html_body_text_ender
@@ -783,7 +792,7 @@ def send_email_report():
         html_data += html_body_text_header
         html_data += f"    Design contains PMCI..........................:   None"
         html_data += html_body_text_ender
-    if (qsf_includes_hssi):
+    if (design_includes_hssi):
         html_data += html_body_text_header
         html_data += f"    Design contains HSSI..........................:   HSSI Included"
         html_data += html_body_text_ender
@@ -1393,9 +1402,9 @@ if __name__ == "__main__":
     test_times_dict = {}
     test_info_dict = {}
     test_results = []
-    qsf_includes_ddr4 = False
-    qsf_includes_pmci = False
-    qsf_includes_hssi = False
+    design_includes_ddr4 = False
+    design_includes_pmci = False
+    design_includes_hssi = False
     regression_run_start = datetime.datetime.now()
     msg_queue = multiprocessing.Queue()
     format = "%(asctime)s: %(message)s"
@@ -1443,9 +1452,15 @@ if __name__ == "__main__":
     linux_distro = get_linux_distro()
     gcc_version = get_gcc_version()
     fim_variant = get_fim_variant()
-    qsf_includes_ddr4 = scan_qsf_for_include("INCLUDE_DDR4")
-    qsf_includes_pmci = scan_qsf_for_include("INCLUDE_PMCI")
-    qsf_includes_hssi = scan_qsf_for_include("INCLUDE_HSSI")
+    design_includes_ddr = {}
+    ddr_mem_families = range(3,9)
+    for ddr_family in ddr_mem_families:
+        ddr_family_name = f"DDR{ddr_family}"
+        ddr_scan_string = "INCLUDE_" + ddr_family_name
+        design_includes_ddr[ddr_family_name] = scan_verilog_macros_for_include(ddr_scan_string)
+    design_includes_local_mem = scan_verilog_macros_for_include("INCLUDE_LOCAL_MEM")
+    design_includes_pmci = scan_verilog_macros_for_include("INCLUDE_PMCI")
+    design_includes_hssi = scan_verilog_macros_for_include("INCLUDE_HSSI")
     if ((args.simulator == 'vcs') or (args.simulator == 'vcsmx')):
         simulator_version = get_vcs_version()
     else:
@@ -1453,15 +1468,18 @@ if __name__ == "__main__":
     logger.info(f">>> Running Unit Test Regression Run Python Script: {os.path.basename(__file__)}")
     logger.info(f"    Begin running at date/time..............: {regression_run_start}")
     logger.info(f"    FIM Variant detected in sim generation..: {fim_variant}")
-    if (qsf_includes_ddr4):
-        logger.info(f"      Design contains DDR4..................:   DDR4 Included")
+    for ddr_family_name in design_includes_ddr:
+        if (design_includes_ddr[ddr_family_name] == True):
+            logger.info(f"      Design contains {ddr_family_name}..................:   {ddr_family_name} Included")
+    if (design_includes_local_mem):
+        logger.info(f"      Design contains Local Memory..........:   Local Memory Included")
     else:
-        logger.info(f"      Design contains DDR4..................:   None")
-    if (qsf_includes_pmci):
+        logger.info(f"      Design contains Local Memory..........:   None")
+    if (design_includes_pmci):
         logger.info(f"      Design contains PMCI..................:   PMCI Included")
     else:
         logger.info(f"      Design contains PMCI..................:   None")
-    if (qsf_includes_hssi):
+    if (design_includes_hssi):
         logger.info(f"      Design contains HSSI..................:   HSSI Included")
     else:
         logger.info(f"      Design contains HSSI..................:   None")

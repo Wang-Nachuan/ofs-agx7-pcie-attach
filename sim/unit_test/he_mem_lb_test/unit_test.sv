@@ -666,10 +666,12 @@ generate
             $display("Mailbox #%0d State: %s", LINK_NUMBER, mbx_msg.name());
             mbx.get(mbx_msg);
          end
-         $display(">>> Running %s on Link %0d...", unit_test_name, LINK_NUMBER);
-         main_test(test_result);
-         $display(">>> %s on Link %0d Completed.", unit_test_name, LINK_NUMBER);
-         test_done = 1'b1;
+         /* $display(">>> Running %s on Link %0d...", unit_test_name, LINK_NUMBER); */
+         /* main_test(test_result); */
+         /* $display(">>> %s on Link %0d Completed.", unit_test_name, LINK_NUMBER); */
+         /* test_done = 1'b1; */
+         $display(">>> No HE MEM LB on Link %0d...", LINK_NUMBER);
+         $display(">>> Returning execution back to link 0.  Link %0d actions completed.", LINK_NUMBER);
          host_gen_block0.pcie_top_host0.unit_test.mbx.put(DONE);
       end
    end

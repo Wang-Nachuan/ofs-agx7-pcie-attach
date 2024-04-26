@@ -101,8 +101,9 @@ function automatic pfvf_struct pfvf_type_from_pfvf(int pf, int vf, bit vf_active
     PFVFClass#(pf_type, vf_type, pf_list, vf_list) pfvf;
 
     pfvf = new(pf,vf,vf_active);
+    pfvf_idx = pfvf.create_pfvf_struct(pf,vf,vf_active);
 
-    if (pfvf.pfvf_exists(pf,vf,vf_active))
+    if (pfvf.pfvf_exists(pfvf_idx))
     begin
        return (pfvf.get_attr());
     end

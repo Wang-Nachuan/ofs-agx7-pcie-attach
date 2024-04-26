@@ -69,6 +69,11 @@ class PFVFRouting #(
    endfunction
 
 
+   function bit pfvf_exists(pfvf_struct setting);
+      return this.pfvf.pfvf_exists(setting);
+   endfunction
+
+
    function void set_bar(bit[3:0] bar);
       this.bar = bar;
    endfunction
