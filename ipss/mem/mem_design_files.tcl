@@ -47,9 +47,9 @@ if {$include_hbm == 1} {
     set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_noc_0.ip
     set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_noc_0_ctrl.ip
 
-    # set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_hbm_1.ip
-    # set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_noc_1.ip
-    # set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_noc_1_ctrl.ip
+    set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_hbm_1.ip
+    set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_noc_1.ip
+    set_global_assignment -name IP_FILE $::env(BUILD_ROOT_REL)/ipss/mem/qip/hbm_ss/ip/hbm_ss/hbm_ss_noc_1_ctrl.ip
 
     # Add the HBM Subsystem to the dictionary of system files that will be parsed by OFS
     # into the project's ofs_ip_cfg_db directory. Parameters from the configured

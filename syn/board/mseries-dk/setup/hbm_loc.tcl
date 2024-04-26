@@ -8,7 +8,7 @@
 # HBM/NoC pin and location assignments
 #
 #-----------------------------------------------------------------------------
-set NUM_HBM 1
+set NUM_HBM 2
 set NUM_NOC_CHANNELS 8
 
 # BOTTOM
