@@ -27,9 +27,9 @@ module top_tb ();
 `endif
     end
 
-    logic async_rst_n;
-    logic clk, rst_n;
-    logic csr_clk, csr_rst_n;
+    bit async_rst_n;
+    bit clk, rst_n;
+    bit csr_clk, csr_rst_n;
 
     always #100 clk = ~clk;
     always #210 csr_clk = ~csr_clk;
@@ -110,6 +110,7 @@ module top_tb ();
         join_any                         \
         disable fork;                    \
     end join                             \
+    #1us                                 \
     test``_en = 1'b0;                    \
     async_rst_n = 1'b0;                  \
     #1us
@@ -120,6 +121,7 @@ module top_tb ();
         // earlier tests can be temporarily disabled by commenting out
         // RUN_TEST.
         //
+        #2us
 
         `RUN_TEST(test0);
         `RUN_TEST(test1);
