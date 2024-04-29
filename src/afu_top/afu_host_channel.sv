@@ -167,10 +167,7 @@ always_comb begin
    txreq_out.tkeep = (pcie_ss_hdr_pkg::HDR_WIDTH / 8)'(mx2ho_tx_ab[1].tkeep);
 end
 
-ofs_fim_axis_pipeline #(
-   .TDATA_WIDTH ($bits(mx2ho_txreq_port.tdata)),
-   .TUSER_WIDTH ($bits(mx2ho_txreq_port.tuser_vendor))
-) txreq_out_pipe (
+ofs_fim_axis_pipeline txreq_out_pipe (
    .clk,
    .rst_n  (rst_n_q),
    .axis_s (txreq_out),
