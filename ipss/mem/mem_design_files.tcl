@@ -8,8 +8,15 @@ set include_hbm 0
 foreach_in_collection assignment [get_all_global_assignments -name DEVICE] {
     set opn [lindex $assignment 2]
 }
-set part_info    [get_part_info -device $opn]
-set base_device  [get_base_device_of $part_info]
+
+if { [catch {set part_info [get_part_info -device $opn]} errmsg] } {
+    # ::quartus::device isn't available in some modules. In those modules,
+    # the IP isn't required. Skip the declaration.
+    set base_device ""
+    puts "Skipping memory IP setup -- part_info not supported in this phase"
+} else {
+    set base_device  [get_base_device_of $part_info]
+}
 
 foreach_in_collection m $vlog_macros {
     if { [string equal "INCLUDE_DDR4" [lindex $m 2]] } {
