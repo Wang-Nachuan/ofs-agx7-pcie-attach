@@ -12,6 +12,7 @@ import datetime
 import re
 import os
 import sys
+import random
 import smtplib
 import textwrap
 from email.mime.text import MIMEText
@@ -1269,7 +1270,7 @@ def sim_farm_process_normal(index, test, test_dir_top, simulator):
                             arc_job_status = line_contains_arc_job_status_pattern.group(1)
                             if (arc_job_status != arc_job_last_status):
                                 logger.info(f"   Farm process {index_string} for test <{test_name_extracted:.<{longest_test_name}}> process_status.......: {arc_job_status}")
-                                if (arc_job_status == "done") or (arc_job_status == "error") or (arc_job_status == "dying") or (arc_job_status == "killed"):
+                                if (arc_job_status == "done") or (arc_job_status == "passed") or (arc_job_status == "failed") or (arc_job_status == "error") or (arc_job_status == "dying") or (arc_job_status == "killed") or (arc_job_status == "collected") or (arc_job_status == "expired"):
                                     arc_job_done = True
                         if (line_contains_arc_job_start_time_pattern):
                             arc_job_start_time = line_contains_arc_job_start_time_pattern.group(1)
@@ -1282,7 +1283,10 @@ def sim_farm_process_normal(index, test, test_dir_top, simulator):
                             arc_job_return_code = line_contains_arc_job_return_code_pattern.group(1)
                 arc_job.wait()
                 arc_job_result = arc_job.poll()
-                time.sleep(1)
+                if (arc_job_status == "running") or (arc_job_status == "queued"):
+                    time.sleep(random.randrange(45,75)) # Randomize polling from one minute minus 15 seconds to one minute plus 15 seconds to keep from spamming ARC.  (Request from IT.)
+                else:
+                    time.sleep(1) # Otherwise poll each second during transitions.
             sim_end = datetime.datetime.now()
             sim_elapsed = sim_end - sim_start
             logger.info(f"   Farm process {index_string} for test <{test_name_extracted:.<{longest_test_name}}> date/time completed..: {sim_end}")
@@ -1363,7 +1367,7 @@ def sim_farm_process_pmci(index, test, test_dir_top, simulator):
                             arc_job_status = line_contains_arc_job_status_pattern.group(1)
                             if (arc_job_status != arc_job_last_status):
                                 logger.info(f"   Farm process {index_string} for test <{test_name_extracted:.<{longest_test_name}}> process_status.......: {arc_job_status}")
-                                if (arc_job_status == "done") or (arc_job_status == "error") or (arc_job_status == "dying") or (arc_job_status == "killed"):
+                                if (arc_job_status == "done") or (arc_job_status == "passed") or (arc_job_status == "failed") or (arc_job_status == "error") or (arc_job_status == "dying") or (arc_job_status == "killed") or (arc_job_status == "collected") or (arc_job_status == "expired"):
                                     arc_job_done = True
                         if (line_contains_arc_job_start_time_pattern):
                             arc_job_start_time = line_contains_arc_job_start_time_pattern.group(1)
@@ -1376,7 +1380,10 @@ def sim_farm_process_pmci(index, test, test_dir_top, simulator):
                             arc_job_return_code = line_contains_arc_job_return_code_pattern.group(1)
                 arc_job.wait()
                 arc_job_result = arc_job.poll()
-                time.sleep(1)
+                if (arc_job_status == "running") or (arc_job_status == "queued"):
+                    time.sleep(random.randrange(45,75)) # Randomize polling from one minute minus 15 seconds to one minute plus 15 seconds to keep from spamming ARC.  (Request from IT.)
+                else:
+                    time.sleep(1) # Otherwise poll each second during transitions.
             sim_end = datetime.datetime.now()
             sim_elapsed = sim_end - sim_start
             logger.info(f"   Farm process {index_string} for test <{test_name_extracted:.<{longest_test_name}}> date/time completed..: {sim_end}")
