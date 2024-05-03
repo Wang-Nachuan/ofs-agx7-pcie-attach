@@ -372,6 +372,30 @@ def scan_verilog_macros_for_include(item):
     return is_item_found
 
 
+def scan_last_generation_command():
+    gen_cmd_dir = rootdir + "/sim/scripts"
+    gen_cmd_file = gen_cmd_dir+"/"+"generated_cmd.f"
+    cmd_pattern = r'\w+'
+    if (os.path.exists(gen_cmd_file)):
+        logger.debug(f"GENERATION COMMAND: File:{gen_cmd_file}")
+    else:
+        logger.error(f"ERROR: Simulation File Generation Command File NOT found...: {gen_cmd_file}")
+        logger.error(f"       Script {os.path.basename(__file__)} execution has been halted.") 
+        sys.exti(1)
+    try:
+        with open(gen_cmd_file) as file_object:
+            for line in file_object:
+                line = line.rstrip()
+                cmd_pattern_found = re.search(cmd_pattern,line)
+                if (cmd_pattern_found):
+                    generation_cmd = line
+    except FileNotFoundError:
+        logger.error(f"ERROR: Generated Verilog Macro File NOT found...: {verilog_macro_file}")
+        logger.error(f"       Script {os.path.basename(__file__)} execution has been halted.") 
+        sys.exit(1)
+    return generation_cmd
+
+
 def get_email_list():
     email_list = os.getenv('EMAIL_LIST')
     if email_list is not None:
@@ -801,6 +825,9 @@ def send_email_report():
         html_data += html_body_text_header
         html_data += f"    Design contains HSSI..........................:   None"
         html_data += html_body_text_ender
+    html_data += html_body_text_header
+    html_data += f"    Last Sim File Generation Command Invoked......: {generation_cmd_line}"
+    html_data += html_body_text_ender
     html_data += html_body_text_header
     html_data += f"    Simulator used for run........................: {args.simulator}"
     html_data += html_body_text_ender
@@ -1468,6 +1495,7 @@ if __name__ == "__main__":
     design_includes_local_mem = scan_verilog_macros_for_include("INCLUDE_LOCAL_MEM")
     design_includes_pmci = scan_verilog_macros_for_include("INCLUDE_PMCI")
     design_includes_hssi = scan_verilog_macros_for_include("INCLUDE_HSSI")
+    generation_cmd_line  = scan_last_generation_command()
     if ((args.simulator == 'vcs') or (args.simulator == 'vcsmx')):
         simulator_version = get_vcs_version()
     else:
@@ -1490,6 +1518,7 @@ if __name__ == "__main__":
         logger.info(f"      Design contains HSSI..................:   HSSI Included")
     else:
         logger.info(f"      Design contains HSSI..................:   None")
+    logger.info(f"    Last Sim File Generation Command Invoked: {generation_cmd_line}")
     logger.info(f"    Simulator used for run..................: {args.simulator}")
     logger.info(f"    Simulator Version used for run..........: {simulator_version}")
     if args.run_regression_locally:
