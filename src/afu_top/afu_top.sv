@@ -400,7 +400,7 @@ afu_host_channel afu_host_channel_inst (
 // AFUs down to a single, merged A channel. The RX port from host
 // to FPGA is demultiplexed and individual connections are forwarded
 // to AFUs.
-pf_vf_mux_w_params  #(
+pf_vf_mux_tree #(
    .MUX_NAME("A"),
    .NUM_PORT(NUM_MUX_PORTS),
    .NUM_RTABLE_ENTRIES(NUM_RTABLE_ENTRIES),
@@ -420,7 +420,7 @@ pf_vf_mux_w_params  #(
 // single RX stream is sufficient. The RX input to the MUX is tied off.
 // AFU B TX ports are multiplexed into a single TX B channel that is
 // passed to the A/B MUX above.
-pf_vf_mux_w_params   #(
+pf_vf_mux_tree #(
    .MUX_NAME ("B"),
    .NUM_PORT(NUM_MUX_PORTS),
    .NUM_RTABLE_ENTRIES(NUM_RTABLE_ENTRIES),
