@@ -8,7 +8,9 @@ fim = base_x16
 part = AGIB027R29A1E2VR3
 device_id = 6001
 
+[pcie.settings]
+pcie_gen = 5
+
 [pcie]
 subsys_dev_id = 1
 exvf_subsysid = 1
-
