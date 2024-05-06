@@ -19,7 +19,6 @@
 
 `ifdef INCLUDE_HSSI
                    `include  "ofs_fim_eth_plat_defines.svh"
-                    import   ofs_fim_eth_if_pkg::*   ;
 `endif
 
 //-----------------------------------------------------------------------------------------------
@@ -29,6 +28,9 @@
 module top 
    import ofs_fim_mem_if_pkg::*;
    import top_cfg_pkg::*;
+ `ifdef INCLUDE_HSSI
+   import ofs_fim_eth_if_pkg::*;
+ `endif
 (
                     input                                       SYS_REFCLK                        ,// System Reference Clock (100MHz)
                                       
@@ -236,8 +238,8 @@ for (genvar j=0; j<PCIE_NUM_LINKS; j++) begin : RST_N
     assign pcie_ss_axis_txreq_if[j].rst_n = rst_n_sys_pcie[j];
 end
 
-t_axis_pcie_flr   pcie_flr_req[PCIE_NUM_LINKS-1:0];
-t_axis_pcie_flr   pcie_flr_rsp[PCIE_NUM_LINKS-1:0];
+pcie_ss_axis_pkg::t_axis_pcie_flr pcie_flr_req[PCIE_NUM_LINKS-1:0];
+pcie_ss_axis_pkg::t_axis_pcie_flr pcie_flr_rsp[PCIE_NUM_LINKS-1:0];
 
 // Partial Reconfiguration FIFO Parity Error from PR Controller
 logic pr_parity_error;
@@ -252,11 +254,11 @@ ofs_uart_if hps_uart_if();
 ofs_uart_if host_uart_if();
 `endif
 
-//Completion Timeout Interface
-t_axis_pcie_cplto         axis_cpl_timeout[PCIE_NUM_LINKS-1:0];
+// Completion Timeout Interface
+pcie_ss_axis_pkg::t_axis_pcie_cplto axis_cpl_timeout[PCIE_NUM_LINKS-1:0];
 
-//Tag Mode
-t_pcie_tag_mode    tag_mode[PCIE_NUM_LINKS-1:0];
+// Tag Mode
+pcie_ss_axis_pkg::t_pcie_tag_mode tag_mode[PCIE_NUM_LINKS-1:0];
 
 
 `ifdef INCLUDE_LOCAL_MEM

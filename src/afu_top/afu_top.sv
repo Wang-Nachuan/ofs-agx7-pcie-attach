@@ -8,12 +8,10 @@
 //-----------------------------------------------------------------------------
 `ifdef INCLUDE_HSSI
    `include "ofs_fim_eth_plat_defines.svh"
-   import ofs_fim_eth_if_pkg::*;
 `endif
 
-import pcie_ss_axis_pkg::*;
-
-module afu_top #(
+module afu_top
+#(
    parameter PCIE_NUM_LINKS = 1,
    parameter AFU_MEM_CHANNEL = 1
 )(
@@ -33,10 +31,10 @@ module afu_top #(
    input wire                            cpri_refclk_153_6m , // CPRI reference clock 153.6 MHz
 
    // FLR
-   input  t_axis_pcie_flr                pcie_flr_req [PCIE_NUM_LINKS-1:0],
-   output t_axis_pcie_flr                pcie_flr_rsp [PCIE_NUM_LINKS-1:0],
+   input  pcie_ss_axis_pkg::t_axis_pcie_flr pcie_flr_req [PCIE_NUM_LINKS-1:0],
+   output pcie_ss_axis_pkg::t_axis_pcie_flr pcie_flr_rsp [PCIE_NUM_LINKS-1:0],
    output logic                          pr_parity_error,
-   input  t_pcie_tag_mode                tag_mode [PCIE_NUM_LINKS-1:0],
+   input  pcie_ss_axis_pkg::t_pcie_tag_mode tag_mode [PCIE_NUM_LINKS-1:0],
 
    ofs_fim_axi_lite_if.master            apf_bpf_slv_if,
    ofs_fim_axi_lite_if.slave             apf_bpf_mst_if,
@@ -58,10 +56,10 @@ module afu_top #(
 `endif
 
 `ifdef INCLUDE_HSSI
-   ofs_fim_hssi_ss_tx_axis_if.client      hssi_ss_st_tx [MAX_NUM_ETH_CHANNELS-1:0],
-   ofs_fim_hssi_ss_rx_axis_if.client      hssi_ss_st_rx [MAX_NUM_ETH_CHANNELS-1:0],
-   ofs_fim_hssi_fc_if.client              hssi_fc [MAX_NUM_ETH_CHANNELS-1:0],
-   input logic [MAX_NUM_ETH_CHANNELS-1:0] i_hssi_clk_pll,
+   ofs_fim_hssi_ss_tx_axis_if.client      hssi_ss_st_tx [ofs_fim_eth_if_pkg::MAX_NUM_ETH_CHANNELS-1:0],
+   ofs_fim_hssi_ss_rx_axis_if.client      hssi_ss_st_rx [ofs_fim_eth_if_pkg::MAX_NUM_ETH_CHANNELS-1:0],
+   ofs_fim_hssi_fc_if.client              hssi_fc [ofs_fim_eth_if_pkg::MAX_NUM_ETH_CHANNELS-1:0],
+   input logic [ofs_fim_eth_if_pkg::MAX_NUM_ETH_CHANNELS-1:0] i_hssi_clk_pll,
 `endif
 
    // PCIE AXI-S interfaces
@@ -76,6 +74,7 @@ module afu_top #(
 //-----------------------------------------------------------------------------------------------
 import ofs_fim_cfg_pkg::*;
 import top_cfg_pkg::*;
+import pcie_ss_axis_pkg::*;
 
 localparam MM_ADDR_WIDTH        = ofs_fim_cfg_pkg::MMIO_ADDR_WIDTH;
 localparam MM_DATA_WIDTH        = ofs_fim_cfg_pkg::MMIO_DATA_WIDTH;

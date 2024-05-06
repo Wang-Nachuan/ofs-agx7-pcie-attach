@@ -5,11 +5,9 @@
 // Top-level module for the AXI-ST BFM
 //---------------------------------------------------------
 
-import host_bfm_types_pkg::*;
-
 module host_bfm_top # (
-   type pf_type = default_pfs, 
-   type vf_type = default_vfs, 
+   type pf_type = host_bfm_types_pkg::default_pfs, 
+   type vf_type = host_bfm_types_pkg::default_vfs, 
    pf_type pf_list = '{1'b1}, 
    vf_type vf_list = '{0}
 ) (

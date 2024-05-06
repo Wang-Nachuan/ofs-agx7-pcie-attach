@@ -95,7 +95,7 @@ end
       
 `ifdef INCLUDE_HSSI
 // HSSI serial data for loopback
-ofs_fim_hssi_serial_if hssi_if [NUM_ETH_LANES-1:0] ();
+ofs_fim_hssi_serial_if hssi_if [ofs_fim_eth_plat_if_pkg::NUM_ETH_LANES-1:0] ();
 `endif
 
 `ifdef INCLUDE_PMCI                                                                              
@@ -211,7 +211,7 @@ top DUT (
   `else
       genvar i;
       generate
-          for (i=0;i<NUM_ETH_LANES;i++) begin
+          for (i=0;i<ofs_fim_eth_plat_if_pkg::NUM_ETH_LANES;i++) begin
               assign hssi_if[i].rx_p = hssi_if[i].tx_p;
               assign hssi_if[i].rx_n = hssi_if[i].tx_n;
           end

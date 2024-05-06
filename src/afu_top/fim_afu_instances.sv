@@ -21,7 +21,6 @@
 
 `include "fpga_defines.vh"
 import top_cfg_pkg::*;
-import pcie_ss_axis_pkg::*;
 
 module fim_afu_instances # (
    // System PF/VF configuration info for generating port reset vectors.
@@ -40,8 +39,8 @@ module fim_afu_instances # (
    input  logic clk,
    input  logic [PCIE_NUM_LINKS-1:0] rst_n,
 
-   input  t_axis_pcie_flr flr_req [PCIE_NUM_LINKS-1:0],
-   output t_axis_pcie_flr flr_rsp [PCIE_NUM_LINKS-1:0],
+   input  pcie_ss_axis_pkg::t_axis_pcie_flr flr_req [PCIE_NUM_LINKS-1:0],
+   output pcie_ss_axis_pkg::t_axis_pcie_flr flr_rsp [PCIE_NUM_LINKS-1:0],
 
    input  logic clk_csr,
    input  logic [PCIE_NUM_LINKS-1:0] rst_n_csr,

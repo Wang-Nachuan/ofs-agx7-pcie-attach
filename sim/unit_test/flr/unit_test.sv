@@ -4,14 +4,13 @@
 // Test module for the simulation. 
 //---------------------------------------------------------
 
-import host_bfm_types_pkg::*;
 
 module unit_test #(
    parameter SOC_ATTACH = 0,
    parameter LINK_NUMBER = 0,
-   parameter type pf_type = default_pfs, 
+   parameter type pf_type = host_bfm_types_pkg::default_pfs, 
    parameter pf_type pf_list = '{1'b1}, 
-   parameter type vf_type = default_vfs, 
+   parameter type vf_type = host_bfm_types_pkg::default_vfs, 
    parameter vf_type vf_list = '{0}
 )(
    input logic clk,
@@ -28,6 +27,7 @@ import packet_class_pkg::*;
 import host_axis_send_class_pkg::*;
 import host_axis_receive_class_pkg::*;
 import host_transaction_class_pkg::*;
+import host_bfm_types_pkg::*;
 import host_bfm_class_pkg::*;
 import host_flr_class_pkg::*;
 import test_csr_defs::*;

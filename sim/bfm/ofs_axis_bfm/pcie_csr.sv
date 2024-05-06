@@ -28,7 +28,7 @@ module pcie_csr #(
    // Error reporting
    input  logic [31:0]               i_err_code,
    // Completion Timeout interface
-   input  t_axis_pcie_cplto          i_axis_cpl_timeout,
+   input  pcie_ss_axis_pkg::t_axis_pcie_cplto i_axis_cpl_timeout,
 
    output logic [1:0]                o_ss_ctrl_cmd,
    output logic [31:0]               o_ss_ctrl_writedata,

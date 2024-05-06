@@ -5,24 +5,21 @@
 // Top-level module for the AXI-ST BFM
 //---------------------------------------------------------
 
-import pcie_ss_axis_pkg::t_flr_func;
-import pcie_ss_axis_pkg::t_axis_pcie_flr;
-import host_bfm_types_pkg::*;
-
 module host_flr_top #(
-   type pf_type = default_pfs, 
-   type vf_type = default_vfs, 
+   type pf_type = host_bfm_types_pkg::default_pfs, 
+   type vf_type = host_bfm_types_pkg::default_vfs, 
    pf_type pf_list = '{1'b1}, 
    vf_type vf_list = '{0}
 )(
    input logic clk,
    input logic rst_n,
-   output t_axis_pcie_flr flr_req_if,
-   input  t_axis_pcie_flr flr_rsp_if
+   output pcie_ss_axis_pkg::t_axis_pcie_flr flr_req_if,
+   input  pcie_ss_axis_pkg::t_axis_pcie_flr flr_rsp_if
 );
 
 import pfvf_class_pkg::*;
 import host_flr_class_pkg::*;
+import host_bfm_types_pkg::*;
 
 //---------------------------------------------------------
 // Concrete BFM Class Definition

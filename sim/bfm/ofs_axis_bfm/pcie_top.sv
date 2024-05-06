@@ -10,11 +10,12 @@
 //-----------------------------------------------------------------------------
 
 `include "fpga_defines.vh"
-import ofs_fim_if_pkg::*;
-import ofs_fim_pcie_pkg::*;
-import host_bfm_types_pkg::*;
 
-module pcie_top # (
+module pcie_top 
+  import ofs_fim_if_pkg::*;
+  import ofs_fim_pcie_pkg::*;
+  import host_bfm_types_pkg::*;
+# (
    parameter            PCIE_LANES      = 16,
    parameter            NUM_PF          = 1,
    parameter            NUM_VF          = 1,
@@ -57,11 +58,11 @@ module pcie_top # (
    ofs_fim_axi_lite_if.slave        csr_lite_if,
    
    // FLR interface
-   output t_axis_pcie_flr           flr_req_if,
-   input  t_axis_pcie_flr           flr_rsp_if,
+   output pcie_ss_axis_pkg::t_axis_pcie_flr flr_req_if,
+   input  pcie_ss_axis_pkg::t_axis_pcie_flr flr_rsp_if,
 
    // Completion Timeout interface
-   output t_axis_pcie_cplto         cpl_timeout_if,
+   output pcie_ss_axis_pkg::t_axis_pcie_cplto cpl_timeout_if,
 
    output t_sideband_from_pcie      pcie_p2c_sideband
 );
