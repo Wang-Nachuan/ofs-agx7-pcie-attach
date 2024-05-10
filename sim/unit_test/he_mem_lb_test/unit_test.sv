@@ -83,6 +83,8 @@ parameter MAX_TEST = 100;
 parameter TIMEOUT = 10.0ms;
 localparam NUMBER_OF_LINKS = `OFS_FIM_IP_CFG_PCIE_SS_NUM_LINKS;
 localparam string unit_test_name = "HE-MEM Loopback Test";
+localparam BUS_WIDTH = host_bfm_types_pkg::TDATA_WIDTH;
+localparam BUS_BYTE_WIDTH = host_bfm_types_pkg::TDATA_WIDTH / 8;
 
 //---------------------------------------------------------
 // Mailbox 
@@ -206,7 +208,7 @@ task test_mem_loopback_util;
    output logic result;
    input  logic mem_display_on;
    input  logic [2:0]  test_mode;
-   input  logic [3:0][511:0] test_data;
+   input  logic [3:0][BUS_WIDTH-1:0] test_data;
    input  logic [63:0] src_base_addr;
    input  logic [63:0] dst_base_addr;
    input  logic [63:0] dsm_base_addr;
@@ -228,17 +230,17 @@ task test_mem_loopback_util;
 begin
    result = 1'b1;
 
-   err_src_addr = |src_base_addr[5:0];
-   err_dst_addr = |dst_base_addr[5:0];
+   err_src_addr = |src_base_addr[$clog2(BUS_BYTE_WIDTH)-1:0];
+   err_dst_addr = |dst_base_addr[$clog2(BUS_BYTE_WIDTH)-1:0];
 
    if (err_src_addr) 
    begin
-      $display("Error: Source buffer address (0x%0x) is not aligned to cacheline boundary (64 bytes).", src_base_addr);
+      $display("Error: Source buffer address (0x%0x) is not aligned to cacheline boundary (%0d bytes).", src_base_addr, BUS_BYTE_WIDTH);
    end
    
    if (err_dst_addr) 
    begin
-      $display("Error: Destination buffer address (0x%0x) is not aligned to cacheline boundary (64 bytes).", dst_base_addr);
+      $display("Error: Destination buffer address (0x%0x) is not aligned to cacheline boundary (%0d bytes).", dst_base_addr, BUS_BYTE_WIDTH);
    end
 
    result = ~(err_src_addr | err_dst_addr);
@@ -254,10 +256,10 @@ begin
          $display("\n (1) Writing test data to source buffer starting at 0x%x", src_base_addr);
          for (int cl=0; cl<num_cl; ++cl) 
          begin
-            for (int i=0; i<8; i=i+1) 
+            for (int i=0; i<BUS_BYTE_WIDTH/8; i=i+1) 
             begin
-               src_addr = (src_base_addr+cl*64+i*8);
-               dst_addr = (dst_base_addr+cl*64+i*8);
+               src_addr = (src_base_addr+cl*BUS_BYTE_WIDTH+i*8);
+               dst_addr = (dst_base_addr+cl*BUS_BYTE_WIDTH+i*8);
                // Write data to source buffer
                init_buf = new[8]; 
                init_buf = {<<byte_t{test_data[cl%4][i*64+:64]}};
@@ -273,9 +275,9 @@ begin
       begin
          for (int cl=0; cl<1024; ++cl) 
          begin
-            for (int i=0; i<8; i=i+1) 
+            for (int i=0; i<BUS_BYTE_WIDTH/8; i=i+1) 
             begin
-               src_addr = (src_base_addr+cl*64+i*8);
+               src_addr = (src_base_addr+cl*BUS_BYTE_WIDTH+i*8);
                // Init source buffer to 0
                init_buf = new[8]; 
                init_buf = {<<byte_t{64'h0}};
@@ -289,7 +291,7 @@ begin
       init_buf = {<<byte_t{64'h0}};
       host_bfm_top.host_memory.initialize_data(dsm_base_addr, init_buf);
    
-      if (mem_display_on) host_bfm_top.host_memory.dump_mem(src_base_addr, num_cl*64); // Bytes
+      if (mem_display_on) host_bfm_top.host_memory.dump_mem(src_base_addr, num_cl*BUS_BYTE_WIDTH); // Bytes
           
       //-----------------------------------
       // Start memory loopback test
@@ -323,11 +325,11 @@ begin
       host_bfm_top.host_bfm.write32(INACT_THRESH, wdata);
 
       // SRC and DST addresses
-      host_bfm_top.host_bfm.write64(SRC_ADDR, {'0, src_base_addr[31:6]});
-      host_bfm_top.host_bfm.write64(DST_ADDR, {'0, dst_base_addr[31:6]});
+      host_bfm_top.host_bfm.write64(SRC_ADDR, {'0, src_base_addr[31:$clog2(BUS_BYTE_WIDTH)]});
+      host_bfm_top.host_bfm.write64(DST_ADDR, {'0, dst_base_addr[31:$clog2(BUS_BYTE_WIDTH)]});
   
       // DSM base address
-      host_bfm_top.host_bfm.write64(DSM_BASEL, {'0, dsm_base_addr[31:6]});
+      host_bfm_top.host_bfm.write64(DSM_BASEL, {'0, dsm_base_addr[31:$clog2(BUS_BYTE_WIDTH)]});
      
       // Start the test
       wdata = '0;
@@ -363,14 +365,14 @@ begin
       if(test_mode == 3'b000) 
       begin
          $display("\n (4) Checking data at destination buffer starting at 0x%x", dst_base_addr);
-         if (mem_display_on) host_bfm_top.host_memory.dump_mem(dst_base_addr, num_cl*64); // Bytes
+         if (mem_display_on) host_bfm_top.host_memory.dump_mem(dst_base_addr, num_cl*BUS_BYTE_WIDTH); // Bytes
    
          for (int cl=0; cl<num_cl; ++cl)
          begin
-            for (int i=0; i<8; i=i+1)
+            for (int i=0; i<BUS_BYTE_WIDTH/8; i=i+1)
             begin
-               dst_addr = (dst_base_addr+cl*64+i*8);
-               src_addr = (src_base_addr+cl*64+i*8);
+               dst_addr = (dst_base_addr+cl*BUS_BYTE_WIDTH+i*8);
+               src_addr = (src_base_addr+cl*BUS_BYTE_WIDTH+i*8);
                read_buf = new[8]; // Storage for 2DW of data.
                host_bfm_top.host_memory.read_data_host(src_addr, read_buf);
                src_data = {<<byte_t{read_buf}};
@@ -416,7 +418,7 @@ task test_mem_loopback;
 
    //logic  [16:0]       cl_req_len;
    logic  [2:0]        cl_len;
-   logic  [3:0][511:0] test_data;
+   logic  [3:0][BUS_WIDTH-1:0] test_data;
    logic  [63:0] src_base_addr, dst_base_addr;
    logic  [63:0] dsm_base_addr;
    logic  [31:0] old_test_err_count;
@@ -457,23 +459,19 @@ begin
       for (int cl=0; cl<4; ++cl) 
       begin
          // Hardcoded MWr and MRd test
-         test_data[cl] = {{cl[3:0], 60'h8888888_88888888},
-                          {cl[3:0], 60'h7777777_77777777},
-                          {cl[3:0], 60'h6666666_66666666},
-                          {cl[3:0], 60'h5555555_55555555},
-                          {cl[3:0], 60'h4444444_44444444},
-                          {cl[3:0], 60'h3333333_33333333},
-                          {cl[3:0], 60'h2222222_22222222},
-                          {cl[3:0], 60'h1111111_11111111}};
+         for (int w=0; w<BUS_BYTE_WIDTH/8; ++w)
+         begin
+            test_data[cl][w*64 +: 64] = {cl[3:0], {15{4'(w+1)}}};
+         end
       end
       src_base_addr = 64'h0;
       dst_base_addr = 64'h0010_0000;
       dsm_base_addr = 64'h0020_0000;
       test_mem_loopback_util(result, mem_display_on, test_mode, test_data, src_base_addr, dst_base_addr, dsm_base_addr, cl_mode, num_cl, cont_mode);
 
-      src_base_addr = 64'h40;
-      dst_base_addr = 64'h0010_0040;
-      dsm_base_addr = 64'h0020_0040;
+      src_base_addr = src_base_addr + BUS_BYTE_WIDTH;
+      dst_base_addr = dst_base_addr + BUS_BYTE_WIDTH;
+      dsm_base_addr = dsm_base_addr + BUS_BYTE_WIDTH;
       if (result) 
       begin
          test_mem_loopback_util(result, mem_display_on, test_mode, test_data, src_base_addr, dst_base_addr, dsm_base_addr, cl_mode, num_cl, cont_mode);
