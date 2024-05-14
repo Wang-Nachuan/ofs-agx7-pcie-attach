@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 
-  `define PCIE_DMRX tb_top.DUT.pcie_ss_axis_rx_if
-  `define PCIE_RX tb_top.DUT.pcie_ss_axis_rxreq_if
-  `define PCIE_TX tb_top.DUT.pcie_ss_axis_tx_if
+  `define PCIE_DMRX tb_top.DUT.pcie_ss_axis_rx_if[0]
+  `define PCIE_RX tb_top.DUT.pcie_ss_axis_rxreq_if[0]
+  `define PCIE_TX tb_top.DUT.pcie_ss_axis_tx_if[0]
   `define CE_INST tb_top.DUT.ce_top_inst.ce_csr_inst
 
 interface coverage_intf ();

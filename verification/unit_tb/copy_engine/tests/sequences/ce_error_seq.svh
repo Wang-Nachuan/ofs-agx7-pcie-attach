@@ -44,12 +44,12 @@ class ce_error_seq extends base_seq;
 
       `uvm_info(get_name(), "waiting for mrd operation to complete", UVM_LOW)
 
-      force tb_top.DUT.pcie_wrapper.pcie_ss_top.host_pcie.pcie_ss.pcie_ss.p0_ss_app_st_rx_tdata[47:45] = 3'b001; 
+      force tb_top.DUT.pcie_wrapper.pcie_ss.top.host_pcie.pcie_ss.pcie_ss.p0_ss_app_st_rx_tdata[47:45] = 3'b001; 
 
 
 #2000ns; 
 	//polling for CE_DMA_STS bit
-      release tb_top.DUT.pcie_wrapper.pcie_ss_top.host_pcie.pcie_ss.pcie_ss.p0_ss_app_st_rx_tdata[47:45]; 
+      release tb_top.DUT.pcie_wrapper.pcie_ss.top.host_pcie.pcie_ss.pcie_ss.p0_ss_app_st_rx_tdata[47:45]; 
    do begin  
       `uvm_info(get_name(), "Polling for CE_DMA_STS ", UVM_LOW)
       mmio_read64(.addr_(`PF4_BAR0+'h0130), .data_(rdata));                        

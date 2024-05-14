@@ -17,7 +17,7 @@ module tb_top;
     logic [ofs_fim_cfg_pkg::PCIE_LANES-1:0] endpoint0_tx_datap;
     logic [ofs_fim_cfg_pkg::PCIE_LANES-1:0] endpoint0_tx_datan;
 
-	ofs_fim_axi_lite_if                csr_lite_if();
+	ofs_fim_axi_lite_if                csr_lite_if[1]();
    	ofs_fim_ace_lite_if                ace_lite_tx_if();
 //ofs_fim_axi_lite_if              axi4mm_rx_if();
 ofs_fim_axi_mmio_if                        axi4mm_rx_if();
@@ -190,8 +190,8 @@ logic pwr_good_n;
    );
 
 
-t_axis_pcie_flr   pcie_flr_req;
-t_axis_pcie_flr   pcie_flr_rsp;
+t_axis_pcie_flr   pcie_flr_req[1];
+t_axis_pcie_flr   pcie_flr_rsp[1];
 //pcie_ss_axis_if   pcie_ss_axis_rx_if(.clk (clk_sys), .rst_n(rst_n_sys));
 //pcie_ss_axis_if   pcie_ss_axis_tx_if(.clk (clk_sys), .rst_n(rst_n_sys));
 
@@ -255,7 +255,6 @@ pcie_wrapper_ce #(
      .CE_BUS_USER_WIDTH        (10        ),
      .CE_MMIO_RSP_FIFO_DEPTH   (4         ),
      .CE_HST2HPS_FIFO_DEPTH    (8         ),
-     .CE_RDY_LOW_THRESHOLD     (200000    ),
      .CE_PF_ID                 (4         ),
      .CE_VF_ID                 (0         ),
      .CE_VF_ACTIVE             (0         ))
@@ -277,7 +276,7 @@ DUT (
    .pin_pcie_rx_n                ('0                ),
    .pin_pcie_tx_p                (endpoint0_tx_datap            ),                
    .pin_pcie_tx_n                (endpoint0_tx_datan            ),                
-   .csr_lite_if                  (csr_lite_if.slave             ), //TODO  
+   .csr_lite_if                  (csr_lite_if             ), //TODO  
    .ace_lite_tx_if               (ace_lite_tx_if         ), //TODO
   // .hps2host_hps_rdy_gpio        (1'b1                          ),
   // .hps2host_ssbl_vfy_gpio       (2'd0                          ),
@@ -306,7 +305,7 @@ always #500ps tbclk_1Ghz = ~tbclk_1Ghz;
          begin
             @(posedge `PCIE_DUT.u_core16.u_ip.u_cfg.u_cfg_dbi_if.cfg_blk_done_o);
             #1ps;
-            if( DUT.pcie_wrapper.pcie_ss_top.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
+            if( DUT.pcie_wrapper.pcie_ss.top.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
                release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_rate[23:0];
                release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_mpllb_sel[7:0];
             end 
@@ -316,7 +315,7 @@ always #500ps tbclk_1Ghz = ~tbclk_1Ghz;
             end
          end
          begin
-            if(DUT.pcie_wrapper.pcie_ss_top.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
+            if(DUT.pcie_wrapper.pcie_ss.top.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
                @(posedge `PCIE_DUT.u_core8.u_ip.u_cfg.u_cfg_dbi_if.cfg_blk_done_o);
                #1ps;
                release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_rate[47:24];
@@ -341,7 +340,7 @@ always #500ps tbclk_1Ghz = ~tbclk_1Ghz;
          begin
             @(posedge `PCIE_DUT.u_core16.u_ip.u_cfg.u_cfg_dbi_if.cfg_blk_done_o);
             #1ps;
-            if( DUT.pcie_wrapper.pcie_ss_top.host_pcie.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
+            if( DUT.pcie_wrapper.pcie_ss.top.host_pcie.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
                release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_rate[23:0];
                release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_mpllb_sel[7:0];
             end 
@@ -351,7 +350,7 @@ always #500ps tbclk_1Ghz = ~tbclk_1Ghz;
             end
          end
          begin
-            if(DUT.pcie_wrapper.pcie_ss_top.host_pcie.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
+            if(DUT.pcie_wrapper.pcie_ss.top.host_pcie.pcie_ss.pcie_ss.hssi_ctp_topology =="pcie_x8x8") begin
                @(posedge `PCIE_DUT.u_core8.u_ip.u_cfg.u_cfg_dbi_if.cfg_blk_done_o);
                #1ps;
                release `PCIE_QHIP.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrphy_top.pcs.i_pcie_pcs.upcs_clk_ctl.pcs_laneX_rate[47:24];

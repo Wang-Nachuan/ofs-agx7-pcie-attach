@@ -23,10 +23,11 @@ export VERDIR = $(OFS_ROOTDIR)/verification/unit_tb/copy_engine
 #endif    
 TEST_DIR :=  $(shell ./create_dir.pl $(VERDIR)/sim/$(TESTNAME) )
 
-SCRIPTS_DIR = $(VERDIR)/scripts
+SCRIPTS_DIR = $(OFS_ROOTDIR)/sim/scripts
+VERIF_SCRIPTS_DIR = $(VERDIR)/scripts
 
-VCDFILE = $(SCRIPTS_DIR)/vpd_dump.key
-FSDBFILE = $(SCRIPTS_DIR)/fsdb_dump.tcl
+VCDFILE = $(VERIF_SCRIPTS_DIR)/vpd_dump.key
+FSDBFILE = $(VERIF_SCRIPTS_DIR)/fsdb_dump.tcl
 
 # Configure the build target, specifying the board and OFSS IP definitions.
 # These can be overridden on the make command line, e.g. BOARD=<board>.
@@ -38,13 +39,15 @@ else
 endif
 
 ADP_DIR = $(OFS_ROOTDIR)/sim/scripts
+QPROJ_DIR = $(ADP_DIR)/qip_gen/quartus_proj_dir
+QIP_DIR = $(ADP_DIR)/qip_sim_script
 
 PLATFORM_DIR = $(AGILEX_DIR)
 
 #VLOG_OPT = -kdb -full64 -error=noMPD -ntb_opts uvm-1.2 +vcs+initreg+random +vcs+lic+wait -ntb_opts dtm -sverilog -timescale=1ns/1fs +libext+.v+.sv -CFLAGS -debug_pp -l vlog.log -assert enable_diag -ignore unique_checks -debug_all
 VLOG_OPT = -kdb -full64 -error=noMPD -ntb_opts uvm-1.2 +vcs+initreg+random +vcs+lic+wait -ntb_opts dtm -sverilog -timescale=1ns/1fs +libext+.v+.sv -l vlog.log -assert enable_diag -ignore unique_checks 
 VLOG_OPT += -Mdir=./csrc +warn=noBCNACMBP -CFLAGS -y $(VERDIR)/vip/pcie_vip/src/verilog/vcs -y $(VERDIR)/vip/pcie_vip/src/sverilog/vcs -P $(VERDIR)/scripts/vip/pli.tab $(WORKDIR)/scripts/vip/msglog.o -notice -work work +incdir+./ 
-VLOG_OPT += +define+INCLUDE_HSSI +define+INCLUDE_PCIE_SS
+VLOG_OPT += +define+INCLUDE_PCIE_SS +define+INCLUDE_HPS
 VLOG_OPT += +define+SIM_MODE +define+SIM_SERIAL +define+PU_MMIO #Enable PCIE Serial link up for p-tile and Power user MMIO for PO FIM
 ifeq ($(n6000_100G),1)
 VLOG_OPT += +define+n6000_100G #Includes CVL by passthrough logic
@@ -185,20 +188,14 @@ ifdef OFSS
 else
 	sh "$(OFS_ROOTDIR)"/ofs-common/scripts/common/sim/gen_sim_files.sh $(BOARD)
 endif
-	# Generate On-the-fly IP Sim files for the target platform
-	rm -rf  $(SCRIPTS_DIR)/qip
-	test -s $(SCRIPTS_DIR)/qip || ln -sf $(ADP_DIR)/qip_sim_script qip
-	cp -f qip/synopsys/vcsmx/synopsys_sim.setup ../ip_libraries/
-	cd ../ip_libraries && ../scripts/qip/synopsys/vcsmx/vcsmx_setup.sh SKIP_SIM=1 USER_DEFINED_COMPILE_OPTIONS=-v2005 QSYS_SIMDIR=../scripts/qip QUARTUS_INSTALL_DIR=$(QUARTUS_HOME)
+	cp -f "$(QIP_DIR)"/synopsys/vcsmx/synopsys_sim.setup ../ip_libraries/
+	cd ../ip_libraries && "$(QIP_DIR)"/synopsys/vcsmx/vcsmx_setup.sh SKIP_SIM=1 SKIP_ELAB=1 USER_DEFINED_COMPILE_OPTIONS=-v2005 QSYS_SIMDIR="$(QIP_DIR)" QUARTUS_INSTALL_DIR=$(QUARTUS_HOME)
 	cd ../ip_libraries/&& sh "$(OFS_ROOTDIR)"/sim/scripts/ip_flist.sh
 
 vlog_adp: setup 
 	cd $(VERDIR)/sim && vlogan -ntb_opts uvm-1.2 -sverilog
 	cd $(VERDIR)/sim && vlogan -full64 -ntb_opts uvm-1.2 -sverilog -timescale=1ns/1ns -l vlog_uvm.log
-	rm -rf  $(SCRIPTS_DIR)/ip_flist.f
-	test -s $(SCRIPTS_DIR)/ip_flist.f  || ln -sf $(ADP_DIR)/ip_flist.f ip_flist.f
-	cd $(VERDIR)/sim && vlogan $(VLOG_OPT) +define+SIM_VIP -f $(SCRIPTS_DIR)/ip_flist.f -F $(ADP_DIR)/generated_rtl_flist.f -f $(SCRIPTS_DIR)/ver_list.f -f $(SCRIPTS_DIR)/rtl_pcie.f 
-
+	cd $(VERDIR)/sim && vlogan $(VLOG_OPT) +define+SIM_VIP -F $(SCRIPTS_DIR)/ip_flist.f -F $(SCRIPTS_DIR)/generated_rtl_flist.f -F $(VERIF_SCRIPTS_DIR)/ver_list.f $(AFU_FLIST_IMPORT)
 
 build_adp: vlog_adp
 	cd $(VERDIR)/sim && vcs $(VCS_OPT) tb_top 

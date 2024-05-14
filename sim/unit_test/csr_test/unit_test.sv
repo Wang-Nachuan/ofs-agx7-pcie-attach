@@ -30,7 +30,7 @@ import host_transaction_class_pkg::*;
 import host_bfm_types_pkg::*;
 import host_bfm_class_pkg::*;
 import test_csr_defs::*;
-
+import top_cfg_pkg::*;
 
 //---------------------------------------------------------
 // FLR handle and FLR Memory

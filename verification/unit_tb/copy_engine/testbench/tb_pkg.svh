@@ -42,11 +42,11 @@
     `define HE_LB_BASE   `PF2_BAR0
     `define HE_MEM_BASE  `PF2_VF0_BAR0
 `ifdef FIM_C
-      `define PCIE_DUT      DUT.pcie_wrapper.pcie_ss_top.pcie_ss.pcie_ss.gen_ptile.u_ptile.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrpcie_top
-      `define PCIE_QHIP  DUT.pcie_wrapper.pcie_ss_top.pcie_ss.pcie_ss.gen_ptile.u_ptile
+      `define PCIE_DUT      DUT.pcie_wrapper.pcie_ss.top.pcie_ss.pcie_ss.gen_ptile.u_ptile.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrpcie_top
+      `define PCIE_QHIP  DUT.pcie_wrapper.pcie_ss.top.pcie_ss.pcie_ss.gen_ptile.u_ptile
     `else
-      `define PCIE_DUT      DUT.pcie_wrapper.pcie_ss_top.host_pcie.pcie_ss.pcie_ss.gen_ptile.u_ptile.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrpcie_top
-      `define PCIE_QHIP  DUT.pcie_wrapper.pcie_ss_top.host_pcie.pcie_ss.pcie_ss.gen_ptile.u_ptile
+      `define PCIE_DUT      DUT.pcie_wrapper.pcie_ss.top.host_pcie.pcie_ss.pcie_ss.gen_ptile.u_ptile.intel_pcie_ptile_ast_qhip.inst.inst.maib_and_tile.z1565a.ctp_tile_encrypted_inst.z1565a_inst.u_wrpcie_top
+      `define PCIE_QHIP  DUT.pcie_wrapper.pcie_ss.top.host_pcie.pcie_ss.pcie_ss.gen_ptile.u_ptile
     `endif
 
 
