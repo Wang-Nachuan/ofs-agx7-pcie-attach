@@ -11,6 +11,16 @@ module passive_vip(`AXI_IF PCie2AFU_if0,`AXI_IF MUX2HE_HSSI_if1,`AXI_IF HE_HSSI2
      //assign axi_if.common_aclk = tb_top.DUT.clk_100m;
     // assign axi_if.slave_if[6].aresetn      = tb_top.DUT.rst_n_100m;
 
+  bit  disable_pmci_monitor ;
+
+initial begin
+`ifdef INCLUDE_PMCI
+  disable_pmci_monitor = 0 ;
+`else
+  disable_pmci_monitor = 1 ;
+`endif 
+end 
+
   assign PCie2AFU_if0.common_aclk          = `DUT.pcie_wrapper.axi_st_tx_if[0].clk;
   assign PCie2AFU_if0.master_if[0].aresetn = `DUT.pcie_wrapper.axi_st_tx_if[0].rst_n;
   assign PCie2AFU_if0.slave_if[0].aresetn  = `DUT.pcie_wrapper.axi_st_rx_if[0].rst_n;
@@ -180,22 +190,22 @@ assign BPF_if3.slave_if[1].rready  =  `DUT.bpf_fme_slv_if.rready;
 //////////////////////////////////BPF2PMCI_PASIVE_CONNECTION///////////////////////////////////
 assign BPF_if3.master_if[2].awaddr  =  `DUT.bpf_pmci_mst_if.awaddr; 
 assign BPF_if3.master_if[2].awprot  =  `DUT.bpf_pmci_mst_if.awprot;
-assign BPF_if3.master_if[2].awvalid =  `DUT.bpf_pmci_mst_if.awvalid;
+assign BPF_if3.master_if[2].awvalid =  (disable_pmci_monitor == 0) ?`DUT.bpf_pmci_mst_if.awvalid : 0;
 assign BPF_if3.master_if[2].awready =  `DUT.bpf_pmci_mst_if.awready;
 assign BPF_if3.master_if[2].wdata   =  `DUT.bpf_pmci_mst_if.wdata;
 assign BPF_if3.master_if[2].wstrb   =  `DUT.bpf_pmci_mst_if.wstrb;
-assign BPF_if3.master_if[2].wvalid  =  `DUT.bpf_pmci_mst_if.wvalid ;
+assign BPF_if3.master_if[2].wvalid  =  (disable_pmci_monitor == 0) ? `DUT.bpf_pmci_mst_if.wvalid : 0 ;
 assign BPF_if3.master_if[2].wready  =  `DUT.bpf_pmci_mst_if.wready;
 assign BPF_if3.master_if[2].bresp   =  `DUT.bpf_pmci_mst_if.bresp;
 assign BPF_if3.master_if[2].bvalid  =  `DUT.bpf_pmci_mst_if.bvalid;
 assign BPF_if3.master_if[2].bready  =  `DUT.bpf_pmci_mst_if.bready ;
 assign BPF_if3.master_if[2].araddr  =  `DUT.bpf_pmci_mst_if.araddr;
 assign BPF_if3.master_if[2].arprot  =  `DUT.bpf_pmci_mst_if.arprot;
-assign BPF_if3.master_if[2].arvalid =  `DUT.bpf_pmci_mst_if.arvalid;
+assign BPF_if3.master_if[2].arvalid =  (disable_pmci_monitor == 0) ? `DUT.bpf_pmci_mst_if.arvalid :0 ;
 assign BPF_if3.master_if[2].arready =  `DUT.bpf_pmci_mst_if.arready;
 assign BPF_if3.master_if[2].rdata   =  `DUT.bpf_pmci_mst_if.rdata;
 assign BPF_if3.master_if[2].rresp   =  `DUT.bpf_pmci_mst_if.rresp;
-assign BPF_if3.master_if[2].rvalid  =  `DUT.bpf_pmci_mst_if.rvalid;
+assign BPF_if3.master_if[2].rvalid  =  (disable_pmci_monitor == 0) ?  `DUT.bpf_pmci_mst_if.rvalid : 0;
 assign BPF_if3.master_if[2].rready  =  `DUT.bpf_pmci_mst_if.rready;
 
 assign BPF_if3.slave_if[2].awaddr  =  `DUT.bpf_pmci_slv_if.awaddr;
