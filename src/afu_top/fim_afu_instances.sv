@@ -20,6 +20,7 @@
 // HE-NULL will be instantiated on each function of LINK 1+
 
 `include "fpga_defines.vh"
+`include "ofs_ip_cfg_db.vh"
 import top_cfg_pkg::*;
 
 module fim_afu_instances # (
@@ -83,6 +84,11 @@ localparam HPS_PID = (top_cfg_pkg::PG_VFS > 0) ? 3 : 2;
 localparam TDATA_WIDTH = afu_axi_rx_a_if[0].DATA_W;
 localparam TUSER_WIDTH = afu_axi_rx_a_if[0].USER_W;
 
+`ifdef OFS_FIM_IP_CFG_PCIE_SS_FUNC_MODE_IS_DM
+  localparam PCIE_DM_ENCODING = 1;
+`else
+  localparam PCIE_DM_ENCODING = 0;
+`endif
 
 // Get the VF function level reset if VF is active for the function.
 // If VF is not active, return a constant: not in reset.
@@ -254,6 +260,7 @@ for(genvar p = 0; p < NUM_MUX_PORTS; p++) begin : afu_gen
       );
 
       ce_top #(
+         .PCIE_DM_ENCODING       (PCIE_DM_ENCODING),
          .CE_PF_ID               (PFVF_ROUTING_TABLE[p].pf),
          .CE_VF_ID               (PFVF_ROUTING_TABLE[p].vf),
          .CE_VF_ACTIVE           (PFVF_ROUTING_TABLE[p].vf_active),

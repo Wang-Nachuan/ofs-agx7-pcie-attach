@@ -4,6 +4,8 @@
 `ifndef CE_SCOREBOARD
 `define CE_SCOREBOARD
 
+`define CE_INST tb_top.DUT.ce_top_inst.ce_csr_inst
+
 `uvm_analysis_imp_decl(_pcie_port_tx)
 `uvm_analysis_imp_decl(_pcie_port_rx)
 `uvm_analysis_imp_decl(_axi_port_rx)
@@ -18,7 +20,8 @@ class ce_scoreboard extends uvm_scoreboard;
 bit [31:0] obs_addr_q[$];
 bit [31:0] exp_addr_q[$];
 bit [31:0] dst_addr;
-bit [31:0] drl_limt;
+bit [31:0] drl_limit;
+bit [1:0]  actual_drl_limit;
 bit [31:0] desc_size;
 bit[511:0] axi_payload_q[$];
 bit[511:0] pci_payload_q[$];
@@ -66,7 +69,7 @@ bit [1:0] cnt= 1;
    else if(pcie_tx_pkt.tlp.tlp_type == 5'b0_0000 && pcie_tx_pkt.tlp.fmt != 3'b000 && pcie_tx_pkt.tlp.fmt != 3'b001 ) begin
       if (pcie_tx_pkt.tlp.address[31:0] == 'he0000108) begin
          `uvm_info(get_type_name(),$sformatf(" SCB:: MWR Pkt transmitted by PCIe VIP for DRL LIMT \n %s",pcie_tx_pkt.sprint()),UVM_LOW)
-         drl_limt = changeEndian(pcie_tx_pkt.tlp.payload[0]);
+         drl_limit = changeEndian(pcie_tx_pkt.tlp.payload[0]);
       end
       else if (pcie_tx_pkt.tlp.address[31:0] == 'he0000118) begin
          `uvm_info(get_type_name(),$sformatf(" SCB:: MWR Pkt transmitted by PCIe VIP for DST ADDR \n %s",pcie_tx_pkt.sprint()),UVM_LOW)
@@ -74,8 +77,19 @@ bit [1:0] cnt= 1;
       end
       else if (pcie_tx_pkt.tlp.address[31:0] == 'he0000120) begin
          `uvm_info(get_type_name(),$sformatf(" SCB:: MWR Pkt transmitted by PCIe VIP for DESC SIZE \n %s",pcie_tx_pkt.sprint()),UVM_LOW)
+
+         // The logic may choose to impose a lower limit on request sizes
+         // than the host requests. Read the chosen limit from the RTL.
+         actual_drl_limit = `CE_INST.csr_data_req_limit;
+         if (drl_limit != actual_drl_limit) begin
+            if (drl_limit < actual_drl_limit)
+               `uvm_error(get_type_name(),$sformatf(" SCB:: Actual chosen DRL LIMIT is higher than request %0d (was %0d)\n", actual_drl_limit, drl_limit))
+            else
+               `uvm_info(get_type_name(),$sformatf(" SCB:: Actual chosen DRL LIMIT %0d (was %0d)\n", actual_drl_limit, drl_limit),UVM_LOW)
+            drl_limit = actual_drl_limit;
+         end
          desc_size = changeEndian(pcie_tx_pkt.tlp.payload[0]);
-         calc_exp_addr (dst_addr, desc_size, drl_limt);
+         calc_exp_addr (dst_addr, desc_size, drl_limit);
       end
    end
    endfunction :write_pcie_port_tx
@@ -99,14 +113,14 @@ bit [1:0] cnt= 1;
     end
   endfunction :write_axi_port_rx
 
-   function calc_exp_addr ( logic [31:0] dst_addr, logic [31:0] desc_size, logic [31:0] drl_limt ); 
+   function calc_exp_addr ( logic [31:0] dst_addr, logic [31:0] desc_size, logic [31:0] drl_limit ); 
       bit [31:0] size;
       bit [31:0] addr;
       bit [31:0] addr_cnt;
       bit [1:0]  drl;
       size = desc_size;
       addr = dst_addr;
-      drl = drl_limt[1:0];
+      drl = drl_limit[1:0];
       case(drl) 
          'b01 : begin
                   if(size%128==0)
@@ -127,10 +141,10 @@ bit [1:0] cnt= 1;
                   addr_cnt=(size/1024)+1;
                 end  
           default : begin
-                      if(size%1024==0)
-                      addr_cnt = size/1024;
+                      if(size%64==0)
+                      addr_cnt = size/64;
                       else
-                      addr_cnt = (size/1024)+1;
+                      addr_cnt = (size/64)+1;
                     end
       endcase
       //size = desc_size/64;    
@@ -158,7 +172,7 @@ bit [1:0] cnt= 1;
                         exp_addr_q.push_back(addr);
                       end
              default  : begin
-                        addr = addr + 'h400; 
+                        addr = addr + 'h40; 
                         exp_addr_q.push_back(addr);
                       end
             endcase
