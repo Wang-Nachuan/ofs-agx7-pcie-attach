@@ -49,6 +49,8 @@ else ifeq ($(n6000_100G),1)
   BOARD = n6000
 else ifeq ($(RTILE_SIM),1)
   BOARD = iseries-dk
+  # UVM simulation doesn't support Gen5x16. Use Gen5 2x8.
+  OFSS = +,"$(OFS_ROOTDIR)"/tools/ofss_config/pcie/pcie_host_2link.ofss
 else
   BOARD = n6001
 endif
