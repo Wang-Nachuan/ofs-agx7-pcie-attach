@@ -3,16 +3,19 @@ type = pcie
 
 [settings]
 output_name = pcie_ss
-# pcie_ss top_topology_hw.tcl parameter using the variables below
-# assuming x16 lane, following will map to  "Gen<pcie_gen> <pcie_instances>x<16/pcie_instances>"
-# i.e. for R-tile PCIe SS example "Gen5 2x8". For combinations supported.
-# Note: 
-# - Gen5 2x8 and Gen5 1x16 are supported
-# - Gen4 1x16 should work but not validated
-pcie_gen = 5
-pcie_instances = 2
-# OFS code using the 2nd link in the reference design. Set value to 1 if 1 x Gen5x8 is used.
-pcie_instances_enabled = 1
+
+#
+# OFS has been tested with three topologies:
+#      Gen5x16 (1024 bit data bus)
+#  2 x Gen5x8  (Bifurcated: two independent 512 bit links)
+#      Gen4x16 (512 bit data bus)
+#
+#   Note: Do not configure 1 x Gen5x8. A second link remains exposed by
+#         the PCIe SS and the extra logic required to tie it off is not
+#         implemented. Choose Gen4x16 instead for a single 512 bit bus.
+#
+pcie_gen = 4
+pcie_instances = 1
 
 [pf0]
 num_vfs = 3

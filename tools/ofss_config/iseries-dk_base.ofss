@@ -9,6 +9,7 @@ part = AGIB027R29A1E2VR3
 device_id = 6001
 
 [pcie.settings]
+# Default settings may be overriden by PCIe-specific OFSS files
 pcie_gen = 5
 
 [pcie]
