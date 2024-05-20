@@ -1,7 +1,5 @@
-[include]
-"$OFS_ROOTDIR"/tools/ofss_config/n6000_base.ofss
+[default]
+"$OFS_ROOTDIR"/tools/ofss_config/base/n6000_base.ofss
 "$OFS_ROOTDIR"/tools/ofss_config/pcie/pcie_host_n6000.ofss
 "$OFS_ROOTDIR"/tools/ofss_config/iopll/iopll_n6000.ofss
-
-[include-default]
 "$OFS_ROOTDIR"/tools/ofss_config/hssi/hssi_4x100.ofss

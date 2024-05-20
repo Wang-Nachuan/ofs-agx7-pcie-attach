@@ -41,18 +41,14 @@ QIP_DIR = $(ADP_DIR)/qip_sim_script
 ifdef FTILE_SIM
   BOARD = fseries-dk
   ifeq ($(ETH_200G),1)
-   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_2x200_ftile.ofss
+   OFSS = +,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_2x200_ftile.ofss
   else ifeq ($(ETH_400G),1)
-   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_1x400_ftile.ofss
-  else
-   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/fseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25_ftile.ofss
+   OFSS = +,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_1x400_ftile.ofss
   endif
 else ifeq ($(n6000_100G),1)
   BOARD = n6000
-  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/n6000.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_4x100.ofss
 else ifeq ($(RTILE_SIM),1)
   BOARD = iseries-dk
-  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/iseries-dk.ofss,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_8x25_ftile.ofss
 else
   BOARD = n6001
 endif
