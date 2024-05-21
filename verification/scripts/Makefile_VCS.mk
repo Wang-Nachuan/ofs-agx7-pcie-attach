@@ -221,6 +221,11 @@ ifeq ($(M),0)
     VLOG_OPT += +define+INCLUDE_UART
 endif
 
+M := $(shell grep -q INCLUDE_USER_CLK "$(SCRIPTS_DIR)"/generated_rtl_flist_macros.f; echo $$?)
+ifeq ($(M),0)
+    VLOG_OPT += +define+INCLUDE_USER_CLK
+endif
+
 
 ifdef NO_MSIX
     VLOG_OPT += +define+NO_MSIX 
