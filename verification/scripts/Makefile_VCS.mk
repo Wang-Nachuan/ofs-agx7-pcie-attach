@@ -41,16 +41,16 @@ QIP_DIR = $(ADP_DIR)/qip_sim_script
 ifdef FTILE_SIM
   BOARD = fseries-dk
   ifeq ($(ETH_200G),1)
-   OFSS = +,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_2x200_ftile.ofss
+   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_2x200_ftile.ofss
   else ifeq ($(ETH_400G),1)
-   OFSS = +,"$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_1x400_ftile.ofss
+   OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/hssi/hssi_1x400_ftile.ofss
   endif
 else ifeq ($(n6000_100G),1)
   BOARD = n6000
 else ifeq ($(RTILE_SIM),1)
   BOARD = iseries-dk
   # UVM simulation doesn't support Gen5x16. Use Gen5 2x8.
-  OFSS = +,"$(OFS_ROOTDIR)"/tools/ofss_config/pcie/pcie_host_2link.ofss
+  OFSS = "$(OFS_ROOTDIR)"/tools/ofss_config/pcie/pcie_host_2link.ofss
 else
   BOARD = n6001
 endif

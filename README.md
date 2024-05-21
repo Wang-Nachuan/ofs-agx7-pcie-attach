@@ -2,58 +2,66 @@
 
 This is the OFS Agilex 7 PCIe Attach FPGA development top-level directory. This repository supports targetting the same design to multiple board configurations specified in **syn/board/<board_name>** folder.
 
+The configurations described here are included as examples in the reference release. Users may construct their own .ofss settings files. For example, the number of PFs or VFs could be changed in any PCIe configuration.
+
+Work directory names in the commands below are merely examples and may be changed.
+
 ## Board
 * n6001 
    - Default .ip parameters are based on n6001 design
     ```bash
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/n6001.ofss,tools/ofss_config/hssi/hssi_8x25.ofss n6001 work_n6001
+        ./ofs-common/scripts/common/syn/build_top.sh -p n6001 work_n6001
     ```
-   - Additionally, n6001 fim supports reconfiguring the .ip via .ofss flow. For
-     example to change hssi config, pass the .ofss files below. 
+   - Additionally, the n6001 FIM supports reconfiguring the IP via .ofss flow. For
+     example, to change the HSSI configuration pass the .ofss files below: 
     ```bash
         # n6001 with 2x100G 
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/n6001_base.ofss,tools/ofss_config/hssi/hssi_2x100.ofss n6001 work_n6001_2x100
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/hssi/hssi_2x100.ofss n6001 work_n6001_2x100
 
         # n6001 with 8x10G 
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/n6001_base.ofss,tools/ofss_config/hssi/hssi_8x10.ofss n6001 work_n6001_8x10
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/hssi/hssi_8x10.ofss n6001 work_n6001_8x10
 
     ```
 * fseries-dk
-   - Compiling the fseries-dk Ethernet 8x25G  design configuration requires .ofss for changing the .ip configuration
+   - The default fseries-dk configuration includes Ethernet 8x25G:
     ```bash
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/fseries-dk.ofss,tools/ofss_config/hssi/hssi_8x25_ftile.ofss fseries-dk work_fseries-dk
+        ./ofs-common/scripts/common/syn/build_top.sh -p fseries-dk work_fseries-dk
     ```
   
 * n6000
-   - Compiling the n6000 variant design requires .ofss for changing the .ip configuration
     ```bash
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/n6000.ofss n6000 work_n6000
+        ./ofs-common/scripts/common/syn/build_top.sh -p n6000 work_n6000
     ```
 
 * iseries-dk
-   - Compiling the iseries-dk design requires .ofss for changing the .ip configuration. Default setting uses 2 PCIe Gen5x8 links on R-tile. Each Gen5x8 link has 3PF & 3VF enabled. AFU can saturate 2 Gen5x8 links simultaneously.
+   - The default iseries-dk sets PCIe to Gen5x16 and Ethernet to 8x25G. The PCIe data bus width is 1024 bits:
     ```bash
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iseries-dk.ofss,tools/ofss_config/hssi/hssi_8x25_ftile.ofss iseries-dk work_iseries-dk
+        ./ofs-common/scripts/common/syn/build_top.sh -p iseries-dk work_iseries-dk
     ```
 
-   - Compiling the iseries-dk for Ethernet 200G design configuration requires .ofss for changing the .ip configuration
+   - PCIe may also be configured with 2 independent links, each with 512 bit data buses:
     ```bash
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iseries-dk.ofss,tools/ofss_config/hssi/hssi_2x200_ftile.ofss iseries-dk work_iseries-dk_200
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/pcie/pcie_host_2link.ofss iseries-dk work_iseries-dk
     ```
 
-   - Compiling the iseries-dk Ethernet 400G design configuration requires .ofss for changing the .ip configuration
+    - For lower host bandwidth applications, selecting PCIe Gen4x16 will save area by instantiating a 512 bit PCIe data bus:
     ```bash
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iseries-dk.ofss,tools/ofss_config/hssi/hssi_1x400_ftile.ofss iseries-dk work_iseries-dk_400
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/pcie/pcie_host_gen4.ofss iseries-dk work_iseries-dk-1link
     ```
 
-    - Compiling the iseries-dk PCIe with 1 Gen5x8 being used in the OFS reference design. 
+   - Multiple IP configurations may be specified, for example 2 PCIe links and Ethernet 200G:
     ```bash
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iseries-dk_1link.ofss,tools/ofss_config/hssi/hssi_8x25_ftile.ofss iseries-dk work_iseries-dk-1link
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/pcie/pcie_host_2link.ofss,tools/ofss_config/hssi/hssi_2x200_ftile.ofss iseries-dk work_iseries-dk_200
     ```
 
-   - Compiling the iseries-dk slim fim for 1PF 1VF, no hssi
+   - Ethernet 400G:
     ```bash
-        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iseries-dk_1pf_1vf.ofss,tools/ofss_config/hssi/hssi_1x400_ftile.ofss iseries-dk:no_hssi,pr_floorplan=syn/board/iseries-dk/setup/pr_assignments_slim.tcl work_iseries-dk_slim
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/hssi/hssi_1x400_ftile.ofss iseries-dk work_iseries-dk_400
+    ```
+
+   - Slim FIM with 2 PCIe Gen5x8 links, each with 1PF and 1VF, no HSSI:
+    ```bash
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/pcie/pcie_host_2link_1pf_1vf.ofss iseries-dk:no_hssi,pr_floorplan=syn/board/iseries-dk/setup/pr_assignments_slim.tcl work_iseries-dk_slim
     ```
 ## Directories
 
