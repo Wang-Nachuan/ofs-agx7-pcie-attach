@@ -1,7 +1,7 @@
 //Copyright (C) 2021 Intel Corporation
 //SPDX-License-Identifier: MIT
-`ifndef TEST_PKG_SVH
-`define TEST_PKG_SVH
+`ifndef TEST_PKG_NO_PMCI_SVH
+`define TEST_PKG_NO_PMCI_SVH
 
 //package test_pkg;
 //    import uvm_pkg::*;
@@ -97,10 +97,6 @@
     `include "mix_intr_test.svh"
 
      
-    `include "pcie_pmci_mctp_vdm_test.svh"
-    `include "pcie_pmci_mctp_multi_vdm_test.svh"
-    `include "pmci_pcie_mctp_vdm_test.svh"
-    `include "pmci_pcie_mctp_multi_vdm_test.svh"
     `include "vdm_err_vid_test.svh"
     `include "bar_32b_test.svh"
     `include "bar_64b_test.svh"
@@ -122,4 +118,4 @@
 
 //endpackage : test_pkg
 
-`endif // TEST_PKG_SVH
+`endif // TEST_PKG_NO_SVH

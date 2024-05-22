@@ -133,6 +133,7 @@
     `include "tb_env.svh"
     `include "pam4_encoder_decoder.sv"
     `include "test_top_pkg.svh"
+    `include "test_top_pkg_no_pmci.svh"
     `ifdef INCLUDE_HSSI
       `include "tx_pkg.svh"
       `include "tx_pkg_100G_200G.svh"
