@@ -1,8 +1,10 @@
 # OFS Agilex 7 PCIe Attach FPGA Development Directory
 
-This is the OFS Agilex 7 PCIe Attach FPGA development top-level directory. This repository supports targetting the same design to multiple board configurations specified in **syn/board/<board_name>** folder.
+This is the OFS Agilex 7 PCIe Attach FPGA development top-level directory. This repository supports targeting the same design to multiple board configurations specified in **syn/board/<board_name>** folder.
 
 The configurations described here are included as examples in the reference release. Users may construct their own .ofss settings files. For example, the number of PFs or VFs could be changed in any PCIe configuration.
+
+OFSS settings control PCIe configuration, primary clock frequency, local memory and Ethernet topology.
 
 Work directory names in the commands below are merely examples and may be changed.
 
@@ -20,8 +22,12 @@ Work directory names in the commands below are merely examples and may be change
 
         # n6001 with 8x10G 
         ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/hssi/hssi_8x10.ofss n6001 work_n6001_8x10
-
     ```
+   - Multiple IP changes can be combined. This selects a 470 MHz clock and 8x10G Ethernet:
+    ```bash
+        ./ofs-common/scripts/common/syn/build_top.sh -p --ofss tools/ofss_config/iopll/iopll_470MHz.ofss,tools/ofss_config/hssi/hssi_8x10.ofss n6001 work_dir
+    ```
+
 * fseries-dk
    - The default fseries-dk configuration includes Ethernet 8x25G:
     ```bash
