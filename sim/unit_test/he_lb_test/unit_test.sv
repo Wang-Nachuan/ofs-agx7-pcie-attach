@@ -87,6 +87,9 @@ localparam string unit_test_name = "HE Loopback Test";
 localparam BUS_WIDTH = host_bfm_types_pkg::TDATA_WIDTH;
 localparam BUS_BYTE_WIDTH = host_bfm_types_pkg::TDATA_WIDTH / 8;
 
+// From HE CSRs
+test_csr_defs::t_info0 csr_info0;
+
 //---------------------------------------------------------
 // Mailbox 
 //---------------------------------------------------------
@@ -665,6 +668,15 @@ task main_test;
       host_bfm_top.host_bfm.set_dm_mode(DM_AUTO_TRANSACTION);
       pfvf = '{2,0,0};
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
+
+      host_bfm_top.host_bfm.read64(test_csr_defs::INFO0, csr_info0);
+      $display("HE API version: %0d", csr_info0.he_lb_api_version);
+      if (test_csr_defs::bus_bytes(csr_info0) != BUS_BYTE_WIDTH) begin
+          $display("\nERROR: Unexpected bus byte width. Is %0d, expected %0d",
+                   test_csr_defs::bus_bytes(csr_info0), BUS_BYTE_WIDTH);
+          incr_err_count();
+          $finish;
+      end
 
       test_mem_loopback (test_result, 1, 3'h0, 3'h0, 17'd1,   1'b0, "test_mem_loopback: cl_mode (1CL), length (1)");
 

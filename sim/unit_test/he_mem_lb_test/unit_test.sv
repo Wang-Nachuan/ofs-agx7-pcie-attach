@@ -86,6 +86,10 @@ localparam string unit_test_name = "HE-MEM Loopback Test";
 localparam BUS_WIDTH = host_bfm_types_pkg::TDATA_WIDTH;
 localparam BUS_BYTE_WIDTH = host_bfm_types_pkg::TDATA_WIDTH / 8;
 
+// From HE CSRs
+test_csr_defs::t_info0 csr_info0;
+int local_mem_bus_bytes;
+
 //---------------------------------------------------------
 // Mailbox 
 //---------------------------------------------------------
@@ -227,6 +231,7 @@ task test_mem_loopback_util;
    logic        err_dst_addr;
    byte_t       init_buf[];
    byte_t       read_buf[];
+   int          bus_bytes;
 begin
    result = 1'b1;
 
@@ -367,9 +372,13 @@ begin
          $display("\n (4) Checking data at destination buffer starting at 0x%x", dst_base_addr);
          if (mem_display_on) host_bfm_top.host_memory.dump_mem(dst_base_addr, num_cl*BUS_BYTE_WIDTH); // Bytes
    
+         // If the local memory bus is narrower than the host bus, HE MEM
+         // drops the data the doesn't fit.
+         bus_bytes = (local_mem_bus_bytes < BUS_BYTE_WIDTH) ? local_mem_bus_bytes : BUS_BYTE_WIDTH;
+
          for (int cl=0; cl<num_cl; ++cl)
          begin
-            for (int i=0; i<BUS_BYTE_WIDTH/8; i=i+1)
+            for (int i=0; i<bus_bytes/8; i=i+1)
             begin
                dst_addr = (dst_base_addr+cl*BUS_BYTE_WIDTH+i*8);
                src_addr = (src_base_addr+cl*BUS_BYTE_WIDTH+i*8);
@@ -742,6 +751,18 @@ task main_test;
       host_bfm_top.host_bfm.set_dm_mode(DM_AUTO_TRANSACTION);
       pfvf = '{0,0,1};
       host_bfm_top.host_bfm.set_pfvf_setting(pfvf);
+
+      host_bfm_top.host_bfm.read64(test_csr_defs::INFO0, csr_info0);
+      $display("HE API version: %0d", csr_info0.he_lb_api_version);
+      if (test_csr_defs::bus_bytes(csr_info0) != BUS_BYTE_WIDTH) begin
+          $display("\nERROR: Unexpected bus byte width. Is %0d, expected %0d",
+                   test_csr_defs::bus_bytes(csr_info0), BUS_BYTE_WIDTH);
+          incr_err_count();
+          $finish;
+      end
+
+      local_mem_bus_bytes = test_csr_defs::local_mem_bus_bytes(csr_info0);
+      $display("HE local memory bus byte width: %0d\n", local_mem_bus_bytes);
 
      `ifdef INCLUDE_DDR4
       wait(top_tb.DUT.local_mem_wrapper.mem_ss_top.mem_ss_cal_success[0] == 1'b1);

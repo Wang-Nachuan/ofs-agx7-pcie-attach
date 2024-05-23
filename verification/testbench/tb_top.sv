@@ -112,6 +112,7 @@ module tb_top;
    `endif
  `endif
 
+ `ifdef INCLUDE_LOCAL_MEM
    `ifdef INCLUDE_DDR4
       ofs_fim_emif_ddr4_if   ddr4_mem [NUMB_DDR_CHANNEL-1:0] ();
     `ifdef AGILEX
@@ -122,6 +123,7 @@ module tb_top;
       `endif
     `endif
    `endif
+ `endif
 
 
      `ifdef n6000_10G
@@ -339,12 +341,15 @@ module tb_top;
         .hssi_if         (hssi_if[ofs_fim_eth_plat_if_pkg::NUM_ETH_LANES-1:0]),
       `endif	
      
+     `ifdef INCLUDE_LOCAL_MEM
       `ifdef INCLUDE_DDR4
         .ddr4_mem     (ddr4_mem),
        `ifdef INCLUDE_HPS
         .ddr4_hps     (ddr4_hps),
        `endif
       `endif
+     `endif
+
       `ifndef RTILE_SIM
         .PCIE_RX_P       (root0_tx_datap),
         .PCIE_RX_N       ('0),
@@ -360,7 +365,8 @@ module tb_top;
      
      
      // EMIF memory model - If ECC is enabled then an additional ECC model must be used
-     `ifdef INCLUDE_DDR4
+     `ifdef INCLUDE_LOCAL_MEM
+      `ifdef INCLUDE_DDR4
         genvar ch;
         generate
            for(ch=0; ch < NUMB_DDR_CHANNEL; ch = ch+1) begin : mem_model
@@ -386,6 +392,7 @@ module tb_top;
               );
            end
         endgenerate
+      `endif
      `endif
      
      // HSSI serial loopback
