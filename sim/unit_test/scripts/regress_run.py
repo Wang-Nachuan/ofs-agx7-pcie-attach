@@ -439,33 +439,41 @@ def get_last_commit():
 
 
 def get_fim_variant():
-    #top_fim_gen_dir = rootdir + "/sim/scripts"
-    fim_variant_cmd_line = f"stat {top_fim_gen_dir}/qip_gen"
+    qip_gen_dir = f"{top_fim_gen_dir}/qip_gen"
+    fim_variant_cmd_line = f"stat {qip_gen_dir}"
     fim_variant_found = 0
     fim_variant = ""
-    fim_variant_pattern = r'File:\s*.*qip_gen.?\s*->\s*.*qip_gen_(\w+)'
-    fim_variant_discovery_command = subprocess.Popen(fim_variant_cmd_line.split(), stdout=subprocess.PIPE, bufsize=1, universal_newlines=True)
-    with fim_variant_discovery_command.stdout:
-        for line in iter(fim_variant_discovery_command.stdout.readline, ""):
-            line_contains_pattern = re.search(fim_variant_pattern,line)
-            if (line_contains_pattern):
-                fim_variant = line_contains_pattern.group(1)
-                fim_variant_found = 1
-    fim_variant_discovery_command.wait()
-    command_success = fim_variant_discovery_command.poll()
-    if (command_success == 0):
-        if (fim_variant_found):
-            logger.debug(f"FIM Variant search has returned successfully with return value {command_success}.")
-            logger.debug(f"FIM Variant is: {fim_variant}.")
+    fim_variant_pattern = r'File:\s*.*qip_gen.?\s*->\s*.*qip_gen_([-\w]+)'
+    if (os.path.exists(qip_gen_dir)):
+        fim_variant_discovery_command = subprocess.Popen(fim_variant_cmd_line.split(), stdout=subprocess.PIPE, bufsize=1, universal_newlines=True)
+        with fim_variant_discovery_command.stdout:
+            for line in iter(fim_variant_discovery_command.stdout.readline, ""):
+                line_contains_pattern = re.search(fim_variant_pattern,line)
+                if (line_contains_pattern):
+                    fim_variant = line_contains_pattern.group(1)
+                    fim_variant_found = 1
+        fim_variant_discovery_command.wait()
+        command_success = fim_variant_discovery_command.poll()
+        if (command_success == 0):
+            if (fim_variant_found):
+                logger.debug(f"FIM Variant search has returned successfully with return value {command_success}.")
+                logger.debug(f"FIM Variant is: {fim_variant}.")
+            else:
+                logger.error(f"ERROR: FIM Variant could not be found.")
+                logger.error(f"       Script {os.path.basename(__file__)} execution has been halted.") 
+                sys.exit(1)
         else:
-            logger.error(f"ERROR: FIM Variant could not be found.")
+            logger.error(f"ERROR: FIM Variant directory stat command has failed: {fim_variant_cmd_line}")
             logger.error(f"       Script {os.path.basename(__file__)} execution has been halted.") 
             sys.exit(1)
+        return fim_variant
     else:
-        logger.error(f"ERROR: FIM Variant directory stat command has failed: {fim_variant_cmd_line}")
-        logger.error(f"       Script {os.path.basename(__file__)} execution has been halted.") 
+        logger.error(f"ERROR: Simulation file generation has not been completed.")
+        logger.error(f"       This must be done before the script can proceed.              ")
+        logger.error(f"       Either run the gen_sim_files.sh script in the directory:      ")
+        logger.error(f"           ofs-common@commit/scripts/common/sim/gen_sim_files.sh     ")
+        logger.error(f"       Or add the --gen_sim_files option with this script.           ")
         sys.exit(1)
-    return fim_variant
 
 
 def find_files(filename, search_top_dir):
@@ -1437,6 +1445,7 @@ if __name__ == "__main__":
     test_info_dict = {}
     test_results = []
     design_includes_ddr4 = False
+    design_includes_local_mem = False
     design_includes_pmci = False
     design_includes_hssi = False
     regression_run_start = datetime.datetime.now()
@@ -1485,40 +1494,12 @@ if __name__ == "__main__":
     hostname = get_hostname()
     linux_distro = get_linux_distro()
     gcc_version = get_gcc_version()
-    fim_variant = get_fim_variant()
-    design_includes_ddr = {}
-    ddr_mem_families = range(3,9)
-    for ddr_family in ddr_mem_families:
-        ddr_family_name = f"DDR{ddr_family}"
-        ddr_scan_string = "INCLUDE_" + ddr_family_name
-        design_includes_ddr[ddr_family_name] = scan_verilog_macros_for_include(ddr_scan_string)
-    design_includes_local_mem = scan_verilog_macros_for_include("INCLUDE_LOCAL_MEM")
-    design_includes_pmci = scan_verilog_macros_for_include("INCLUDE_PMCI")
-    design_includes_hssi = scan_verilog_macros_for_include("INCLUDE_HSSI")
-    generation_cmd_line  = scan_last_generation_command()
     if ((args.simulator == 'vcs') or (args.simulator == 'vcsmx')):
         simulator_version = get_vcs_version()
     else:
         simulator_version = get_msim_version()
     logger.info(f">>> Running Unit Test Regression Run Python Script: {os.path.basename(__file__)}")
     logger.info(f"    Begin running at date/time..............: {regression_run_start}")
-    logger.info(f"    FIM Variant detected in sim generation..: {fim_variant}")
-    for ddr_family_name in design_includes_ddr:
-        if (design_includes_ddr[ddr_family_name] == True):
-            logger.info(f"      Design contains {ddr_family_name}..................:   {ddr_family_name} Included")
-    if (design_includes_local_mem):
-        logger.info(f"      Design contains Local Memory..........:   Local Memory Included")
-    else:
-        logger.info(f"      Design contains Local Memory..........:   None")
-    if (design_includes_pmci):
-        logger.info(f"      Design contains PMCI..................:   PMCI Included")
-    else:
-        logger.info(f"      Design contains PMCI..................:   None")
-    if (design_includes_hssi):
-        logger.info(f"      Design contains HSSI..................:   HSSI Included")
-    else:
-        logger.info(f"      Design contains HSSI..................:   None")
-    logger.info(f"    Last Sim File Generation Command Invoked: {generation_cmd_line}")
     logger.info(f"    Simulator used for run..................: {args.simulator}")
     logger.info(f"    Simulator Version used for run..........: {simulator_version}")
     if args.run_regression_locally:
@@ -1557,6 +1538,34 @@ if __name__ == "__main__":
             sys.exit(1)
     if args.gen_sim_files:
         generate_sim_files()
+    fim_variant = get_fim_variant()
+    design_includes_ddr = {}
+    ddr_mem_families = range(3,9)
+    for ddr_family in ddr_mem_families:
+        ddr_family_name = f"DDR{ddr_family}"
+        ddr_scan_string = "INCLUDE_" + ddr_family_name
+        design_includes_ddr[ddr_family_name] = scan_verilog_macros_for_include(ddr_scan_string)
+    design_includes_local_mem = scan_verilog_macros_for_include("INCLUDE_LOCAL_MEM")
+    design_includes_pmci = scan_verilog_macros_for_include("INCLUDE_PMCI")
+    design_includes_hssi = scan_verilog_macros_for_include("INCLUDE_HSSI")
+    generation_cmd_line  = scan_last_generation_command()
+    logger.info(f"    FIM Variant detected in sim generation..: {fim_variant}")
+    for ddr_family_name in design_includes_ddr:
+        if (design_includes_ddr[ddr_family_name] == True):
+            logger.info(f"      Design contains {ddr_family_name}..................:   {ddr_family_name} Included")
+    if (design_includes_local_mem):
+        logger.info(f"      Design contains Local Memory..........:   Local Memory Included")
+    else:
+        logger.info(f"      Design contains Local Memory..........:   None")
+    if (design_includes_pmci):
+        logger.info(f"      Design contains PMCI..................:   PMCI Included")
+    else:
+        logger.info(f"      Design contains PMCI..................:   None")
+    if (design_includes_hssi):
+        logger.info(f"      Design contains HSSI..................:   HSSI Included")
+    else:
+        logger.info(f"      Design contains HSSI..................:   None")
+    logger.info(f"    Last Sim File Generation Command Invoked: {generation_cmd_line}")
     list_of_tests = create_test_list()
     pmci_problem_list_of_tests = pmci_problem_test_filter()
     all_tests = list_of_tests + pmci_problem_list_of_tests
