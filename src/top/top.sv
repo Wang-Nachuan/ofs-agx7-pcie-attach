@@ -168,12 +168,15 @@ logic [PCIE_NUM_LINKS-1:0] pwr_good_csr_clk_n;
 logic         p0_ss_app_st_ctrlshadow_tvalid;
 logic [39:0]  p0_ss_app_st_ctrlshadow_tdata;
 
-always_ff @(posedge clk_sys) begin
-  rst_n_sys_pcie <= rst_n_sys;
-  rst_n_sys_afu  <= rst_n_sys;
-  rst_n_sys_mem  <= rst_n_sys[0];
-  rst_n_sys_hps  <= rst_n_sys[0];
+// These used to be registers for explicit reset duplication. Now that
+// rst_ctrl() automatically adds a duplication tree, they are simple
+// assignment. Adding a register here would just get in the way.
+assign rst_n_sys_pcie = rst_n_sys;
+assign rst_n_sys_afu  = rst_n_sys;
+assign rst_n_sys_mem  = rst_n_sys[0];
+assign rst_n_sys_hps  = rst_n_sys[0];
 
+always_ff @(posedge clk_sys) begin
   h2f_reset_q <= h2f_reset;
 end
 

@@ -212,7 +212,8 @@ fim_resync #(
    .SYNC_CHAIN_LENGTH(3),
    .WIDTH(1),
    .INIT_VALUE(0),
-   .NO_CUT(1)
+   .NO_CUT(1),
+   .TURN_OFF_ADD_PIPELINE(0)
 ) rst_clk_sys_resync (
    .clk   (clk_sys),
    .reset (~rst_warm_n | ~fim_rst_n),
@@ -225,7 +226,8 @@ fim_resync #(
    .SYNC_CHAIN_LENGTH(3),
    .WIDTH(1),
    .INIT_VALUE(0),
-   .NO_CUT(1)
+   .NO_CUT(1),
+   .TURN_OFF_ADD_PIPELINE(0)
 ) rst_clk100m_resync (
    .clk   (clk_100m),
    .reset (~rst_warm_n | ~fim_rst_n),
@@ -238,7 +240,8 @@ fim_resync #(
    .SYNC_CHAIN_LENGTH(3),
    .WIDTH(1),
    .INIT_VALUE(0),
-   .NO_CUT(1)
+   .NO_CUT(1),
+   .TURN_OFF_ADD_PIPELINE(0)
 ) rst_clk50m_resync (
    .clk   (clk_50m),
    .reset (~rst_warm_n | ~fim_rst_n),
@@ -251,7 +254,8 @@ fim_resync #(
    .SYNC_CHAIN_LENGTH(3),
    .WIDTH(1),
    .INIT_VALUE(0),
-   .NO_CUT(1)
+   .NO_CUT(1),
+   .TURN_OFF_ADD_PIPELINE(0)
 ) rst_clk_sys_div2_resync (
    .clk   (clk_sys_div2),
    .reset (~fim_rst_n),
@@ -263,7 +267,8 @@ fim_resync #(
    .SYNC_CHAIN_LENGTH(3),
    .WIDTH(1),
    .INIT_VALUE(0),
-   .NO_CUT(1)
+   .NO_CUT(1),
+   .TURN_OFF_ADD_PIPELINE(0)
 ) rst_clk_ptp_slv_resync (
    .clk   (clk_ptp_slv),
    .reset (~rst_warm_n | ~fim_rst_n),

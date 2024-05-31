@@ -152,6 +152,7 @@ pf_vf_mux_w_params   #(
 //
 logic [NUM_MUX_PORTS-1:0]       func_pf_rst_n;
 logic [NUM_MUX_PORTS-1:0]       func_vf_rst_n;
+logic [NUM_MUX_PORTS-1:0]       port_rst_in_n;
 logic [NUM_MUX_PORTS-1:0]       port_rst_n;
 
 logic [NUM_PF-1:0]              pf_flr_rst_n;
@@ -187,7 +188,19 @@ for (genvar p = 0; p < NUM_MUX_PORTS; p++) begin : port_map
    // - PF Flr 
    // - VF Flr
    // - PCIe system reset
-   always @(posedge clk) port_rst_n[p] <= func_pf_rst_n[p] && func_vf_rst_n[p] && rst_n[0];
+   always @(posedge clk) port_rst_in_n[p] <= func_pf_rst_n[p] && func_vf_rst_n[p] && rst_n[0];
+
+   // Build a multi-cycle duplication reset tree
+   fim_dup_tree
+    #(
+      .TREE_DEPTH(3)
+      )
+     dup
+      (
+       .clk,
+       .din(port_rst_in_n[p]),
+       .dout(port_rst_n[p])
+       );
 end : port_map
    
 // ---------------------------------------------------------------------------
