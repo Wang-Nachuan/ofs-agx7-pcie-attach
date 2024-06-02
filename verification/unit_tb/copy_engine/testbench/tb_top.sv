@@ -19,8 +19,10 @@ module tb_top;
 
 	ofs_fim_axi_lite_if                csr_lite_if[1]();
    	ofs_fim_ace_lite_if                ace_lite_tx_if();
-//ofs_fim_axi_lite_if              axi4mm_rx_if();
-ofs_fim_axi_mmio_if                        axi4mm_rx_if();
+
+    ofs_fim_axi_mmio_if #(.AWADDR_WIDTH(21), .ARADDR_WIDTH(21), .WDATA_WIDTH(32), .RDATA_WIDTH(32), .AWID_WIDTH(4), .ARID_WIDTH(4)) axi4mm_rx_if() ; //AXI4 MM- Interface between hps and copy engine
+    assign axi4mm_rx_if.awqos =4'd0;
+    assign axi4mm_rx_if.arqos =4'd0;
 
     reg SYS_RefClk   = 0;
     reg PCIE_RefClk  = 0;
