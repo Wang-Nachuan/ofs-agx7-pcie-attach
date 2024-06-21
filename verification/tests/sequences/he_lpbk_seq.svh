@@ -244,6 +244,10 @@ class he_lpbk_seq extends base_seq;
 	    rdata[2] = 1;
             mmio_write64(.addr_(base_addr+'h138), .data_(rdata));
 	    `uvm_info(get_name(), $psprintf("CSR_CTL = %0h", rdata), UVM_LOW)
+        `ifdef n6000_100G
+         // The above Write to the stop bit in  is not happening sometimes. and this is happening randomely.and it is is because of a open issue on VIP TLP Scheduler. To bypass this below force if applied. 
+            uvm_hdl_force("tb_top.DUT.afu_top.pg_afu.port_gasket.pr_slot.afu_main.port_afu_instances.afu_gen[0].hlb_gen.he_lb_inst.main.engines.csr2eng.ctl.stop", 1'b1) ;
+        `endif
 	end
 
     if(ral_mode_prtcl == 0) begin

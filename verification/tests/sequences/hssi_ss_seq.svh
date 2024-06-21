@@ -156,10 +156,14 @@ class hssi_ss_seq extends base_seq;
       `endif
       `endif
        `ifndef INCLUDE_CVL
+	m_regs_a["HSSI_CMD_STATUS"] = "HSSI_CMD_STATUS";
         tb_env0.hssi_regs.get_registers(m_regs);
 	check_reset_value(m_regs,m_regs_a,r_array);
 	m_regs_a["HSSI_READ_DATA"] = "HSSI_READ_DATA_REG";
 	wr_rd_cmp(m_regs,m_regs_a,w_array);
+        m_regs_m[0] = tb_env0.hssi_regs.get_reg_by_name("HSSI_CMD_STATUS");
+        r_a_array["HSSI_CMD_STATUS"] = 32'h00000008;
+	check_reset_value(m_regs_m,m_regs_b,r_a_array);    
        `else       
 	m_regs_a["HSSI_FEATURE"] = "HSSI_FEATURE_REG";
 	m_regs_a["HSSI_PORT_0_ATTR"] = "HSSI_PORT_0_ATTR_REG";
@@ -178,6 +182,7 @@ class hssi_ss_seq extends base_seq;
 	m_regs_a["HSSI_PORT_13_ATTR"] = "HSSI_PORT_13_ATTR_REG";
 	m_regs_a["HSSI_PORT_14_ATTR"] = "HSSI_PORT_14_ATTR_REG";
 	m_regs_a["HSSI_PORT_15_ATTR"] = "HSSI_PORT_15_ATTR_REG";
+	m_regs_a["HSSI_CMD_STATUS"] = "HSSI_CMD_STATUS";
 	m_regs_a["HSSI_READ_DATA"] = "HSSI_READ_DATA_REG";
 	m_regs_a["HSSI_PORT_0_STATUS"] = "HSSI_PORT_0_STATUS_REG";
 	m_regs_a["HSSI_PORT_1_STATUS"] = "HSSI_PORT_1_STATUS_REG";
@@ -352,14 +357,18 @@ class hssi_ss_seq extends base_seq;
     m_regs_m[4] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_12_ATTR");
     r_a_array["HSSI_PORT_12_ATTR"] = 32'h0024101b;
 
-    m_regs_m[5] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_0_STATUS");
+    m_regs_m[5] = tb_env0.hssi_regs.get_reg_by_name("HSSI_CMD_STATUS");
+    r_a_array["HSSI_CMD_STATUS"] = 32'h00000008;
+
+    m_regs_m[6] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_0_STATUS");
     r_a_array["HSSI_PORT_0_STATUS"] = 32'h8000080;
-    m_regs_m[6] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_1_STATUS");
+    m_regs_m[7] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_1_STATUS");
     r_a_array["HSSI_PORT_1_STATUS"] = 32'h00000000;
-    m_regs_m[7] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_2_STATUS");
+    m_regs_m[8] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_2_STATUS");
     r_a_array["HSSI_PORT_2_STATUS"] = 32'h00000000;
-    m_regs_m[8] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_3_STATUS");
+    m_regs_m[9] = tb_env0.hssi_regs.get_reg_by_name("HSSI_PORT_3_STATUS");
     r_a_array["HSSI_PORT_3_STATUS"] = 32'h00000000;
+    $display("Inside n6000_100G");
 	  check_reset_value(m_regs_m,m_regs_b,r_a_array);    
     `endif
    `endif
