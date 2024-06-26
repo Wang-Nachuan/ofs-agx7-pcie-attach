@@ -89,6 +89,8 @@ import ofs_csr_pkg::*;
    logic [63:0]                        com_csr_readdata;
    logic                               com_csr_readdatavalid;
    logic [5:0]                         com_csr_address;
+   logic                               csr_araddr_is_16b;
+   logic                               csr_araddr_is_upper32b;
 
    logic [63:0]                        com_csr_writedata_nxt;
    logic                               com_csr_read_nxt;
@@ -141,14 +143,103 @@ ofs_fim_axi_mmio_if #(
    .RDATA_WIDTH  (ofs_fim_cfg_pkg::MMIO_DATA_WIDTH)
 ) csr_if();
 
+ofs_fim_axi_mmio_if #(
+   .AWID_WIDTH   (ofs_fim_cfg_pkg::MMIO_TID_WIDTH),
+   .AWADDR_WIDTH (ADDR_WIDTH),
+   .WDATA_WIDTH  (ofs_fim_cfg_pkg::MMIO_DATA_WIDTH),
+   .ARID_WIDTH   (ofs_fim_cfg_pkg::MMIO_TID_WIDTH),
+   .ARADDR_WIDTH (ADDR_WIDTH),
+   .RDATA_WIDTH  (ofs_fim_cfg_pkg::MMIO_DATA_WIDTH)
+) csr_if_aximm();
 
 // AXI4-lite to AXI-M adapter
 axi_lite2mmio axi_lite2mmio (
    .clk       (clk),
    .rst_n     (~reset),
    .lite_if   (csr_lite_if),
-   .mmio_if   (csr_if)
+   .mmio_if   (csr_if_aximm)
 );
+
+//---------------------------------
+// The NIOSV in the PMCI SS is doing 16b reads to the QSFP controller.
+// The NIOSII bridges converted to 32b but the NIOSV is native AXI and does
+// not do this conversion so 16b reads are reaching the QSFP controller
+// The code below converts to 32b read since OFS does not allow lower
+// than 32b reads
+//---------------------------------
+assign csr_if_aximm.awready = csr_if.awready;
+assign csr_if_aximm.wready  = csr_if.wready; 
+assign csr_if_aximm.bvalid  = csr_if.bvalid; 
+assign csr_if_aximm.bresp   = csr_if.bresp;  
+assign csr_if_aximm.bid     = csr_if.bid;    
+assign csr_if_aximm.buser   = csr_if.buser;    // check
+
+assign csr_if_aximm.arready = csr_if.arready;
+assign csr_if_aximm.rvalid  = csr_if.rvalid; 
+assign csr_if_aximm.rid     = csr_if.rid;    
+assign csr_if_aximm.rresp   = csr_if.rresp;  
+//assign csr_if_aximm.rdata   = csr_if.rdata;  
+assign csr_if_aximm.rlast   = csr_if.rlast;  
+assign csr_if_aximm.ruser   = csr_if.ruser; // check  
+
+
+assign csr_if.clk       = csr_if_aximm.clk;  
+assign csr_if.rst_n     = csr_if_aximm.rst_n;  
+assign csr_if.awvalid   = csr_if_aximm.awvalid;  
+assign csr_if.awid      = csr_if_aximm.awid;  
+assign csr_if.awaddr    = csr_if_aximm.awaddr;  
+assign csr_if.awlen     = csr_if_aximm.awlen;  
+assign csr_if.awsize    = csr_if_aximm.awsize;  
+assign csr_if.awburst   = csr_if_aximm.awburst;  
+assign csr_if.awlock    = csr_if_aximm.awlock;  
+assign csr_if.awcache   = csr_if_aximm.awcache;  
+assign csr_if.awprot    = csr_if_aximm.awprot;  
+assign csr_if.awqos     = csr_if_aximm.awqos;  
+assign csr_if.awuser    = csr_if_aximm.awuser;  
+assign csr_if.wvalid    = csr_if_aximm.wvalid;  
+assign csr_if.wdata     = csr_if_aximm.wdata;  
+assign csr_if.wstrb     = csr_if_aximm.wstrb;  
+assign csr_if.wlast     = csr_if_aximm.wlast;  
+assign csr_if.wuser     = csr_if_aximm.wuser;  
+assign csr_if.bready    = csr_if_aximm.bready;  
+assign csr_if.arvalid   = csr_if_aximm.arvalid;  
+assign csr_if.arid      = csr_if_aximm.arid;  
+assign csr_if.arlen     = csr_if_aximm.arlen;  
+assign csr_if.arsize    = csr_if_aximm.arsize;  
+assign csr_if.arburst   = csr_if_aximm.arburst;  
+assign csr_if.arlock    = csr_if_aximm.arlock;  
+assign csr_if.arcache   = csr_if_aximm.arcache;  
+assign csr_if.arprot    = csr_if_aximm.arprot;  
+assign csr_if.arqos     = csr_if_aximm.arqos;  
+assign csr_if.aruser    = csr_if_aximm.aruser;  
+assign csr_if.rready    = csr_if_aximm.rready;  
+
+
+
+// adjust the araddr to not assert bit 1 
+assign csr_if.araddr = csr_if_aximm.araddr & 64'hffff_ffff_ffff_fffd;
+
+//Determine if read is 16b
+always @(posedge clk) 
+begin
+    if (csr_if_aximm.arvalid)
+        csr_araddr_is_16b <= csr_if_aximm.araddr[1];
+end
+
+
+always @(posedge clk) 
+begin
+    if (csr_if_aximm.arvalid)
+        csr_araddr_is_upper32b <= csr_if_aximm.araddr[2];
+end
+
+// adjust read data based on size of read.
+assign csr_if_aximm.rdata = csr_araddr_is_16b? 
+                                    (csr_araddr_is_upper32b? 
+                                    {csr_if.rdata[63:48],csr_if.rdata[63:48],csr_if.rdata[31:0]} : 
+                                    {csr_if.rdata[63:32],csr_if.rdata[31:16],csr_if.rdata[31:16]}) : 
+                                    csr_if.rdata;
+
 
 //---------------------------------
 // Map AXI write/read request to CSR write/read,

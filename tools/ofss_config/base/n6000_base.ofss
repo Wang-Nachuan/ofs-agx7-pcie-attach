@@ -11,3 +11,7 @@ device_id = 6000
 [pcie.settings]
 # Default settings may be overriden by PCIe-specific OFSS files
 pcie_gen = 4
+
+[pcie]
+subsys_dev_id = 6000
+exvf_subsysid = 6000
