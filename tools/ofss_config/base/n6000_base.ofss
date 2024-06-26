@@ -13,5 +13,5 @@ device_id = 6000
 pcie_gen = 4
 
 [pcie]
-subsys_dev_id = 6000
-exvf_subsysid = 6000
+subsys_dev_id = 0x1770
+exvf_subsysid = 0x1770
