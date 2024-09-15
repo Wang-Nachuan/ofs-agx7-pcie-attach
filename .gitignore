@@ -1,0 +1,10 @@
+*.o
+*.obj
+
+*.log
+
+**/__pycache__/
+**/venv/
+
+build*/
+
