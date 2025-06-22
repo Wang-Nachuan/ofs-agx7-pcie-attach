@@ -36,6 +36,7 @@ if { [info exist env(OFS_BUILD_TAG_FLAT) ] } {
 
 
         set_instance_assignment -name PLACE_REGION "X90 Y40 X385 Y265" -to afu_top|pg_afu.port_gasket|pr_slot|afu_main
+        # set_instance_assignment -name PLACE_REGION "X40 Y10 X385 Y319" -to afu_top|pg_afu.port_gasket|pr_slot|afu_main
         set_instance_assignment -name ROUTE_REGION "X0 Y0 X385 Y329" -to afu_top|pg_afu.port_gasket|pr_slot|afu_main
     }
 
